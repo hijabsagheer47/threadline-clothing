@@ -1,159 +1,1684 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dress details — Threadline</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Details | Threadline</title>
+
+    <meta
+        name="description"
+        content="View product details, available colors, sizes, fabric information and customer reviews at Threadline."
+    >
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
 </head>
+
 <body>
 
+<!-- =========================================================
+     ANNOUNCEMENT BAR
+========================================================= -->
+
+<div class="announcement-bar">
+    Free shipping on orders over Rs. 8,000
+</div>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
 <header class="site-header">
-  <nav class="nav">
-    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shop.html">Shop</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="checkout.html">Checkout</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
-        Cart <span class="cart-badge">0</span>
-      </a>
-      <a href="admin.html" class="btn btn-small">Upload Dress</a>
-      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+
+    <div class="container nav-container">
+
+        <a href="index.html" class="brand-logo">
+            THREADLINE
+        </a>
+
+        <nav class="site-nav">
+
+            <a href="index.html">Home</a>
+
+            <a href="shop.html">Shop</a>
+
+            <a href="categories.html">Collections</a>
+
+            <a href="shop.html?category=new-arrivals">
+                New Arrivals
+            </a>
+
+            <a href="about.html">About</a>
+
+            <a href="contact.html">Contact</a>
+
+        </nav>
+
+
+        <!-- Navbar Actions -->
+
+        <div class="nav-actions">
+
+            <button
+                class="nav-icon"
+                type="button"
+                aria-label="Search"
+                onclick="toggleSearch()"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <a
+                href="#"
+                class="nav-icon"
+                aria-label="Account"
+            >
+                <i class="fa-regular fa-user"></i>
+            </a>
+
+            <a
+                href="#"
+                class="nav-icon"
+                aria-label="Wishlist"
+            >
+                <i class="fa-regular fa-heart"></i>
+            </a>
+
+            <a
+                href="cart.html"
+                class="nav-cart"
+                aria-label="Shopping cart"
+            >
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                <span class="cart-count">
+                    0
+                </span>
+            </a>
+
+        </div>
+
+
+        <!-- Mobile Toggle -->
+
+        <button
+            class="nav-toggle"
+            type="button"
+            aria-label="Open navigation"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
     </div>
-  </nav>
+
 </header>
 
-<section class="section-tight">
-  <div class="container" id="productRoot">
-    <!-- filled by JS -->
-  </div>
+
+<!-- =========================================================
+     SEARCH OVERLAY
+========================================================= -->
+
+<div class="search-panel" id="searchPanel">
+
+    <div class="container">
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="productSearch"
+                placeholder="Search products..."
+                aria-label="Search products"
+            >
+
+            <button type="button" onclick="performSearch()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     BREADCRUMB
+========================================================= -->
+
+<section class="breadcrumb-section">
+
+    <div class="container">
+
+        <div class="breadcrumb">
+
+            <a href="index.html">Home</a>
+
+            <span>/</span>
+
+            <a href="shop.html">Shop</a>
+
+            <span>/</span>
+
+            <span>Product Details</span>
+
+        </div>
+
+    </div>
+
 </section>
 
-<section class="section alt" id="relatedSection" style="display:none;">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker">YOU MAY ALSO LIKE</span>
-        <h2>More from this category.</h2>
-      </div>
+
+<!-- =========================================================
+     PRODUCT DETAILS
+========================================================= -->
+
+<main>
+
+<section class="product-details-section">
+
+    <div class="container product-details-wrapper">
+
+
+        <!-- =================================================
+             LEFT - PRODUCT IMAGES
+        ================================================== -->
+
+        <div class="product-gallery">
+
+
+            <!-- Thumbnails -->
+
+            <div class="product-thumbnails">
+
+                <button
+                    class="product-thumb active"
+                    type="button"
+                    onclick="changeProductImage(this, 'images/products/dress-1.jpg')"
+                >
+
+                    <img
+                        src="images/products/dress-1.jpg"
+                        alt="Threadline dress front view"
+                    >
+
+                </button>
+
+
+                <button
+                    class="product-thumb"
+                    type="button"
+                    onclick="changeProductImage(this, 'images/products/dress-2.jpg')"
+                >
+
+                    <img
+                        src="images/products/dress-2.jpg"
+                        alt="Threadline dress side view"
+                    >
+
+                </button>
+
+
+                <button
+                    class="product-thumb"
+                    type="button"
+                    onclick="changeProductImage(this, 'images/products/dress-3.jpg')"
+                >
+
+                    <img
+                        src="images/products/dress-3.jpg"
+                        alt="Threadline dress detail"
+                    >
+
+                </button>
+
+
+                <button
+                    class="product-thumb"
+                    type="button"
+                    onclick="changeProductImage(this, 'images/products/dress-4.jpg')"
+                >
+
+                    <img
+                        src="images/products/dress-4.jpg"
+                        alt="Threadline dress back view"
+                    >
+
+                </button>
+
+            </div>
+
+
+            <!-- Main Image -->
+
+            <div
+                class="product-main-image"
+                id="productImageContainer"
+            >
+
+                <img
+                    id="mainProductImage"
+                    src="images/products/dress-1.jpg"
+                    alt="Threadline Premium Embroidered Dress"
+                >
+
+                <div class="zoom-hint">
+
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+
+                    Hover to zoom
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RIGHT - PRODUCT INFORMATION
+        ================================================== -->
+
+        <div class="product-information">
+
+
+            <!-- Product Category -->
+
+            <span class="product-category">
+                Eastern Wear
+            </span>
+
+
+            <!-- Product Name -->
+
+            <h1 class="product-title">
+                Premium Embroidered Dress
+            </h1>
+
+
+            <!-- Rating -->
+
+            <div class="product-rating">
+
+                <div class="stars">
+
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+
+                </div>
+
+                <span>
+                    4.9 (24 Reviews)
+                </span>
+
+            </div>
+
+
+            <!-- Price -->
+
+            <div class="product-price">
+
+                <span class="current-price">
+                    Rs. 4,999
+                </span>
+
+                <span class="old-price">
+                    Rs. 6,499
+                </span>
+
+                <span class="discount">
+                    23% OFF
+                </span>
+
+            </div>
+
+
+            <!-- Short Description -->
+
+            <p class="product-short-description">
+
+                A beautifully crafted contemporary outfit designed
+                with delicate detailing and a comfortable silhouette.
+                Perfect for festive occasions, dinners and special events.
+
+            </p>
+
+
+            <!-- Divider -->
+
+            <div class="product-divider"></div>
+
+
+            <!-- Color -->
+
+            <div class="product-option">
+
+                <div class="option-heading">
+
+                    <strong>Color</strong>
+
+                    <span id="selectedColor">
+                        Black
+                    </span>
+
+                </div>
+
+
+                <div class="color-options">
+
+                    <button
+                        type="button"
+                        class="color-option active black"
+                        aria-label="Black"
+                        onclick="selectColor(this, 'Black')"
+                    ></button>
+
+
+                    <button
+                        type="button"
+                        class="color-option maroon"
+                        aria-label="Maroon"
+                        onclick="selectColor(this, 'Maroon')"
+                    ></button>
+
+
+                    <button
+                        type="button"
+                        class="color-option beige"
+                        aria-label="Beige"
+                        onclick="selectColor(this, 'Beige')"
+                    ></button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Size -->
+
+            <div class="product-option">
+
+                <div class="option-heading">
+
+                    <strong>Size</strong>
+
+                    <a href="#size-guide">
+                        Size Guide
+                    </a>
+
+                </div>
+
+
+                <div class="size-options">
+
+                    <button
+                        type="button"
+                        class="size-option"
+                        onclick="selectSize(this)"
+                    >
+                        S
+                    </button>
+
+                    <button
+                        type="button"
+                        class="size-option active"
+                        onclick="selectSize(this)"
+                    >
+                        M
+                    </button>
+
+                    <button
+                        type="button"
+                        class="size-option"
+                        onclick="selectSize(this)"
+                    >
+                        L
+                    </button>
+
+                    <button
+                        type="button"
+                        class="size-option"
+                        onclick="selectSize(this)"
+                    >
+                        XL
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Quantity -->
+
+            <div class="product-option">
+
+                <div class="option-heading">
+
+                    <strong>Quantity</strong>
+
+                </div>
+
+
+                <div class="quantity-selector">
+
+                    <button
+                        type="button"
+                        onclick="decreaseQuantity()"
+                        aria-label="Decrease quantity"
+                    >
+                        −
+                    </button>
+
+                    <span id="quantity">
+                        1
+                    </span>
+
+                    <button
+                        type="button"
+                        onclick="increaseQuantity()"
+                        aria-label="Increase quantity"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Add To Cart -->
+
+            <button
+                type="button"
+                class="btn btn-primary product-add-cart"
+                onclick="addProductToCart()"
+            >
+
+                <i class="fa-solid fa-bag-shopping"></i>
+
+                ADD TO CART
+
+            </button>
+
+
+            <!-- Buy Now -->
+
+            <button
+                type="button"
+                class="btn btn-outline product-buy-now"
+                onclick="buyNow()"
+            >
+
+                BUY NOW
+
+            </button>
+
+
+            <!-- Product Benefits -->
+
+            <div class="product-benefits">
+
+                <div class="benefit-item">
+
+                    <i class="fa-solid fa-truck"></i>
+
+                    <div>
+
+                        <strong>Free Shipping</strong>
+
+                        <span>
+                            On orders above Rs. 8,000
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit-item">
+
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                    <div>
+
+                        <strong>Easy Returns</strong>
+
+                        <span>
+                            7 days return & exchange
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="benefit-item">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div>
+
+                        <strong>Secure Payment</strong>
+
+                        <span>
+                            Safe & secure checkout
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
-    <div class="product-grid" id="relatedGrid"></div>
-  </div>
+
 </section>
+
+
+<!-- =========================================================
+     PRODUCT INFORMATION TABS
+========================================================= -->
+
+<section class="product-information-section">
+
+    <div class="container">
+
+        <div class="product-tabs">
+
+            <button
+                class="product-tab active"
+                onclick="openProductTab(event, 'description')"
+            >
+                Description
+            </button>
+
+            <button
+                class="product-tab"
+                onclick="openProductTab(event, 'fabric')"
+            >
+                Fabric & Material
+            </button>
+
+            <button
+                class="product-tab"
+                onclick="openProductTab(event, 'size-guide')"
+            >
+                Size Guide
+            </button>
+
+            <button
+                class="product-tab"
+                onclick="openProductTab(event, 'shipping')"
+            >
+                Shipping Information
+            </button>
+
+            <button
+                class="product-tab"
+                onclick="openProductTab(event, 'returns')"
+            >
+                Return & Exchange
+            </button>
+
+            <button
+                class="product-tab"
+                onclick="openProductTab(event, 'reviews')"
+            >
+                Reviews
+            </button>
+
+        </div>
+
+
+        <!-- Description -->
+
+        <div
+            id="description"
+            class="product-tab-content active"
+        >
+
+            <h2>Product Description</h2>
+
+            <p>
+                This premium embroidered dress is designed for women
+                who appreciate elegant details and timeless fashion.
+                Its sophisticated silhouette gives you a polished look
+                while keeping you comfortable throughout the day.
+            </p>
+
+            <p>
+                The outfit can be styled for festive gatherings,
+                formal dinners, family events and other special occasions.
+            </p>
+
+        </div>
+
+
+        <!-- Fabric -->
+
+        <div
+            id="fabric"
+            class="product-tab-content"
+        >
+
+            <h2>Fabric & Material</h2>
+
+            <ul>
+
+                <li>
+                    Premium quality fabric
+                </li>
+
+                <li>
+                    Soft and comfortable texture
+                </li>
+
+                <li>
+                    Detailed embroidery
+                </li>
+
+                <li>
+                    Breathable material
+                </li>
+
+                <li>
+                    Suitable for formal and festive wear
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- Size Guide -->
+
+        <div
+            id="size-guide"
+            class="product-tab-content"
+        >
+
+            <h2>Size Guide</h2>
+
+            <p>
+                Please use the following guide to select your
+                preferred size.
+            </p>
+
+
+            <div class="size-table-wrapper">
+
+                <table class="size-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Size</th>
+
+                            <th>Chest</th>
+
+                            <th>Waist</th>
+
+                            <th>Length</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>S</td>
+
+                            <td>36"</td>
+
+                            <td>30"</td>
+
+                            <td>42"</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>M</td>
+
+                            <td>38"</td>
+
+                            <td>32"</td>
+
+                            <td>43"</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>L</td>
+
+                            <td>40"</td>
+
+                            <td>34"</td>
+
+                            <td>44"</td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td>XL</td>
+
+                            <td>42"</td>
+
+                            <td>36"</td>
+
+                            <td>45"</td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- Shipping -->
+
+        <div
+            id="shipping"
+            class="product-tab-content"
+        >
+
+            <h2>Shipping Information</h2>
+
+            <p>
+                Orders are carefully packed and dispatched after
+                confirmation.
+            </p>
+
+            <ul>
+
+                <li>
+                    Standard delivery: 3–5 working days
+                </li>
+
+                <li>
+                    Express delivery: 1–2 working days
+                </li>
+
+                <li>
+                    Free shipping on orders above Rs. 8,000
+                </li>
+
+                <li>
+                    Delivery time may vary during sale periods
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- Returns -->
+
+        <div
+            id="returns"
+            class="product-tab-content"
+        >
+
+            <h2>Return & Exchange</h2>
+
+            <p>
+                We want you to be completely satisfied with your purchase.
+                Eligible products can be returned or exchanged within
+                7 days of delivery.
+            </p>
+
+            <ul>
+
+                <li>
+                    Product must be unused and unworn
+                </li>
+
+                <li>
+                    Original tags must be attached
+                </li>
+
+                <li>
+                    Product should be returned in original packaging
+                </li>
+
+                <li>
+                    Sale items may have different return conditions
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- Reviews -->
+
+        <div
+            id="reviews"
+            class="product-tab-content"
+        >
+
+            <div class="reviews-header">
+
+                <div>
+
+                    <h2>Customer Reviews</h2>
+
+                    <div class="overall-rating">
+
+                        <strong>4.9</strong>
+
+                        <div>
+
+                            <div class="stars">
+
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+
+                            </div>
+
+                            <span>
+                                Based on 24 reviews
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn btn-outline"
+                    onclick="openReviewForm()"
+                >
+                    Write a Review
+                </button>
+
+            </div>
+
+
+            <!-- Review -->
+
+            <div class="review-item">
+
+                <div class="review-top">
+
+                    <strong>Sarah K.</strong>
+
+                    <span>
+                        Verified Purchase
+                    </span>
+
+                </div>
+
+                <div class="stars">
+
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+
+                </div>
+
+                <p>
+                    Beautiful fabric and excellent finishing.
+                    The dress looks even better in person.
+                </p>
+
+            </div>
+
+
+            <!-- Review -->
+
+            <div class="review-item">
+
+                <div class="review-top">
+
+                    <strong>Ayesha M.</strong>
+
+                    <span>
+                        Verified Purchase
+                    </span>
+
+                </div>
+
+                <div class="stars">
+
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+
+                </div>
+
+                <p>
+                    Very elegant design and comfortable to wear.
+                    The size was exactly as expected.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     RELATED PRODUCTS
+========================================================= -->
+
+<section class="section-padding related-products">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="eyebrow">
+                YOU MAY ALSO LIKE
+            </span>
+
+            <h2>
+                Related Products
+            </h2>
+
+            <p>
+                Discover more styles from our latest collection.
+            </p>
+
+        </div>
+
+
+        <div class="products-grid">
+
+
+            <!-- Product 1 -->
+
+            <article class="product-card">
+
+                <a href="product.html">
+
+                    <div class="product-card-image">
+
+                        <img
+                            src="images/products/dress-2.jpg"
+                            alt="Elegant embroidered outfit"
+                        >
+
+                    </div>
+
+                </a>
+
+                <div class="product-card-content">
+
+                    <span>
+                        Eastern Wear
+                    </span>
+
+                    <h3>
+                        Elegant Embroidered Outfit
+                    </h3>
+
+                    <strong>
+                        Rs. 5,499
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 2 -->
+
+            <article class="product-card">
+
+                <a href="product.html">
+
+                    <div class="product-card-image">
+
+                        <img
+                            src="images/products/dress-3.jpg"
+                            alt="Premium festive dress"
+                        >
+
+                    </div>
+
+                </a>
+
+                <div class="product-card-content">
+
+                    <span>
+                        Festive Edit
+                    </span>
+
+                    <h3>
+                        Premium Festive Dress
+                    </h3>
+
+                    <strong>
+                        Rs. 6,999
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 3 -->
+
+            <article class="product-card">
+
+                <a href="product.html">
+
+                    <div class="product-card-image">
+
+                        <img
+                            src="images/products/dress-4.jpg"
+                            alt="Classic fashion dress"
+                        >
+
+                    </div>
+
+                </a>
+
+                <div class="product-card-content">
+
+                    <span>
+                        New Arrival
+                    </span>
+
+                    <h3>
+                        Classic Signature Dress
+                    </h3>
+
+                    <strong>
+                        Rs. 4,799
+                    </strong>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 4 -->
+
+            <article class="product-card">
+
+                <a href="product.html">
+
+                    <div class="product-card-image">
+
+                        <img
+                            src="images/products/dress-1.jpg"
+                            alt="Modern luxury dress"
+                        >
+
+                    </div>
+
+                </a>
+
+                <div class="product-card-content">
+
+                    <span>
+                        Stitched
+                    </span>
+
+                    <h3>
+                        Modern Luxury Dress
+                    </h3>
+
+                    <strong>
+                        Rs. 5,999
+                    </strong>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
 
 <footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h4>Threadline</h4>
-        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
-          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
-          <li><a href="shop.html?cat=Western">Western</a></li>
-          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Care</h4>
-        <ul>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Shipping &amp; Delivery</a></li>
-          <li><a href="#">Return &amp; Exchange</a></li>
-          <li><a href="#">Order Tracking</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Information</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Developed by</h4>
-        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
-      </div>
+
+    <div class="container footer-grid">
+
+
+        <div class="footer-column">
+
+            <a
+                href="index.html"
+                class="footer-logo"
+            >
+                THREADLINE
+            </a>
+
+            <p>
+                Modern fashion, timeless style.
+            </p>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Shop</h3>
+
+            <a href="shop.html?category=stitched">
+                Stitched
+            </a>
+
+            <a href="shop.html?category=unstitched">
+                Unstitched
+            </a>
+
+            <a href="shop.html?category=western">
+                Western
+            </a>
+
+            <a href="shop.html?category=eastern">
+                Eastern
+            </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Customer Care</h3>
+
+            <a href="contact.html">
+                Contact
+            </a>
+
+            <a href="contact.html#faq">
+                FAQ
+            </a>
+
+            <a href="#">
+                Shipping
+            </a>
+
+            <a href="#">
+                Returns
+            </a>
+
+            <a href="#">
+                Order Tracking
+            </a>
+
+        </div>
+
+
+        <div class="footer-column">
+
+            <h3>Follow Us</h3>
+
+            <div class="social-links">
+
+                <a
+                    href="#"
+                    aria-label="Instagram"
+                >
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a
+                    href="#"
+                    aria-label="Facebook"
+                >
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a
+                    href="#"
+                    aria-label="TikTok"
+                >
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+
+            </div>
+
+        </div>
+
     </div>
+
+
     <div class="footer-bottom">
-      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
-      <span>Demo storefront built to the project brief</span>
+
+        <div class="container">
+
+            <p>
+                © <span id="year"></span> Threadline.
+                All Rights Reserved.
+            </p>
+
+        </div>
+
     </div>
-  </div>
+
 </footer>
 
-<script src="js/data.js"></script>
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
 <script src="js/main.js"></script>
+
+
 <script>
-  const id = new URLSearchParams(location.search).get("id");
-  const product = id ? getProductById(id) : null;
-  const root = document.getElementById("productRoot");
 
-  if(!product){
-    root.innerHTML = `
-      <div class="empty-state">
-        <h3>This dress could not be found</h3>
-        <p>It may have been removed. Have a look at the full catalogue instead.</p>
-        <a href="shop.html" class="btn btn-solid" style="margin-top:18px;">Back to shop</a>
-      </div>`;
-  }else{
-    document.title = product.name + " — Threadline";
-    let activeImg = 0;
+/* =========================================================
+   PRODUCT IMAGE SWITCH
+========================================================= */
 
-    function renderDetail(){
-      root.innerHTML = `
-        <div class="detail-wrap">
-          <div>
-            <div class="gallery-main"><img id="mainImg" src="${product.images[activeImg]}" alt="${product.name}"></div>
-            <div class="gallery-thumbs" id="thumbs">
-              ${product.images.map((img,i)=>`
-                <button class="${i===activeImg ? "active" : ""}" data-i="${i}" aria-label="Photo ${i+1}">
-                  <img src="${img}" alt="">
-                </button>`).join("")}
-            </div>
-          </div>
-          <div class="detail-info">
-            <span class="p-cat">${product.category.toUpperCase()}</span>
-            <h1>${product.name}</h1>
-            <div class="price">${money(product.price)}</div>
-            <p class="desc">${product.details}</p>
-            <div class="spec-row"><span>Fabric</span><span>${product.fabric || "—"}</span></div>
-            <div class="spec-row"><span>Sizes</span><span>${product.sizes || "—"}</span></div>
-            <div class="spec-row"><span>Category</span><span>${product.category}</span></div>
-            <a href="contact.html" class="btn btn-solid btn-block" style="margin-top:26px;">Enquire about this dress</a>
-          </div>
-        </div>`;
+function changeProductImage(button, image) {
 
-      document.querySelectorAll("#thumbs button").forEach(btn=>{
-        btn.addEventListener("click", ()=>{
-          activeImg = Number(btn.dataset.i);
-          renderDetail();
+    const mainImage =
+        document.getElementById("mainProductImage");
+
+    mainImage.src = image;
+
+    document
+        .querySelectorAll(".product-thumb")
+        .forEach(function(thumb) {
+
+            thumb.classList.remove("active");
+
         });
-      });
-    }
-    renderDetail();
 
-    const related = loadProducts().filter(p => p.category === product.category && p.id !== product.id).slice(0,4);
-    if(related.length){
-      document.getElementById("relatedSection").style.display = "block";
-      document.getElementById("relatedGrid").innerHTML = related.map(productCardHTML).join("");
+    button.classList.add("active");
+}
+
+
+/* =========================================================
+   COLOR SELECTION
+========================================================= */
+
+function selectColor(button, color) {
+
+    document
+        .querySelectorAll(".color-option")
+        .forEach(function(option) {
+
+            option.classList.remove("active");
+
+        });
+
+    button.classList.add("active");
+
+    document.getElementById("selectedColor").textContent = color;
+}
+
+
+/* =========================================================
+   SIZE SELECTION
+========================================================= */
+
+function selectSize(button) {
+
+    document
+        .querySelectorAll(".size-option")
+        .forEach(function(option) {
+
+            option.classList.remove("active");
+
+        });
+
+    button.classList.add("active");
+}
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+let productQuantity = 1;
+
+
+function increaseQuantity() {
+
+    productQuantity++;
+
+    document.getElementById("quantity").textContent =
+        productQuantity;
+}
+
+
+function decreaseQuantity() {
+
+    if (productQuantity > 1) {
+
+        productQuantity--;
+
+        document.getElementById("quantity").textContent =
+            productQuantity;
     }
-  }
+}
+
+
+/* =========================================================
+   PRODUCT IMAGE ZOOM
+========================================================= */
+
+const productImageContainer =
+    document.getElementById("productImageContainer");
+
+const mainProductImage =
+    document.getElementById("mainProductImage");
+
+
+if (productImageContainer && mainProductImage) {
+
+    productImageContainer.addEventListener(
+        "mousemove",
+        function(event) {
+
+            const rect =
+                productImageContainer.getBoundingClientRect();
+
+            const x =
+                ((event.clientX - rect.left) / rect.width) * 100;
+
+            const y =
+                ((event.clientY - rect.top) / rect.height) * 100;
+
+            mainProductImage.style.transformOrigin =
+                `${x}% ${y}%`;
+
+            mainProductImage.style.transform =
+                "scale(1.5)";
+        }
+    );
+
+
+    productImageContainer.addEventListener(
+        "mouseleave",
+        function() {
+
+            mainProductImage.style.transform =
+                "scale(1)";
+
+            mainProductImage.style.transformOrigin =
+                "center center";
+        }
+    );
+
+}
+
+
+/* =========================================================
+   PRODUCT TABS
+========================================================= */
+
+function openProductTab(event, tabId) {
+
+    document
+        .querySelectorAll(".product-tab-content")
+        .forEach(function(content) {
+
+            content.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelectorAll(".product-tab")
+        .forEach(function(tab) {
+
+            tab.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById(tabId)
+        .classList.add("active");
+
+
+    event.currentTarget.classList.add("active");
+}
+
+
+/* =========================================================
+   ADD TO CART
+========================================================= */
+
+function addProductToCart() {
+
+    const selectedSize =
+        document.querySelector(".size-option.active");
+
+    const selectedColor =
+        document.getElementById("selectedColor").textContent;
+
+
+    if (!selectedSize) {
+
+        alert("Please select a size.");
+
+        return;
+    }
+
+
+    const product = {
+
+        name: "Premium Embroidered Dress",
+
+        price: 4999,
+
+        quantity: productQuantity,
+
+        size: selectedSize.textContent.trim(),
+
+        color: selectedColor,
+
+        image: "images/products/dress-1.jpg"
+
+    };
+
+
+    let cart =
+        JSON.parse(localStorage.getItem("threadlineCart")) || [];
+
+
+    cart.push(product);
+
+
+    localStorage.setItem(
+        "threadlineCart",
+        JSON.stringify(cart)
+    );
+
+
+    updateCartCount();
+
+
+    alert("Product added to cart successfully!");
+}
+
+
+/* =========================================================
+   BUY NOW
+========================================================= */
+
+function buyNow() {
+
+    const selectedSize =
+        document.querySelector(".size-option.active");
+
+
+    if (!selectedSize) {
+
+        alert("Please select a size.");
+
+        return;
+    }
+
+
+    addProductToCart();
+
+
+    window.location.href =
+        "checkout.html";
+}
+
+
+/* =========================================================
+   UPDATE CART COUNT
+========================================================= */
+
+function updateCartCount() {
+
+    const cart =
+        JSON.parse(localStorage.getItem("threadlineCart")) || [];
+
+
+    const count =
+        cart.reduce(function(total, item) {
+
+            return total + item.quantity;
+
+        }, 0);
+
+
+    const cartCount =
+        document.querySelector(".cart-count");
+
+
+    if (cartCount) {
+
+        cartCount.textContent = count;
+
+    }
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function toggleSearch() {
+
+    const panel =
+        document.getElementById("searchPanel");
+
+    if (panel) {
+
+        panel.classList.toggle("active");
+
+    }
+}
+
+
+function performSearch() {
+
+    const searchInput =
+        document.getElementById("productSearch");
+
+    if (!searchInput) return;
+
+
+    const searchValue =
+        searchInput.value.trim();
+
+
+    if (searchValue !== "") {
+
+        window.location.href =
+            "shop.html?search=" +
+            encodeURIComponent(searchValue);
+
+    }
+}
+
+
+/* =========================================================
+   REVIEW FORM
+========================================================= */
+
+function openReviewForm() {
+
+    alert(
+        "Review form will be available after customer login."
+    );
+}
+
+
+/* =========================================================
+   CURRENT YEAR
+========================================================= */
+
+const yearElement =
+    document.getElementById("year");
+
+
+if (yearElement) {
+
+    yearElement.textContent =
+        new Date().getFullYear();
+
+}
+
+
+/* =========================================================
+   INITIAL CART COUNT
+========================================================= */
+
+updateCartCount();
+
 </script>
+
 </body>
 </html>

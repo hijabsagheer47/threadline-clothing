@@ -1,199 +1,1330 @@
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Threadline — Stitched, Unstitched, Western &amp; Eastern Wear</title>
-<meta name="description" content="Threadline is a clothing brand storefront for stitched, unstitched, western and eastern wear, with each dress shown in multiple photos, pricing and details.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Threadline Clothing | Timeless Style, Modern Elegance</title>
+
+    <meta name="description"
+          content="Discover Threadline Clothing — elegant stitched, unstitched, eastern and western wear designed for every occasion.">
+
+    <meta name="keywords"
+          content="Threadline Clothing, women's clothing, Pakistani dresses, stitched dresses, unstitched fabric, eastern wear, western wear">
+
+    <meta name="author" content="Threadline Clothing">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
+<!-- =========================================================
+     TOP ANNOUNCEMENT BAR
+========================================================= -->
+
+<div class="announcement-bar">
+    <p>Free delivery on orders above Rs. 5,000</p>
+</div>
+
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
 <header class="site-header">
-  <nav class="nav">
-    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shop.html">Shop</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="checkout.html">Checkout</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
-        Cart <span class="cart-badge">0</span>
-      </a>
-      <a href="admin.html" class="btn btn-small">Upload Dress</a>
-      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+
+    <div class="container nav-container">
+
+        <a href="index.html" class="brand-logo">
+            THREADLINE
+        </a>
+
+        <button class="nav-toggle"
+                aria-label="Open navigation menu"
+                type="button">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav class="site-nav">
+
+            <a href="index.html" class="active">Home</a>
+
+            <a href="shop.html">Shop</a>
+
+            <a href="categories.html">Collections</a>
+
+            <a href="about.html">About</a>
+
+            <a href="contact.html">Contact</a>
+
+        </nav>
+
+        <div class="nav-actions">
+
+            <a href="shop.html" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+
+            <a href="#" aria-label="Account">
+                <i class="fa-regular fa-user"></i>
+            </a>
+
+            <a href="#" aria-label="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+            </a>
+
+            <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span class="cart-count">0</span>
+            </a>
+
+        </div>
+
     </div>
-  </nav>
+
 </header>
 
-<section class="hero">
-  <div class="hero-copy">
-    <span class="hero-eyebrow">NEW SEASON — LAWN &amp; FESTIVE</span>
-    <h1>Fabric, cut and&nbsp;finish for every occasion.</h1>
-    <p class="lede">From ready-to-wear stitched suits to fabric-only unstitched sets, tailored western pieces and hand-embellished eastern wear — every dress is shown with full photos, pricing and details before you decide.</p>
-    <div class="hero-actions">
-      <a href="shop.html" class="btn btn-solid">Browse the shop</a>
-      <a href="admin.html" class="btn">Upload a dress</a>
+
+<main>
+
+
+<!-- =========================================================
+     HERO SECTION
+========================================================= -->
+
+<section class="hero-section">
+
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-content">
+
+        <p class="hero-eyebrow">
+            NEW SEASON 2026
+        </p>
+
+        <h1>
+            Elegance Woven<br>
+            Into Every Thread
+        </h1>
+
+        <p class="hero-description">
+            Discover thoughtfully designed pieces that bring
+            timeless elegance and modern style to every occasion.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="shop.html" class="btn btn-primary">
+                Shop Collection
+            </a>
+
+            <a href="categories.html" class="btn btn-outline">
+                Explore Categories
+            </a>
+
+        </div>
+
     </div>
-  </div>
-  <div class="hero-visual">
-    <svg viewBox="0 0 700 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="heroFold" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#8a3b48"/>
-          <stop offset="1" stop-color="#3f151c"/>
-        </linearGradient>
-      </defs>
-      <rect width="700" height="800" fill="url(#heroFold)"/>
-      <g fill="none" stroke="#F6EFE4" stroke-width="1" opacity="0.5">
-        <path d="M120 130 C280 200 420 200 580 130"/>
-        <path d="M100 260 C280 330 420 330 600 260"/>
-        <path d="M90 390 C280 460 420 460 610 390"/>
-        <path d="M100 520 C280 590 420 590 600 520"/>
-        <path d="M120 650 C280 710 420 710 580 650"/>
-      </g>
-      <g opacity="0.9" stroke="#F6EFE4" stroke-width="1.6" fill="none">
-        <path d="M350 90 C270 130 250 250 250 320 L225 720 L475 720 L450 320 C450 250 430 130 350 90 Z"/>
-        <path d="M350 90 C305 105 275 150 265 200"/>
-        <path d="M350 90 C395 105 425 150 435 200"/>
-      </g>
-    </svg>
-  </div>
+
 </section>
 
-<section class="section">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker">SHOP BY CATEGORY</span>
-        <h2>Four ways to wear it.</h2>
-      </div>
-      <p>Stitched and ready to wear, unstitched for your own tailor, western silhouettes, or heavy eastern occasion pieces.</p>
+
+<!-- =========================================================
+     CATEGORY QUICK LINKS
+========================================================= -->
+
+<section class="category-section section-padding">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                EXPLORE
+            </p>
+
+            <h2>
+                Shop By Category
+            </h2>
+
+            <p>
+                Find a style that feels uniquely yours.
+            </p>
+
+        </div>
+
+
+        <div class="category-grid">
+
+
+            <!-- Category 1 -->
+
+            <a href="categories.html" class="category-card">
+
+                <div class="category-image">
+
+                    <img src="https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=900&q=85"
+                         alt="Women's elegant fashion collection"
+                         loading="lazy">
+
+                </div>
+
+                <div class="category-content">
+
+                    <h3>Stitched</h3>
+
+                    <span>
+                        Explore Collection
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- Category 2 -->
+
+            <a href="categories.html" class="category-card">
+
+                <div class="category-image">
+
+                    <img src="https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=900&q=85"
+                         alt="Women's unstitched fabric collection"
+                         loading="lazy">
+
+                </div>
+
+                <div class="category-content">
+
+                    <h3>Unstitched</h3>
+
+                    <span>
+                        Explore Collection
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- Category 3 -->
+
+            <a href="categories.html" class="category-card">
+
+                <div class="category-image">
+
+                    <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?auto=format&fit=crop&w=900&q=85"
+                         alt="Women's modern fashion collection"
+                         loading="lazy">
+
+                </div>
+
+                <div class="category-content">
+
+                    <h3>Eastern Wear</h3>
+
+                    <span>
+                        Explore Collection
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                </div>
+
+            </a>
+
+
+            <!-- Category 4 -->
+
+            <a href="categories.html" class="category-card">
+
+                <div class="category-image">
+
+                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=85"
+                         alt="Women's western fashion collection"
+                         loading="lazy">
+
+                </div>
+
+                <div class="category-content">
+
+                    <h3>Western Wear</h3>
+
+                    <span>
+                        Explore Collection
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                </div>
+
+            </a>
+
+        </div>
+
     </div>
-    <div class="category-grid" id="categoryGrid"></div>
-  </div>
+
 </section>
 
-<section class="section alt">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker">THIS WEEK</span>
-        <h2>Recently added.</h2>
-      </div>
-      <a href="shop.html" class="btn btn-small">View all dresses</a>
+
+<!-- =========================================================
+     NEW ARRIVALS
+========================================================= -->
+
+<section class="products-section section-padding">
+
+    <div class="container">
+
+        <div class="section-top">
+
+            <div class="section-heading left">
+
+                <p class="section-label">
+                    JUST IN
+                </p>
+
+                <h2>
+                    New Arrivals
+                </h2>
+
+                <p>
+                    Fresh silhouettes designed for the season.
+                </p>
+
+            </div>
+
+            <a href="shop.html" class="text-link">
+                View All
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="product-grid">
+
+
+            <!-- Product 1 -->
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <span class="product-badge">
+                        NEW
+                    </span>
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85"
+                         alt="Elegant women's dress"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Eastern Wear
+                    </p>
+
+                    <h3>
+                        Embroidered Lawn Dress
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>(12)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 4,999
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 2 -->
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <span class="product-badge">
+                        NEW
+                    </span>
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1612336307429-8a898d10e223?auto=format&fit=crop&w=800&q=85"
+                         alt="Elegant women's formal dress"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Festive Collection
+                    </p>
+
+                    <h3>
+                        Rose Embroidered Suit
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>(18)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 6,499
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 3 -->
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <span class="product-badge sale">
+                        SALE
+                    </span>
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=800&q=85"
+                         alt="Women's stylish fashion outfit"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Ready to Wear
+                    </p>
+
+                    <h3>
+                        Classic Linen Co-Ord
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>(9)</span>
+                    </div>
+
+                    <p class="product-price">
+
+                        <span class="old-price">
+                            Rs. 5,499
+                        </span>
+
+                        Rs. 4,499
+
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <!-- Product 4 -->
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <span class="product-badge">
+                        NEW
+                    </span>
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=85"
+                         alt="Women's premium fashion outfit"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Western Wear
+                    </p>
+
+                    <h3>
+                        Everyday Linen Set
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>(21)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 5,299
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
     </div>
-    <div class="product-grid" id="featuredGrid"></div>
-  </div>
+
 </section>
 
-<section class="section-tight">
-  <div class="container split">
-    <div>
-      <span class="kicker">HOW IT WORKS</span>
-      <h2>Every dress, fully shown.</h2>
-      <p>Each listing carries three to four photos, the fabric and price, and any sizing or made-to-order notes — so you know exactly what you're getting before you reach out to order.</p>
-      <div class="stat-row">
-        <div><div class="num" id="statCount">—</div><div class="lbl">dresses listed</div></div>
-        <div><div class="num">4</div><div class="lbl">categories</div></div>
-        <div><div class="num">3–4</div><div class="lbl">photos per dress</div></div>
-      </div>
+
+<!-- =========================================================
+     FEATURED COLLECTION
+========================================================= -->
+
+<section class="featured-section">
+
+    <div class="featured-image">
+
+        <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1400&q=90"
+             alt="Threadline featured fashion collection"
+             loading="lazy">
+
     </div>
-    <div>
-      <div class="gallery-main" style="aspect-ratio:4/3;">
-        <svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
-          <rect width="480" height="360" fill="#E9D7C9"/>
-          <g fill="none" stroke="#7A2E3B" stroke-width="1.4" opacity="0.55">
-            <rect x="60" y="40" width="140" height="180"/>
-            <rect x="215" y="40" width="140" height="90"/>
-            <rect x="215" y="145" width="140" height="75"/>
-            <rect x="60" y="235" width="295" height="85"/>
-          </g>
-          <text x="240" y="345" font-family="Georgia, serif" font-size="16" fill="#7A2E3B" text-anchor="middle">Multiple angles, every listing</text>
-        </svg>
-      </div>
+
+    <div class="featured-content">
+
+        <p class="section-label">
+            THE THREADLINE EDIT
+        </p>
+
+        <h2>
+            Made for Moments<br>
+            That Matter
+        </h2>
+
+        <p>
+            From effortless everyday looks to statement pieces
+            for special occasions, discover designs created to
+            make you feel confident, comfortable and beautifully you.
+        </p>
+
+        <a href="shop.html" class="btn btn-primary">
+            Discover The Collection
+        </a>
+
     </div>
-  </div>
+
 </section>
+
+
+<!-- =========================================================
+     WHY CHOOSE THREADLINE
+========================================================= -->
+
+<section class="why-section section-padding">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                WHY THREADLINE
+            </p>
+
+            <h2>
+                Designed With You In Mind
+            </h2>
+
+        </div>
+
+
+        <div class="features-grid">
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-gem"></i>
+                </div>
+
+                <h3>
+                    Quality Fabrics
+                </h3>
+
+                <p>
+                    Carefully selected fabrics designed for comfort,
+                    durability and everyday elegance.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+
+                <h3>
+                    Thoughtful Design
+                </h3>
+
+                <p>
+                    Every silhouette is designed with attention to
+                    fit, detail and timeless style.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-truck-fast"></i>
+                </div>
+
+                <h3>
+                    Easy Delivery
+                </h3>
+
+                <p>
+                    Reliable delivery options that bring your
+                    favorite pieces right to your doorstep.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+
+                <h3>
+                    Customer Care
+                </h3>
+
+                <p>
+                    Our team is here to help you before and after
+                    every purchase.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     BEST SELLERS
+========================================================= -->
+
+<section class="products-section section-padding">
+
+    <div class="container">
+
+        <div class="section-top">
+
+            <div class="section-heading left">
+
+                <p class="section-label">
+                    CUSTOMER FAVORITES
+                </p>
+
+                <h2>
+                    Best Sellers
+                </h2>
+
+                <p>
+                    Pieces our customers keep coming back for.
+                </p>
+
+            </div>
+
+            <a href="shop.html" class="text-link">
+                Shop All
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="product-grid">
+
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1591369822096-ffd140ec948f?auto=format&fit=crop&w=800&q=85"
+                         alt="Elegant women's clothing"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Stitched
+                    </p>
+
+                    <h3>
+                        Ivory Signature Kurta
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>(32)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 4,799
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1571513800374-df1bbe650e56?auto=format&fit=crop&w=800&q=85"
+                         alt="Women's elegant seasonal dress"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Eastern Wear
+                    </p>
+
+                    <h3>
+                        Midnight Printed Ensemble
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>(24)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 5,999
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=85"
+                         alt="Women's premium dress"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Festive
+                    </p>
+
+                    <h3>
+                        Pearl Embroidered Dress
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <span>(41)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 7,499
+                    </p>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <div class="product-image">
+
+                    <button class="wishlist-btn"
+                            aria-label="Add to wishlist"
+                            type="button">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+
+                    <img src="https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=800&q=85"
+                         alt="Women's casual fashion outfit"
+                         loading="lazy">
+
+                    <a href="product.html"
+                       class="quick-view">
+                        Quick View
+                    </a>
+
+                </div>
+
+                <div class="product-info">
+
+                    <p class="product-category">
+                        Casual Wear
+                    </p>
+
+                    <h3>
+                        Soft Cotton Everyday Set
+                    </h3>
+
+                    <div class="product-rating">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <span>(17)</span>
+                    </div>
+
+                    <p class="product-price">
+                        Rs. 3,999
+                    </p>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     CUSTOMER REVIEWS
+========================================================= -->
+
+<section class="reviews-section section-padding">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                CUSTOMER LOVE
+            </p>
+
+            <h2>
+                What Our Customers Say
+            </h2>
+
+        </div>
+
+
+        <div class="reviews-grid">
+
+
+            <article class="review-card">
+
+                <div class="review-stars">
+                    ★★★★★
+                </div>
+
+                <p>
+                    “The fabric quality was even better than I expected.
+                    The dress looked beautiful and the finishing was perfect.”
+                </p>
+
+                <div class="review-author">
+                    <div class="author-avatar">
+                        A
+                    </div>
+
+                    <div>
+                        <strong>
+                            Ayesha K.
+                        </strong>
+
+                        <span>
+                            Verified Customer
+                        </span>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <article class="review-card">
+
+                <div class="review-stars">
+                    ★★★★★
+                </div>
+
+                <p>
+                    “I loved the fit and the details. Everything from
+                    ordering to delivery was smooth and easy.”
+                </p>
+
+                <div class="review-author">
+
+                    <div class="author-avatar">
+                        M
+                    </div>
+
+                    <div>
+                        <strong>
+                            Maham R.
+                        </strong>
+
+                        <span>
+                            Verified Customer
+                        </span>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article class="review-card">
+
+                <div class="review-stars">
+                    ★★★★★
+                </div>
+
+                <p>
+                    “Beautiful collection and very elegant designs.
+                    Definitely coming back for the next collection.”
+                </p>
+
+                <div class="review-author">
+
+                    <div class="author-avatar">
+                        S
+                    </div>
+
+                    <div>
+                        <strong>
+                            Sara A.
+                        </strong>
+
+                        <span>
+                            Verified Customer
+                        </span>
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     NEWSLETTER
+========================================================= -->
+
+<section class="newsletter-section">
+
+    <div class="container newsletter-container">
+
+        <div class="newsletter-content">
+
+            <p class="section-label">
+                STAY IN THE LOOP
+            </p>
+
+            <h2>
+                Be the first to know.
+            </h2>
+
+            <p>
+                Sign up for new arrivals, exclusive offers and
+                seasonal inspiration.
+            </p>
+
+        </div>
+
+
+        <form class="newsletter-form">
+
+            <label for="newsletter-email" class="sr-only">
+                Email address
+            </label>
+
+            <input
+                type="email"
+                id="newsletter-email"
+                placeholder="Enter your email address"
+                required
+            >
+
+            <button type="submit">
+                Subscribe
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     INSTAGRAM / STYLE GALLERY
+========================================================= -->
+
+<section class="gallery-section section-padding">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                @THREADLINE
+            </p>
+
+            <h2>
+                Follow Our Style
+            </h2>
+
+            <p>
+                Everyday inspiration, new collections and more.
+            </p>
+
+        </div>
+
+
+        <div class="gallery-grid">
+
+            <img
+                src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=700&q=85"
+                alt="Threadline fashion style"
+                loading="lazy"
+            >
+
+            <img
+                src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=700&q=85"
+                alt="Fashion collection"
+                loading="lazy"
+            >
+
+            <img
+                src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=85"
+                alt="Women's fashion"
+                loading="lazy"
+            >
+
+            <img
+                src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=700&q=85"
+                alt="Elegant fashion outfit"
+                loading="lazy"
+            >
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
 
 <footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h4>Threadline</h4>
-        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
-          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
-          <li><a href="shop.html?cat=Western">Western</a></li>
-          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Care</h4>
-        <ul>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Shipping &amp; Delivery</a></li>
-          <li><a href="#">Return &amp; Exchange</a></li>
-          <li><a href="#">Order Tracking</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Information</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Developed by</h4>
-        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
-      </div>
+
+    <div class="container footer-grid">
+
+
+        <!-- Brand -->
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="footer-logo">
+                THREADLINE
+            </a>
+
+            <p>
+                Thoughtfully designed clothing for
+                every version of you.
+            </p>
+
+            <div class="social-links">
+
+                <a href="#" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+
+                <a href="#" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+
+                <a href="#" aria-label="TikTok">
+                    <i class="fa-brands fa-tiktok"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Shop -->
+
+        <div class="footer-column">
+
+            <h3>
+                Shop
+            </h3>
+
+            <a href="shop.html">
+                New Arrivals
+            </a>
+
+            <a href="categories.html">
+                Stitched
+            </a>
+
+            <a href="categories.html">
+                Unstitched
+            </a>
+
+            <a href="categories.html">
+                Eastern Wear
+            </a>
+
+            <a href="categories.html">
+                Western Wear
+            </a>
+
+        </div>
+
+
+        <!-- Customer Care -->
+
+        <div class="footer-column">
+
+            <h3>
+                Customer Care
+            </h3>
+
+            <a href="contact.html">
+                Contact Us
+            </a>
+
+            <a href="#">
+                Shipping & Delivery
+            </a>
+
+            <a href="#">
+                Returns & Exchange
+            </a>
+
+            <a href="#">
+                Size Guide
+            </a>
+
+            <a href="#">
+                FAQs
+            </a>
+
+        </div>
+
+
+        <!-- Information -->
+
+        <div class="footer-column">
+
+            <h3>
+                Information
+            </h3>
+
+            <a href="about.html">
+                About Threadline
+            </a>
+
+            <a href="#">
+                Privacy Policy
+            </a>
+
+            <a href="#">
+                Terms & Conditions
+            </a>
+
+            <a href="#">
+                Track Order
+            </a>
+
+            <a href="contact.html">
+                Help
+            </a>
+
+        </div>
+
     </div>
+
+
     <div class="footer-bottom">
-      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
-      <span>Demo storefront built to the project brief</span>
+
+        <div class="container">
+
+            <p>
+                © <span id="year"></span> Threadline Clothing.
+                All Rights Reserved.
+            </p>
+
+        </div>
+
     </div>
-  </div>
+
 </footer>
 
-<script src="js/data.js"></script>
-<script src="js/main.js"></script>
-<script>
-  function renderCategories(){
-    const grid = document.getElementById("categoryGrid");
-    grid.innerHTML = CATEGORIES.map(cat => `
-      <a class="category-card" href="shop.html?cat=${encodeURIComponent(cat)}">
-        ${categorySwatch(cat)}
-        <h3>${cat}</h3>
-        <span class="count">${categoryCount(cat)} dresses</span>
-        <span class="arrow">Shop ${cat} →</span>
-      </a>
-    `).join("");
-  }
 
-  function renderFeatured(){
-    const products = loadProducts().slice(0,4);
-    const grid = document.getElementById("featuredGrid");
-    grid.innerHTML = products.map(productCardHTML).join("");
-    document.getElementById("statCount").textContent = loadProducts().length;
-  }
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
 
-  renderCategories();
-  renderFeatured();
-</script>
+<script src="script.js"></script>
+
 </body>
 </html>
+```

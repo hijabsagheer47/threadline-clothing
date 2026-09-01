@@ -1,256 +1,1521 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upload a dress — Threadline</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-</head>
-<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<header class="site-header">
-  <nav class="nav">
-    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shop.html">Shop</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="checkout.html">Checkout</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
-        Cart <span class="cart-badge">0</span>
-      </a>
-      <a href="admin.html" class="btn btn-small">Upload Dress</a>
-      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
-</header>
+    <title>Admin Panel — Threadline</title>
 
-<section class="section-tight">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker">SELLER PANEL</span>
-        <h2>Post a new dress.</h2>
-      </div>
-      <p>Add 3–4 photos, the name, price and details. It appears in the shop immediately.</p>
-    </div>
+    <meta name="description"
+          content="Threadline admin panel for managing dresses and products.">
 
-    <div class="admin-shell">
-      <div class="form-card">
-        <form id="dressForm">
-          <div class="field">
-            <label for="fName">Dress name</label>
-            <input type="text" id="fName" required placeholder="e.g. Zareen Embroidered Suit">
-          </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-          <div class="field-row">
-            <div class="field">
-              <label for="fPrice">Price (PKR)</label>
-              <input type="number" id="fPrice" min="0" required placeholder="8900">
-            </div>
-            <div class="field">
-              <label for="fCategory">Category</label>
-              <select id="fCategory" required>
-                <option value="Stitched">Stitched</option>
-                <option value="Unstitched">Unstitched</option>
-                <option value="Western">Western</option>
-                <option value="Eastern">Eastern</option>
-              </select>
-            </div>
-          </div>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
 
-          <div class="field-row">
-            <div class="field">
-              <label for="fFabric">Fabric (optional)</label>
-              <input type="text" id="fFabric" placeholder="e.g. Lawn, Net dupatta">
-            </div>
-            <div class="field">
-              <label for="fSizes">Sizes (optional)</label>
-              <input type="text" id="fSizes" placeholder="e.g. S · M · L · XL">
-            </div>
-          </div>
+    <link rel="stylesheet" href="css/style.css">
 
-          <div class="field">
-            <label for="fDetails">Details</label>
-            <textarea id="fDetails" required placeholder="Describe the cut, work, dupatta, occasion…"></textarea>
-          </div>
+    <style>
 
-          <div class="field">
-            <label>Photos — add 3 to 4</label>
-            <div class="upload-slots" id="uploadSlots"></div>
-            <p class="hint">Tap a box to choose a photo. JPG or PNG, first photo is used as the main image.</p>
-          </div>
+        /* =====================================================
+           ADMIN PAGE
+        ====================================================== */
 
-          <button type="submit" class="btn btn-solid btn-block">Post dress</button>
-          <div class="form-msg" id="formMsg"></div>
-        </form>
-      </div>
-
-      <div>
-        <h3>Currently listed</h3>
-        <p class="hint" style="margin-bottom:18px;">Everything posted here — remove anything that shouldn't be public.</p>
-        <div class="admin-list" id="adminList"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h4>Threadline</h4>
-        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
-          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
-          <li><a href="shop.html?cat=Western">Western</a></li>
-          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Care</h4>
-        <ul>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Shipping &amp; Delivery</a></li>
-          <li><a href="#">Return &amp; Exchange</a></li>
-          <li><a href="#">Order Tracking</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Information</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Developed by</h4>
-        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
-      <span>Demo storefront built to the project brief</span>
-    </div>
-  </div>
-</footer>
-
-<script src="js/data.js"></script>
-<script src="js/main.js"></script>
-<script>
-  const SLOT_COUNT = 4;
-  let slotImages = new Array(SLOT_COUNT).fill(null);
-
-  function renderSlots(){
-    const wrap = document.getElementById("uploadSlots");
-    wrap.innerHTML = "";
-    for(let i=0;i<SLOT_COUNT;i++){
-      const slot = document.createElement("div");
-      slot.className = "upload-slot";
-      if(slotImages[i]){
-        slot.innerHTML = `<img src="${slotImages[i]}" alt="Photo ${i+1}"><span class="remove" data-i="${i}">✕</span>`;
-      }else{
-        slot.innerHTML = `<span>${i < 3 ? "Photo " + (i+1) + " (required)" : "Photo 4 (optional)"}</span>
-          <input type="file" accept="image/*" data-i="${i}">`;
-      }
-      wrap.appendChild(slot);
-    }
-    wrap.querySelectorAll("input[type=file]").forEach(inp=>{
-      inp.addEventListener("change", (e)=>{
-        const i = Number(inp.dataset.i);
-        const file = e.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = ()=>{
-          slotImages[i] = reader.result;
-          renderSlots();
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-    wrap.querySelectorAll(".remove").forEach(btn=>{
-      btn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        const i = Number(btn.dataset.i);
-        slotImages[i] = null;
-        renderSlots();
-      });
-    });
-  }
-  renderSlots();
-
-  function showMsg(text, ok){
-    const el = document.getElementById("formMsg");
-    el.textContent = text;
-    el.className = "form-msg show " + (ok ? "ok" : "err");
-  }
-
-  document.getElementById("dressForm").addEventListener("submit", (e)=>{
-    e.preventDefault();
-    const images = slotImages.filter(Boolean);
-    if(images.length < 3){
-      showMsg("Add at least 3 photos before posting.", false);
-      return;
-    }
-    const product = {
-      name: document.getElementById("fName").value.trim(),
-      price: Number(document.getElementById("fPrice").value),
-      category: document.getElementById("fCategory").value,
-      fabric: document.getElementById("fFabric").value.trim(),
-      sizes: document.getElementById("fSizes").value.trim(),
-      details: document.getElementById("fDetails").value.trim(),
-      images
-    };
-    addProduct(product);
-    showMsg(`"${product.name}" was posted to the ${product.category} category.`, true);
-    document.getElementById("dressForm").reset();
-    slotImages = new Array(SLOT_COUNT).fill(null);
-    renderSlots();
-    renderAdminList();
-  });
-
-  function renderAdminList(){
-    const list = loadProducts();
-    const el = document.getElementById("adminList");
-    if(list.length === 0){
-      el.innerHTML = `<div class="empty-state"><h3>Nothing listed yet</h3><p>Post your first dress using the form.</p></div>`;
-      return;
-    }
-    el.innerHTML = list.map(p => `
-      <div class="admin-row">
-        <img class="thumb" src="${p.images[0]}" alt="${p.name}">
-        <div>
-          <div class="name">${p.name}</div>
-          <div class="meta">${p.category} · ${money(p.price)}</div>
-        </div>
-        <a href="product.html?id=${p.id}" class="btn btn-small">View</a>
-        <button class="del" data-id="${p.id}">Remove</button>
-      </div>
-    `).join("");
-    el.querySelectorAll(".del").forEach(btn=>{
-      btn.addEventListener("click", ()=>{
-        if(confirm("Remove this dress from the shop?")){
-          deleteProduct(btn.dataset.id);
-          renderAdminList();
+        .admin-page {
+            background: var(--cream);
         }
-      });
-    });
-  }
-  renderAdminList();
-</script>
+
+        /* Hero */
+
+        .admin-hero {
+            padding: 80px 20px 60px;
+            text-align: center;
+        }
+
+        .admin-hero .eyebrow {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .admin-hero h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(38px, 5vw, 58px);
+            margin: 0 0 14px;
+            color: var(--text);
+        }
+
+        .admin-hero p {
+            max-width: 650px;
+            margin: 0 auto;
+            color: var(--text-light);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* Main */
+
+        .admin-section {
+            padding: 10px 20px 90px;
+        }
+
+        .admin-wrapper {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 25px;
+        }
+
+        .dashboard-card span {
+            display: block;
+            color: var(--text-light);
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-card strong {
+            font-family: "Playfair Display", serif;
+            font-size: 30px;
+            color: var(--primary);
+        }
+
+        /* Layout */
+
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* Form */
+
+        .admin-form-card,
+        .products-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 30px;
+        }
+
+        .card-heading {
+            margin-bottom: 25px;
+        }
+
+        .card-heading h2 {
+            font-family: "Playfair Display", serif;
+            font-size: 28px;
+            color: var(--text);
+            margin: 0 0 7px;
+        }
+
+        .card-heading p {
+            color: var(--text-light);
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        /* Sizes */
+
+        .size-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .size-options input {
+            display: none;
+        }
+
+        .size-options label {
+            border: 1px solid var(--border);
+            padding: 9px 14px;
+            margin: 0;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .size-options input:checked + label {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        /* Image Upload */
+
+        .image-upload {
+            border: 1px dashed var(--primary);
+            background: var(--cream);
+            padding: 18px;
+            text-align: center;
+        }
+
+        .image-upload input {
+            width: 100%;
+            font-size: 12px;
+        }
+
+        .upload-note {
+            color: var(--text-light);
+            font-size: 11px;
+            line-height: 1.5;
+            margin-top: 8px;
+        }
+
+        /* Image Preview */
+
+        .image-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .preview-box {
+            height: 90px;
+            background: var(--cream);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Button */
+
+        .add-product-btn {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            background: var(--primary);
+            color: var(--white);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .add-product-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Product Header */
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .products-header h2 {
+            font-family: "Playfair Display", serif;
+            color: var(--text);
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .product-count {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        /* Product List */
+
+        .admin-product-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .admin-product {
+            display: grid;
+            grid-template-columns: 75px 1fr auto;
+            gap: 15px;
+            align-items: center;
+            border: 1px solid var(--border);
+            padding: 12px;
+        }
+
+        .admin-product-image {
+            width: 75px;
+            height: 85px;
+            background: var(--cream);
+            overflow: hidden;
+        }
+
+        .admin-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .admin-product-info h3 {
+            color: var(--text);
+            font-size: 14px;
+            margin: 0 0 5px;
+        }
+
+        .admin-product-info p {
+            color: var(--text-light);
+            font-size: 11px;
+            margin: 3px 0;
+        }
+
+        .admin-product-price {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .admin-product-actions {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+
+        .view-btn,
+        .remove-btn {
+            display: inline-block;
+            padding: 9px 12px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .view-btn {
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+        }
+
+        .remove-btn {
+            border: 1px solid var(--primary);
+            background: var(--white);
+            color: var(--primary);
+        }
+
+        .remove-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Empty */
+
+        .empty-products {
+            border: 1px dashed var(--border);
+            padding: 45px 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        /* Notice */
+
+        .admin-notice {
+            margin-top: 20px;
+            padding: 15px 18px;
+            background: var(--cream);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .admin-notice strong {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+
+        @media (max-width: 950px) {
+
+            .admin-layout {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-section {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .admin-form-card,
+            .products-card {
+                padding: 22px;
+            }
+
+            .admin-product {
+                grid-template-columns: 65px 1fr;
+            }
+
+            .admin-product-image {
+                width: 65px;
+                height: 75px;
+            }
+
+            .admin-product-actions {
+                grid-column: 2;
+            }
+
+            .image-preview-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+        }
+
+    </style>
+</head>
+
+<body class="admin-page">
+
+
+    <!-- =====================================================
+         ANNOUNCEMENT BAR
+    ====================================================== -->
+
+    <div class="announcement-bar">
+        Complimentary shipping on orders over Rs. 8,000
+    </div>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
+
+    <header class="site-header">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="brand-logo">
+                THREADLINE
+            </a>
+
+            <nav class="site-nav">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="shop.html">
+                    Shop
+                </a>
+
+                <a href="categories.html">
+                    Collections
+                </a>
+
+                <a href="shop.html">
+                    New Arrivals
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+            </nav>
+
+            <div class="nav-actions">
+
+                <button
+                    class="nav-search"
+                    type="button"
+                >
+                    Search
+                </button>
+
+                <a href="#" class="nav-account">
+                    Account
+                </a>
+
+                <a
+                    href="#"
+                    class="nav-wishlist"
+                    aria-label="Wishlist"
+                >
+                    ♡
+                </a>
+
+                <a href="cart.html" class="nav-cart">
+                    Cart
+                    <span class="cart-count">0</span>
+                </a>
+
+                <button
+                    class="nav-toggle"
+                    type="button"
+                    aria-label="Open Menu"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <main>
+
+        <section class="admin-hero">
+
+            <div class="eyebrow">
+                Threadline Management
+            </div>
+
+            <h1>
+                Admin Panel
+            </h1>
+
+            <p>
+                Manage your Threadline collection, add new dresses,
+                update products and keep your storefront organized.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ADMIN CONTENT
+        ================================================== -->
+
+        <section class="admin-section">
+
+            <div class="admin-wrapper">
+
+
+                <!-- Dashboard -->
+
+                <div class="dashboard-grid">
+
+                    <div class="dashboard-card">
+
+                        <span>
+                            Total Products
+                        </span>
+
+                        <strong id="totalProducts">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <span>
+                            Collection Status
+                        </span>
+
+                        <strong>
+                            Active
+                        </strong>
+
+                    </div>
+
+
+                    <div class="dashboard-card">
+
+                        <span>
+                            Store
+                        </span>
+
+                        <strong>
+                            Live
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Main Layout -->
+
+                <div class="admin-layout">
+
+
+                    <!-- =====================================
+                         ADD PRODUCT
+                    ====================================== -->
+
+                    <div class="admin-form-card">
+
+                        <div class="card-heading">
+
+                            <h2>
+                                Post a New Dress
+                            </h2>
+
+                            <p>
+                                Add a new product to the Threadline
+                                storefront.
+                            </p>
+
+                        </div>
+
+
+                        <form id="adminProductForm">
+
+
+                            <!-- Dress Name -->
+
+                            <div class="form-group">
+
+                                <label for="productName">
+                                    Dress Name
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="productName"
+                                    class="form-control"
+                                    placeholder="e.g. Premium Embroidered Dress"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Price -->
+
+                            <div class="form-group">
+
+                                <label for="productPrice">
+                                    Price (Rs.)
+                                </label>
+
+                                <input
+                                    type="number"
+                                    id="productPrice"
+                                    class="form-control"
+                                    placeholder="4999"
+                                    min="1"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Category -->
+
+                            <div class="form-group">
+
+                                <label for="productCategory">
+                                    Category
+                                </label>
+
+                                <select
+                                    id="productCategory"
+                                    class="form-control"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Category
+                                    </option>
+
+                                    <option value="stitched">
+                                        Stitched
+                                    </option>
+
+                                    <option value="unstitched">
+                                        Unstitched
+                                    </option>
+
+                                    <option value="western">
+                                        Western
+                                    </option>
+
+                                    <option value="eastern">
+                                        Eastern
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Fabric -->
+
+                            <div class="form-group">
+
+                                <label for="productFabric">
+                                    Fabric
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="productFabric"
+                                    class="form-control"
+                                    placeholder="e.g. Lawn, Cotton, Chiffon"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <!-- Sizes -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Available Sizes
+                                </label>
+
+                                <div class="size-options">
+
+                                    <input
+                                        type="checkbox"
+                                        id="adminS"
+                                        value="S"
+                                        checked
+                                    >
+
+                                    <label for="adminS">
+                                        S
+                                    </label>
+
+
+                                    <input
+                                        type="checkbox"
+                                        id="adminM"
+                                        value="M"
+                                        checked
+                                    >
+
+                                    <label for="adminM">
+                                        M
+                                    </label>
+
+
+                                    <input
+                                        type="checkbox"
+                                        id="adminL"
+                                        value="L"
+                                        checked
+                                    >
+
+                                    <label for="adminL">
+                                        L
+                                    </label>
+
+
+                                    <input
+                                        type="checkbox"
+                                        id="adminXL"
+                                        value="XL"
+                                    >
+
+                                    <label for="adminXL">
+                                        XL
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Details -->
+
+                            <div class="form-group">
+
+                                <label for="productDetails">
+                                    Product Details
+                                </label>
+
+                                <textarea
+                                    id="productDetails"
+                                    class="form-control"
+                                    placeholder="Describe the dress, design, embroidery, fit, etc."
+                                    required
+                                ></textarea>
+
+                            </div>
+
+
+                            <!-- Images -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Product Photos
+                                </label>
+
+                                <div class="image-upload">
+
+                                    <input
+                                        type="file"
+                                        id="productImages"
+                                        accept="image/jpeg,image/png,image/jpg"
+                                        multiple
+                                        required
+                                    >
+
+                                    <div class="upload-note">
+                                        Select 1 to 4 product images.
+                                        JPG or PNG recommended.
+                                    </div>
+
+                                </div>
+
+                                <div
+                                    class="image-preview-grid"
+                                    id="imagePreviewGrid"
+                                ></div>
+
+                            </div>
+
+
+                            <!-- Submit -->
+
+                            <button
+                                type="submit"
+                                class="add-product-btn"
+                            >
+                                ADD PRODUCT
+                            </button>
+
+                        </form>
+
+
+                        <div class="admin-notice">
+
+                            <strong>Admin note:</strong>
+                            Products added here are stored in your
+                            browser for this demo website. A real
+                            multi-user admin system requires a backend
+                            and database.
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         PRODUCTS
+                    ====================================== -->
+
+                    <div class="products-card">
+
+                        <div class="products-header">
+
+                            <h2>
+                                Products
+                            </h2>
+
+                            <span
+                                class="product-count"
+                                id="productCount"
+                            >
+                                0 products
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="admin-product-list"
+                            id="adminProductList"
+                        >
+
+                            <div class="empty-products">
+
+                                No products added yet.
+
+                                <br>
+
+                                Add your first dress using the
+                                form.
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+
+            <div class="footer-column">
+
+                <a href="index.html" class="footer-logo">
+                    THREADLINE
+                </a>
+
+                <p>
+                    Modern fashion, timeless style.
+                </p>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="shop.html?category=stitched">
+                    Stitched
+                </a>
+
+                <a href="shop.html?category=unstitched">
+                    Unstitched
+                </a>
+
+                <a href="shop.html?category=western">
+                    Western
+                </a>
+
+                <a href="shop.html?category=eastern">
+                    Eastern
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Customer Care
+                </h3>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+                <a href="contact.html#faq">
+                    FAQ
+                </a>
+
+                <a href="#">
+                    Shipping
+                </a>
+
+                <a href="#">
+                    Returns
+                </a>
+
+                <a href="#">
+                    Order Tracking
+                </a>
+
+            </div>
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Follow Us
+                </h3>
+
+                <a href="#">
+                    Instagram
+                </a>
+
+                <a href="#">
+                    Facebook
+                </a>
+
+                <a href="#">
+                    TikTok
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 Threadline. All Rights Reserved.
+            </p>
+
+            <p>
+                Designed and finished in-house, one thread at a time.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form =
+                document.getElementById("adminProductForm");
+
+            const imageInput =
+                document.getElementById("productImages");
+
+            const previewGrid =
+                document.getElementById("imagePreviewGrid");
+
+            const productList =
+                document.getElementById("adminProductList");
+
+            const totalProducts =
+                document.getElementById("totalProducts");
+
+            const productCount =
+                document.getElementById("productCount");
+
+
+            let selectedImages = [];
+
+
+            /* =================================================
+               LOAD PRODUCTS
+            ================================================= */
+
+            function getProducts() {
+
+                try {
+
+                    return JSON.parse(
+                        localStorage.getItem("threadlineProducts")
+                    ) || [];
+
+                } catch (error) {
+
+                    return [];
+
+                }
+
+            }
+
+
+            function saveProducts(products) {
+
+                localStorage.setItem(
+                    "threadlineProducts",
+                    JSON.stringify(products)
+                );
+
+            }
+
+
+            /* =================================================
+               IMAGE SELECTION
+            ================================================= */
+
+            imageInput.addEventListener(
+                "change",
+                function () {
+
+                    selectedImages = [];
+
+                    previewGrid.innerHTML = "";
+
+                    const files =
+                        Array.from(this.files).slice(0, 4);
+
+
+                    if (files.length === 0) {
+                        return;
+                    }
+
+
+                    files.forEach(function (file) {
+
+                        if (!file.type.startsWith("image/")) {
+                            return;
+                        }
+
+                        const reader =
+                            new FileReader();
+
+
+                        reader.onload =
+                            function (event) {
+
+                                selectedImages.push(
+                                    event.target.result
+                                );
+
+
+                                const preview =
+                                    document.createElement("div");
+
+                                preview.className =
+                                    "preview-box";
+
+
+                                const img =
+                                    document.createElement("img");
+
+                                img.src =
+                                    event.target.result;
+
+                                img.alt =
+                                    "Product Preview";
+
+
+                                preview.appendChild(img);
+
+                                previewGrid.appendChild(
+                                    preview
+                                );
+
+                            };
+
+
+                        reader.readAsDataURL(file);
+
+                    });
+
+                }
+            );
+
+
+            /* =================================================
+               RENDER PRODUCTS
+            ================================================= */
+
+            function renderProducts() {
+
+                const products = getProducts();
+
+                totalProducts.textContent =
+                    products.length;
+
+                productCount.textContent =
+                    products.length +
+                    (products.length === 1
+                        ? " product"
+                        : " products");
+
+
+                if (products.length === 0) {
+
+                    productList.innerHTML = `
+                        <div class="empty-products">
+                            No products added yet.
+                            <br>
+                            Add your first dress using the form.
+                        </div>
+                    `;
+
+                    return;
+
+                }
+
+
+                productList.innerHTML = "";
+
+
+                products.forEach(function (product) {
+
+                    const item =
+                        document.createElement("div");
+
+                    item.className =
+                        "admin-product";
+
+
+                    const image =
+                        product.images &&
+                        product.images.length
+                            ? product.images[0]
+                            : "";
+
+
+                    item.innerHTML = `
+
+                        <div class="admin-product-image">
+                            ${
+                                image
+                                ? `<img src="${image}" alt="${escapeHTML(product.name)}">`
+                                : `<span>No Image</span>`
+                            }
+                        </div>
+
+                        <div class="admin-product-info">
+
+                            <h3>
+                                ${escapeHTML(product.name)}
+                            </h3>
+
+                            <p>
+                                ${escapeHTML(product.category)}
+                                ·
+                                ${escapeHTML(product.fabric)}
+                            </p>
+
+                            <p>
+                                Sizes:
+                                ${escapeHTML(product.sizes.join(", "))}
+                            </p>
+
+                            <p class="admin-product-price">
+                                Rs. ${formatMoney(product.price)}
+                            </p>
+
+                        </div>
+
+                        <div class="admin-product-actions">
+
+                            <a
+                                href="product.html?id=${product.id}"
+                                class="view-btn"
+                            >
+                                View
+                            </a>
+
+                            <button
+                                type="button"
+                                class="remove-btn"
+                                data-id="${product.id}"
+                            >
+                                Remove
+                            </button>
+
+                        </div>
+
+                    `;
+
+
+                    productList.appendChild(item);
+
+                });
+
+            }
+
+
+            /* =================================================
+               ADD PRODUCT
+            ================================================= */
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    const name =
+                        document.getElementById(
+                            "productName"
+                        ).value.trim();
+
+
+                    const price =
+                        Number(
+                            document.getElementById(
+                                "productPrice"
+                            ).value
+                        );
+
+
+                    const category =
+                        document.getElementById(
+                            "productCategory"
+                        ).value;
+
+
+                    const fabric =
+                        document.getElementById(
+                            "productFabric"
+                        ).value.trim();
+
+
+                    const details =
+                        document.getElementById(
+                            "productDetails"
+                        ).value.trim();
+
+
+                    const sizes =
+                        Array.from(
+                            document.querySelectorAll(
+                                ".size-options input:checked"
+                            )
+                        ).map(
+                            function (input) {
+                                return input.value;
+                            }
+                        );
+
+
+                    if (selectedImages.length === 0) {
+
+                        alert(
+                            "Please select at least one product image."
+                        );
+
+                        return;
+
+                    }
+
+
+                    if (sizes.length === 0) {
+
+                        alert(
+                            "Please select at least one size."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const products =
+                        getProducts();
+
+
+                    const newProduct = {
+
+                        id:
+                            Date.now(),
+
+                        name:
+                            name,
+
+                        price:
+                            price,
+
+                        category:
+                            category,
+
+                        fabric:
+                            fabric,
+
+                        sizes:
+                            sizes,
+
+                        details:
+                            details,
+
+                        images:
+                            selectedImages,
+
+                        createdAt:
+                            new Date().toISOString()
+
+                    };
+
+
+                    products.push(newProduct);
+
+                    saveProducts(products);
+
+
+                    alert(
+                        "Product added successfully."
+                    );
+
+
+                    form.reset();
+
+                    selectedImages = [];
+
+                    previewGrid.innerHTML = "";
+
+
+                    renderProducts();
+
+                }
+            );
+
+
+            /* =================================================
+               REMOVE PRODUCT
+            ================================================= */
+
+            productList.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        !event.target.classList.contains(
+                            "remove-btn"
+                        )
+                    ) {
+                        return;
+                    }
+
+
+                    const id =
+                        Number(
+                            event.target.dataset.id
+                        );
+
+
+                    const confirmed =
+                        confirm(
+                            "Are you sure you want to remove this product?"
+                        );
+
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+
+                    const products =
+                        getProducts();
+
+
+                    const updatedProducts =
+                        products.filter(
+                            function (product) {
+                                return product.id !== id;
+                            }
+                        );
+
+
+                    saveProducts(
+                        updatedProducts
+                    );
+
+
+                    renderProducts();
+
+                }
+            );
+
+
+            /* =================================================
+               HELPERS
+            ================================================= */
+
+            function formatMoney(value) {
+
+                return Number(value).toLocaleString(
+                    "en-PK"
+                );
+
+            }
+
+
+            function escapeHTML(value) {
+
+                return String(value)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+
+            }
+
+
+            /* =================================================
+               INITIAL LOAD
+            ================================================= */
+
+            renderProducts();
+
+        });
+
+    </script>
+
 </body>
 </html>

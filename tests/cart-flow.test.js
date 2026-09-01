@@ -120,3 +120,24 @@ test('visible products are capped at 30 per category even when storage contains 
   assert.equal(categoryCount('Western'), 30);
   assert.equal(categoryCount('Eastern'), 30);
 });
+
+test('category URLs normalize to supported collection names', () => {
+  delete require.cache[require.resolve('../js/main.js')];
+  const { normalizeCategoryQuery } = require('../js/main.js');
+
+  assert.equal(normalizeCategoryQuery('stitched'), 'Stitched');
+  assert.equal(normalizeCategoryQuery('unstitched'), 'Unstitched');
+  assert.equal(normalizeCategoryQuery('western'), 'Western');
+  assert.equal(normalizeCategoryQuery('eastern'), 'Eastern');
+  assert.equal(normalizeCategoryQuery('new-arrivals'), 'new-arrivals');
+  assert.equal(normalizeCategoryQuery('New Arrivals'), 'new-arrivals');
+});
+
+test('new-arrivals route filters to new products only', () => {
+  delete require.cache[require.resolve('../js/main.js')];
+  const { isNewArrivalProduct } = require('../js/main.js');
+
+  assert.equal(isNewArrivalProduct({ isNew: true }), true);
+  assert.equal(isNewArrivalProduct({}), false);
+  assert.equal(isNewArrivalProduct({ badge: 'NEW' }), true);
+});

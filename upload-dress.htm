@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Upload Your Dress — Threadline</title>
+
+    <meta name="description"
+          content="Upload your dress image and share your fashion preferences with Threadline.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* =========================================================
+           UPLOAD DRESS PAGE
+        ========================================================= */
+
+        .upload-page {
+            background: var(--cream);
+        }
+
+        /* Hero */
+
+        .upload-hero {
+            padding: 90px 20px 70px;
+            text-align: center;
+            background: var(--cream);
+        }
+
+        .upload-hero .eyebrow {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .upload-hero h1 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(38px, 5vw, 64px);
+            line-height: 1.1;
+            color: var(--text);
+            margin: 0 0 18px;
+        }
+
+        .upload-hero p {
+            max-width: 650px;
+            margin: 0 auto;
+            color: var(--text-light);
+            font-size: 17px;
+            line-height: 1.8;
+        }
+
+        /* Main */
+
+        .upload-section {
+            padding: 20px 20px 90px;
+        }
+
+        .upload-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 35px;
+            align-items: start;
+        }
+
+        /* Left Preview */
+
+        .upload-preview-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 28px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .upload-preview-card h2 {
+            font-family: "Playfair Display", serif;
+            font-size: 28px;
+            margin: 0 0 8px;
+            color: var(--text);
+        }
+
+        .upload-preview-card > p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin: 0 0 22px;
+            line-height: 1.6;
+        }
+
+        .image-preview {
+            width: 100%;
+            min-height: 440px;
+            background: var(--cream);
+            border: 1px dashed var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 440px;
+            object-fit: cover;
+            display: none;
+        }
+
+        .preview-placeholder {
+            padding: 30px;
+            color: var(--text-light);
+        }
+
+        .preview-icon {
+            width: 65px;
+            height: 65px;
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            color: var(--primary);
+            font-size: 26px;
+        }
+
+        .preview-placeholder strong {
+            display: block;
+            color: var(--text);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .preview-placeholder span {
+            font-size: 13px;
+        }
+
+        .change-image-btn {
+            display: none;
+            margin-top: 16px;
+            width: 100%;
+            padding: 13px 18px;
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .change-image-btn:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Form Card */
+
+        .upload-form-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 38px;
+        }
+
+        .form-heading {
+            margin-bottom: 30px;
+        }
+
+        .form-heading h2 {
+            font-family: "Playfair Display", serif;
+            font-size: 30px;
+            color: var(--text);
+            margin: 0 0 8px;
+        }
+
+        .form-heading p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 9px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .required {
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: 0.25s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        textarea.form-control {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* File Upload */
+
+        .file-upload-box {
+            border: 1px dashed var(--primary);
+            background: var(--cream);
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .file-upload-box:hover {
+            background: var(--cream-dark);
+        }
+
+        .file-upload-box input {
+            display: none;
+        }
+
+        .file-upload-title {
+            display: block;
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .file-upload-text {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* Two Columns */
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        /* Options */
+
+        .option-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .option-grid input {
+            display: none;
+        }
+
+        .option-grid label {
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            cursor: pointer;
+            background: var(--white);
+            transition: 0.25s ease;
+        }
+
+        .option-grid input:checked + label {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: var(--white);
+        }
+
+        /* Color Options */
+
+        .color-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .color-grid input {
+            display: none;
+        }
+
+        .color-grid label {
+            border: 1px solid var(--border);
+            padding: 10px 15px;
+            margin: 0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.25s ease;
+        }
+
+        .color-grid input:checked + label {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Submit */
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            background: var(--primary);
+            color: var(--white);
+            padding: 16px 25px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .form-note {
+            margin-top: 14px;
+            color: var(--text-light);
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* Success Message */
+
+        .success-message {
+            display: none;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+            border: 1px solid #c9b99f;
+            background: var(--cream);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .success-message strong {
+            color: var(--primary);
+        }
+
+        /* How it works */
+
+        .upload-process {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 90px;
+        }
+
+        .process-heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .process-heading span {
+            display: block;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .process-heading h2 {
+            font-family: "Playfair Display", serif;
+            font-size: 38px;
+            margin: 0;
+            color: var(--text);
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .process-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 30px 24px;
+            text-align: center;
+        }
+
+        .process-number {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-weight: 700;
+        }
+
+        .process-card h3 {
+            font-size: 17px;
+            margin: 0 0 9px;
+            color: var(--text);
+        }
+
+        .process-card p {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 900px) {
+            .upload-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-preview-card {
+                position: static;
+            }
+
+            .image-preview,
+            .image-preview img {
+                min-height: 380px;
+                height: 380px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .upload-hero {
+                padding: 65px 18px 50px;
+            }
+
+            .upload-section {
+                padding: 10px 15px 65px;
+            }
+
+            .upload-form-card {
+                padding: 25px 20px;
+            }
+
+            .upload-preview-card {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-process {
+                padding: 0 15px 65px;
+            }
+
+            .process-heading h2 {
+                font-size: 31px;
+            }
+
+            .image-preview,
+            .image-preview img {
+                min-height: 320px;
+                height: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body class="upload-page">
+
+    <!-- =========================================================
+         ANNOUNCEMENT BAR
+    ========================================================== -->
+
+    <div class="announcement-bar">
+        Complimentary shipping on orders over Rs. 8,000
+    </div>
+
+
+    <!-- =========================================================
+         HEADER / NAVBAR
+    ========================================================== -->
+
+    <header class="site-header">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="brand-logo">
+                THREADLINE
+            </a>
+
+            <nav class="site-nav">
+
+                <a href="index.html">Home</a>
+
+                <a href="shop.html">Shop</a>
+
+                <a href="categories.html">Collections</a>
+
+                <a href="shop.html">New Arrivals</a>
+
+                <a href="about.html">About</a>
+
+                <a href="contact.html">Contact</a>
+
+            </nav>
+
+            <div class="nav-actions">
+
+                <button class="nav-search" type="button" aria-label="Search">
+                    Search
+                </button>
+
+                <a href="#" class="nav-account">
+                    Account
+                </a>
+
+                <a href="#" class="nav-wishlist" aria-label="Wishlist">
+                    ♡
+                </a>
+
+                <a href="cart.html" class="nav-cart">
+                    Cart
+                    <span class="cart-count">0</span>
+                </a>
+
+                <button class="nav-toggle" type="button" aria-label="Open Menu">
+                    ☰
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         HERO
+    ========================================================== -->
+
+    <main>
+
+        <section class="upload-hero">
+
+            <div class="eyebrow">
+                Custom Fashion Request
+            </div>
+
+            <h1>
+                Upload Your Dress
+            </h1>
+
+            <p>
+                Have a dress in mind? Upload an image and tell us
+                what you're looking for. Share your preferred fabric,
+                size, color and style with our team.
+            </p>
+
+        </section>
+
+
+        <!-- =====================================================
+             UPLOAD FORM
+        ====================================================== -->
+
+        <section class="upload-section">
+
+            <div class="upload-wrapper">
+
+
+                <!-- LEFT: IMAGE PREVIEW -->
+
+                <div class="upload-preview-card">
+
+                    <h2>
+                        Your Inspiration
+                    </h2>
+
+                    <p>
+                        Upload a clear image of the dress you have
+                        in mind. You can use a photo, screenshot,
+                        or fashion reference.
+                    </p>
+
+                    <div class="image-preview">
+
+                        <div class="preview-placeholder" id="previewPlaceholder">
+
+                            <div class="preview-icon">
+                                +
+                            </div>
+
+                            <strong>
+                                No image selected
+                            </strong>
+
+                            <span>
+                                Your dress preview will appear here
+                            </span>
+
+                        </div>
+
+                        <img
+                            id="dressPreview"
+                            src=""
+                            alt="Dress Preview"
+                        >
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="change-image-btn"
+                        id="changeImageBtn"
+                    >
+                        Change Image
+                    </button>
+
+                </div>
+
+
+                <!-- RIGHT: FORM -->
+
+                <div class="upload-form-card">
+
+                    <div class="form-heading">
+
+                        <h2>
+                            Tell Us About Your Dress
+                        </h2>
+
+                        <p>
+                            Fill in the details below so we can better
+                            understand your preferred style.
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="success-message"
+                        id="successMessage"
+                    >
+                        <strong>Request submitted successfully.</strong>
+                        Your dress request has been saved. Our team can
+                        review your requirements and contact you soon.
+                    </div>
+
+
+                    <form id="dressRequestForm">
+
+
+                        <!-- Image -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Upload Image
+                                <span class="required">*</span>
+                            </label>
+
+                            <label
+                                for="dressImage"
+                                class="file-upload-box"
+                            >
+
+                                <span class="file-upload-title">
+                                    Choose Dress Image
+                                </span>
+
+                                <span class="file-upload-text">
+                                    JPG, JPEG or PNG — Maximum 5MB
+                                </span>
+
+                                <span
+                                    class="file-name"
+                                    id="fileName"
+                                ></span>
+
+                                <input
+                                    type="file"
+                                    id="dressImage"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    required
+                                >
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- Dress Type -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Dress Type
+                                <span class="required">*</span>
+                            </label>
+
+                            <select
+                                id="dressType"
+                                class="form-control"
+                                required
+                            >
+
+                                <option value="">
+                                    Select dress type
+                                </option>
+
+                                <option value="Stitched">
+                                    Stitched
+                                </option>
+
+                                <option value="Unstitched">
+                                    Unstitched
+                                </option>
+
+                                <option value="Western">
+                                    Western
+                                </option>
+
+                                <option value="Eastern">
+                                    Eastern
+                                </option>
+
+                                <option value="Formal">
+                                    Formal Wear
+                                </option>
+
+                                <option value="Party Wear">
+                                    Party Wear
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Fabric -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Preferred Fabric
+                                <span class="required">*</span>
+                            </label>
+
+                            <select
+                                id="fabric"
+                                class="form-control"
+                                required
+                            >
+
+                                <option value="">
+                                    Select preferred fabric
+                                </option>
+
+                                <option value="Lawn">
+                                    Lawn
+                                </option>
+
+                                <option value="Cotton">
+                                    Cotton
+                                </option>
+
+                                <option value="Linen">
+                                    Linen
+                                </option>
+
+                                <option value="Silk">
+                                    Silk
+                                </option>
+
+                                <option value="Chiffon">
+                                    Chiffon
+                                </option>
+
+                                <option value="Organza">
+                                    Organza
+                                </option>
+
+                                <option value="Velvet">
+                                    Velvet
+                                </option>
+
+                                <option value="Georgette">
+                                    Georgette
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- Size + Color -->
+
+                        <div class="form-row">
+
+
+                            <!-- Size -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Size
+                                    <span class="required">*</span>
+                                </label>
+
+                                <div class="option-grid">
+
+                                    <input
+                                        type="radio"
+                                        name="size"
+                                        id="sizeS"
+                                        value="S"
+                                        required
+                                    >
+                                    <label for="sizeS">S</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="size"
+                                        id="sizeM"
+                                        value="M"
+                                    >
+                                    <label for="sizeM">M</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="size"
+                                        id="sizeL"
+                                        value="L"
+                                    >
+                                    <label for="sizeL">L</label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="size"
+                                        id="sizeXL"
+                                        value="XL"
+                                    >
+                                    <label for="sizeXL">XL</label>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Color -->
+
+                            <div class="form-group">
+
+                                <label>
+                                    Preferred Color
+                                    <span class="required">*</span>
+                                </label>
+
+                                <div class="color-grid">
+
+                                    <input
+                                        type="radio"
+                                        name="color"
+                                        id="black"
+                                        value="Black"
+                                        required
+                                    >
+                                    <label for="black">
+                                        Black
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="color"
+                                        id="maroon"
+                                        value="Maroon"
+                                    >
+                                    <label for="maroon">
+                                        Maroon
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="color"
+                                        id="beige"
+                                        value="Beige"
+                                    >
+                                    <label for="beige">
+                                        Beige
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="color"
+                                        id="white"
+                                        value="White"
+                                    >
+                                    <label for="white">
+                                        White
+                                    </label>
+
+
+                                    <input
+                                        type="radio"
+                                        name="color"
+                                        id="otherColor"
+                                        value="Other"
+                                    >
+                                    <label for="otherColor">
+                                        Other
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Notes -->
+
+                        <div class="form-group">
+
+                            <label for="notes">
+                                Additional Notes
+                            </label>
+
+                            <textarea
+                                id="notes"
+                                class="form-control"
+                                placeholder="Tell us about embroidery, length, sleeves, neckline, fitting, or any other details you would like..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <!-- Submit -->
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            SUBMIT REQUEST
+                        </button>
+
+                        <p class="form-note">
+                            By submitting this request, you agree that
+                            Threadline may use the provided information
+                            to understand your dress requirements.
+                        </p>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             HOW IT WORKS
+        ====================================================== -->
+
+        <section class="upload-process">
+
+            <div class="process-heading">
+
+                <span>
+                    Simple Process
+                </span>
+
+                <h2>
+                    From Inspiration to Your Style
+                </h2>
+
+            </div>
+
+
+            <div class="process-grid">
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        01
+                    </div>
+
+                    <h3>
+                        Upload
+                    </h3>
+
+                    <p>
+                        Share an image or reference of the dress
+                        you would like to create.
+                    </p>
+
+                </div>
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        02
+                    </div>
+
+                    <h3>
+                        Tell Us
+                    </h3>
+
+                    <p>
+                        Select your fabric, size, color and add
+                        any special requirements.
+                    </p>
+
+                </div>
+
+
+                <div class="process-card">
+
+                    <div class="process-number">
+                        03
+                    </div>
+
+                    <h3>
+                        We Review
+                    </h3>
+
+                    <p>
+                        Your request is saved for review and our
+                        team can follow up on your requirements.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-container">
+
+
+            <!-- Brand -->
+
+            <div class="footer-column">
+
+                <a href="index.html" class="footer-logo">
+                    THREADLINE
+                </a>
+
+                <p>
+                    Modern fashion, timeless style.
+                </p>
+
+            </div>
+
+
+            <!-- Shop -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="shop.html?category=stitched">
+                    Stitched
+                </a>
+
+                <a href="shop.html?category=unstitched">
+                    Unstitched
+                </a>
+
+                <a href="shop.html?category=western">
+                    Western
+                </a>
+
+                <a href="shop.html?category=eastern">
+                    Eastern
+                </a>
+
+            </div>
+
+
+            <!-- Customer Care -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Customer Care
+                </h3>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+                <a href="contact.html#faq">
+                    FAQ
+                </a>
+
+                <a href="#">
+                    Shipping
+                </a>
+
+                <a href="#">
+                    Returns
+                </a>
+
+                <a href="#">
+                    Order Tracking
+                </a>
+
+            </div>
+
+
+            <!-- Social -->
+
+            <div class="footer-column">
+
+                <h3>
+                    Follow Us
+                </h3>
+
+                <a href="#" target="_blank">
+                    Instagram
+                </a>
+
+                <a href="#" target="_blank">
+                    Facebook
+                </a>
+
+                <a href="#" target="_blank">
+                    TikTok
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 Threadline. All Rights Reserved.
+            </p>
+
+            <p>
+                Designed and finished in-house, one thread at a time.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+    ========================================================== -->
+
+    <script src="js/main.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const form = document.getElementById("dressRequestForm");
+
+            const imageInput = document.getElementById("dressImage");
+
+            const previewImage = document.getElementById("dressPreview");
+
+            const previewPlaceholder =
+                document.getElementById("previewPlaceholder");
+
+            const fileName =
+                document.getElementById("fileName");
+
+            const changeImageBtn =
+                document.getElementById("changeImageBtn");
+
+            const successMessage =
+                document.getElementById("successMessage");
+
+
+            /* =====================================================
+               IMAGE PREVIEW
+            ====================================================== */
+
+            imageInput.addEventListener("change", function () {
+
+                const file = this.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+
+                /* Check file size */
+
+                const maxSize = 5 * 1024 * 1024;
+
+                if (file.size > maxSize) {
+
+                    alert("Please select an image smaller than 5MB.");
+
+                    imageInput.value = "";
+
+                    return;
+                }
+
+
+                /* Check image type */
+
+                if (!file.type.startsWith("image/")) {
+
+                    alert("Please select a valid image file.");
+
+                    imageInput.value = "";
+
+                    return;
+                }
+
+
+                /* File name */
+
+                fileName.textContent = file.name;
+
+                fileName.style.display = "block";
+
+
+                /* Preview */
+
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+
+                    previewImage.src = event.target.result;
+
+                    previewImage.style.display = "block";
+
+                    previewPlaceholder.style.display = "none";
+
+                    changeImageBtn.style.display = "block";
+
+                };
+
+                reader.readAsDataURL(file);
+
+            });
+
+
+            /* =====================================================
+               CHANGE IMAGE
+            ====================================================== */
+
+            changeImageBtn.addEventListener("click", function () {
+
+                imageInput.click();
+
+            });
+
+
+            /* =====================================================
+               FORM SUBMIT
+            ====================================================== */
+
+            form.addEventListener("submit", function (event) {
+
+                event.preventDefault();
+
+
+                const file = imageInput.files[0];
+
+                if (!file) {
+
+                    alert("Please upload a dress image.");
+
+                    return;
+                }
+
+
+                const selectedSize =
+                    document.querySelector(
+                        'input[name="size"]:checked'
+                    );
+
+                const selectedColor =
+                    document.querySelector(
+                        'input[name="color"]:checked'
+                    );
+
+
+                if (!selectedSize) {
+
+                    alert("Please select your size.");
+
+                    return;
+                }
+
+
+                if (!selectedColor) {
+
+                    alert("Please select your preferred color.");
+
+                    return;
+                }
+
+
+                /* Get image as Data URL */
+
+                const reader = new FileReader();
+
+
+                reader.onload = function (event) {
+
+                    const request = {
+
+                        id: Date.now(),
+
+                        image: event.target.result,
+
+                        dressType:
+                            document.getElementById("dressType").value,
+
+                        fabric:
+                            document.getElementById("fabric").value,
+
+                        size:
+                            selectedSize.value,
+
+                        color:
+                            selectedColor.value,
+
+                        notes:
+                            document.getElementById("notes").value,
+
+                        date:
+                            new Date().toLocaleString()
+
+                    };
+
+
+                    /* Existing requests */
+
+                    let requests =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "threadlineDressRequests"
+                            )
+                        ) || [];
+
+
+                    requests.push(request);
+
+
+                    /* Save request */
+
+                    localStorage.setItem(
+                        "threadlineDressRequests",
+                        JSON.stringify(requests)
+                    );
+
+
+                    /* Show success */
+
+                    successMessage.style.display = "block";
+
+
+                    /* Reset form */
+
+                    form.reset();
+
+                    previewImage.src = "";
+
+                    previewImage.style.display = "none";
+
+                    previewPlaceholder.style.display = "block";
+
+                    fileName.textContent = "";
+
+                    fileName.style.display = "none";
+
+                    changeImageBtn.style.display = "none";
+
+
+                    /* Scroll to success */
+
+                    successMessage.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+
+                };
+
+
+                reader.readAsDataURL(file);
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,156 +1,1256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shop — Threadline</title>
-<meta name="description" content="Browse stitched, unstitched, western and eastern dresses with photos, pricing and details.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shop | Threadline Clothing</title>
+
+    <meta name="description"
+        content="Explore Threadline Clothing's elegant collection of stitched, unstitched, eastern and western wear.">
+
+    <meta name="keywords"
+        content="Threadline Clothing, Pakistani clothing, women's fashion, stitched dresses, unstitched dresses, eastern wear, western wear">
+
+    <meta name="author" content="Threadline Clothing">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
+
 <body>
 
-<header class="site-header">
-  <nav class="nav">
-    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shop.html" class="active">Shop</a></li>
-      <li><a href="categories.html">Categories</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="contact.html">Contact</a></li>
-      <li><a href="cart.html">Cart</a></li>
-      <li><a href="checkout.html">Checkout</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
-        Cart <span class="cart-badge">0</span>
-      </a>
-      <a href="admin.html" class="btn btn-small">Upload Dress</a>
-      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
-    </div>
-  </nav>
-</header>
+    <!-- =====================================================
+         ANNOUNCEMENT BAR
+    ====================================================== -->
 
-<section class="section-tight">
-  <div class="container">
-    <div class="section-head">
-      <div>
-        <span class="kicker">FULL CATALOGUE</span>
-        <h2>Shop all dresses.</h2>
-      </div>
-      <p id="resultCount"></p>
+    <div class="announcement-bar">
+        <p>
+            Free delivery on orders above Rs 5,000
+        </p>
     </div>
 
-    <div class="toolbar">
-      <div class="filter-tabs" id="filterTabs"></div>
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search by name…" aria-label="Search dresses">
-      </div>
-    </div>
 
-    <div class="product-grid" id="shopGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <h3>No dresses match that search</h3>
-      <p>Try a different category or clear the search box.</p>
-    </div>
-  </div>
-</section>
+    <!-- =====================================================
+         NAVBAR
+    ====================================================== -->
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div>
-        <h4>Threadline</h4>
-        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
-      </div>
-      <div>
-        <h4>Shop</h4>
-        <ul>
-          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
-          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
-          <li><a href="shop.html?cat=Western">Western</a></li>
-          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Care</h4>
-        <ul>
-          <li><a href="contact.html">Contact Us</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Shipping &amp; Delivery</a></li>
-          <li><a href="#">Return &amp; Exchange</a></li>
-          <li><a href="#">Order Tracking</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Information</h4>
-        <ul>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Cookie Policy</a></li>
-          <li><a href="#">Terms &amp; Conditions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Developed by</h4>
-        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
-      <span>Demo storefront built to the project brief</span>
-    </div>
-  </div>
-</footer>
+    <header class="site-header">
 
-<script src="js/data.js"></script>
-<script src="js/main.js"></script>
-<script>
-  const params = new URLSearchParams(location.search);
-  let activeCat = params.get("cat") || "All";
-  let query = "";
+        <div class="container nav-container">
 
-  function renderTabs(){
-    const tabs = ["All", ...CATEGORIES];
-    document.getElementById("filterTabs").innerHTML = tabs.map(cat => `
-      <button data-cat="${cat}" class="${cat === activeCat ? "active" : ""}">${cat}</button>
-    `).join("");
-    document.querySelectorAll("#filterTabs button").forEach(btn=>{
-      btn.addEventListener("click", () => {
-        activeCat = btn.dataset.cat;
-        renderTabs();
-        renderGrid();
-      });
-    });
-  }
+            <!-- Logo -->
+            <a href="index.html" class="brand-logo">
+                THREADLINE
+            </a>
 
-  function renderGrid(){
-    let list = loadProducts();
-    if(activeCat !== "All") list = list.filter(p => p.category === activeCat);
-    if(query.trim()) list = list.filter(p => p.name.toLowerCase().includes(query.trim().toLowerCase()));
 
-    const grid = document.getElementById("shopGrid");
-    const empty = document.getElementById("emptyState");
-    document.getElementById("resultCount").textContent = list.length + (list.length === 1 ? " dress" : " dresses");
+            <!-- Mobile Button -->
+            <button
+                class="nav-toggle"
+                type="button"
+                aria-label="Open navigation menu">
 
-    if(list.length === 0){
-      grid.innerHTML = "";
-      empty.style.display = "block";
-    }else{
-      empty.style.display = "none";
-      grid.innerHTML = list.map(productCardHTML).join("");
-    }
-  }
+                <i class="fa-solid fa-bars"></i>
 
-  document.getElementById("searchInput").addEventListener("input", (e)=>{
-    query = e.target.value;
-    renderGrid();
-  });
+            </button>
 
-  renderTabs();
-  renderGrid();
-</script>
+
+            <!-- Navigation -->
+            <nav class="nav-links">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="shop.html" class="active">
+                    Shop
+                </a>
+
+                <a href="categories.html">
+                    Collections
+                </a>
+
+                <a href="about.html">
+                    About
+                </a>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+            </nav>
+
+
+            <!-- Navigation Actions -->
+            <div class="nav-actions">
+
+                <a href="shop.html"
+                   aria-label="Search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                </a>
+
+
+                <a href="#"
+                   aria-label="Account">
+
+                    <i class="fa-regular fa-user"></i>
+
+                </a>
+
+
+                <a href="#"
+                   aria-label="Wishlist">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                </a>
+
+
+                <a href="cart.html"
+                   class="cart-link"
+                   aria-label="Shopping cart">
+
+                    <i class="fa-solid fa-bag-shopping"></i>
+
+                    <span class="cart-badge">
+                        0
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         SHOP HERO
+    ====================================================== -->
+
+    <main>
+
+        <section class="shop-hero">
+
+            <div class="shop-hero-overlay"></div>
+
+            <div class="container shop-hero-content">
+
+                <p class="section-label">
+                    THE THREADLINE COLLECTION
+                </p>
+
+                <h1>
+                    Shop Our Collection
+                </h1>
+
+                <p>
+                    Discover thoughtfully designed pieces,
+                    refined details and timeless styles
+                    for every occasion.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             SHOP CONTENT
+        ====================================================== -->
+
+        <section class="shop-section section-padding">
+
+            <div class="container">
+
+
+                <!-- SHOP TOP BAR -->
+
+                <div class="shop-topbar">
+
+                    <div>
+
+                        <p class="shop-result-count">
+
+                            Showing
+                            <strong id="product-count">
+                                0
+                            </strong>
+                            products
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="shop-controls">
+
+                        <button
+                            class="filter-toggle"
+                            type="button">
+
+                            <i class="fa-solid fa-sliders"></i>
+
+                            Filters
+
+                        </button>
+
+
+                        <label
+                            for="sort-products"
+                            class="sort-label">
+
+                            Sort by:
+
+                        </label>
+
+
+                        <select
+                            id="sort-products"
+                            class="sort-select">
+
+                            <option value="featured">
+                                Featured
+                            </option>
+
+                            <option value="price-low">
+                                Price: Low to High
+                            </option>
+
+                            <option value="price-high">
+                                Price: High to Low
+                            </option>
+
+                            <option value="name">
+                                Name: A to Z
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =====================================================
+                     SHOP LAYOUT
+                ====================================================== -->
+
+                <div class="shop-layout">
+
+
+                    <!-- FILTER SIDEBAR -->
+
+                    <aside
+                        class="filter-sidebar"
+                        id="filter-sidebar">
+
+
+                        <div class="filter-header">
+
+                            <h2>
+                                Filters
+                            </h2>
+
+                            <button
+                                type="button"
+                                class="filter-close"
+                                aria-label="Close filters">
+
+                                <i class="fa-solid fa-xmark"></i>
+
+                            </button>
+
+                        </div>
+
+
+
+                        <!-- CATEGORY -->
+
+                        <div class="filter-group">
+
+                            <h3>
+                                Category
+                            </h3>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="checkbox"
+                                    name="category"
+                                    value="Stitched">
+
+                                <span>
+                                    Stitched
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="checkbox"
+                                    name="category"
+                                    value="Unstitched">
+
+                                <span>
+                                    Unstitched
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="checkbox"
+                                    name="category"
+                                    value="Eastern">
+
+                                <span>
+                                    Eastern Wear
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="checkbox"
+                                    name="category"
+                                    value="Western">
+
+                                <span>
+                                    Western Wear
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <!-- PRICE -->
+
+                        <div class="filter-group">
+
+                            <h3>
+                                Price Range
+                            </h3>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="radio"
+                                    name="price"
+                                    value="all"
+                                    checked>
+
+                                <span>
+                                    All Prices
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="radio"
+                                    name="price"
+                                    value="under-8000">
+
+                                <span>
+                                    Under Rs 8,000
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="radio"
+                                    name="price"
+                                    value="8000-12000">
+
+                                <span>
+                                    Rs 8,000 – Rs 12,000
+                                </span>
+
+                            </label>
+
+
+                            <label class="filter-option">
+
+                                <input
+                                    type="radio"
+                                    name="price"
+                                    value="over-12000">
+
+                                <span>
+                                    Above Rs 12,000
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+
+                        <button
+                            type="button"
+                            class="clear-filters">
+
+                            Clear All Filters
+
+                        </button>
+
+                    </aside>
+
+
+
+                    <!-- =====================================================
+                         PRODUCTS
+                    ====================================================== -->
+
+                    <div class="shop-products">
+
+
+                        <!-- SEARCH -->
+
+                        <div class="shop-search">
+
+                            <div class="search-box">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                                <input
+                                    type="search"
+                                    id="shop-search"
+                                    placeholder="Search dresses, suits, collections...">
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PRODUCT GRID -->
+
+                        <div
+                            class="product-grid shop-product-grid"
+                            id="shop-product-grid">
+
+                            <!-- Products will load automatically -->
+
+                        </div>
+
+
+
+                        <!-- EMPTY STATE -->
+
+                        <div
+                            class="shop-empty"
+                            id="shop-empty"
+                            style="display:none;">
+
+                            <i class="fa-regular fa-face-frown"></i>
+
+                            <h2>
+                                No products found
+                            </h2>
+
+                            <p>
+                                Try changing your search or filters.
+                            </p>
+
+                            <button
+                                type="button"
+                                class="clear-filters">
+
+                                Clear Filters
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             NEWSLETTER
+        ====================================================== -->
+
+        <section class="newsletter-section">
+
+            <div class="container newsletter-container">
+
+                <div class="newsletter-content">
+
+                    <p class="section-label">
+                        STAY IN THE LOOP
+                    </p>
+
+                    <h2>
+                        Be the first to know.
+                    </h2>
+
+                    <p>
+                        Sign up for new arrivals, exclusive offers
+                        and seasonal inspiration.
+                    </p>
+
+                </div>
+
+
+                <form class="newsletter-form">
+
+                    <label
+                        for="newsletter-email"
+                        class="sr-only">
+
+                        Email address
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="newsletter-email"
+                        placeholder="Enter your email address"
+                        required>
+
+                    <button type="submit">
+                        Subscribe
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="container footer-grid">
+
+
+            <div class="footer-brand">
+
+                <a
+                    href="index.html"
+                    class="footer-logo">
+
+                    THREADLINE
+
+                </a>
+
+                <p>
+                    Thoughtfully designed clothing
+                    for every version of you.
+                </p>
+
+
+                <div class="social-links">
+
+                    <a href="#" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+
+                    <a href="#" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+
+                    <a href="#" aria-label="TikTok">
+                        <i class="fa-brands fa-tiktok"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="shop.html">
+                    New Arrivals
+                </a>
+
+                <a href="categories.html">
+                    Stitched
+                </a>
+
+                <a href="categories.html">
+                    Unstitched
+                </a>
+
+                <a href="categories.html">
+                    Eastern Wear
+                </a>
+
+                <a href="categories.html">
+                    Western Wear
+                </a>
+
+            </div>
+
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Customer Care
+                </h3>
+
+                <a href="contact.html">
+                    Contact Us
+                </a>
+
+                <a href="#">
+                    Shipping & Delivery
+                </a>
+
+                <a href="#">
+                    Returns & Exchange
+                </a>
+
+                <a href="#">
+                    Size Guide
+                </a>
+
+                <a href="#">
+                    FAQs
+                </a>
+
+            </div>
+
+
+
+            <div class="footer-column">
+
+                <h3>
+                    Information
+                </h3>
+
+                <a href="about.html">
+                    About Threadline
+                </a>
+
+                <a href="#">
+                    Privacy Policy
+                </a>
+
+                <a href="#">
+                    Terms & Conditions
+                </a>
+
+                <a href="#">
+                    Track Order
+                </a>
+
+                <a href="contact.html">
+                    Help
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="footer-bottom">
+
+            <div class="container">
+
+                <p>
+
+                    ©
+                    <span id="year"></span>
+                    Threadline Clothing.
+                    All Rights Reserved.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <!-- IMPORTANT:
+         data.js FIRST
+         main.js SECOND
+    -->
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+
+
+    <!-- SHOP PAGE LOGIC -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const grid =
+                    document.getElementById(
+                        "shop-product-grid"
+                    );
+
+                const count =
+                    document.getElementById(
+                        "product-count"
+                    );
+
+                const searchInput =
+                    document.getElementById(
+                        "shop-search"
+                    );
+
+                const sortSelect =
+                    document.getElementById(
+                        "sort-products"
+                    );
+
+                const emptyState =
+                    document.getElementById(
+                        "shop-empty"
+                    );
+
+                const categoryInputs =
+                    document.querySelectorAll(
+                        'input[name="category"]'
+                    );
+
+                const priceInputs =
+                    document.querySelectorAll(
+                        'input[name="price"]'
+                    );
+
+                const clearButtons =
+                    document.querySelectorAll(
+                        ".clear-filters"
+                    );
+
+
+                let products =
+                    typeof loadProducts === "function"
+                        ? loadProducts()
+                        : [];
+
+
+                let filteredProducts =
+                    [...products];
+
+
+                function applyQueryCategory() {
+
+                    const params = new URLSearchParams(
+                        window.location.search
+                    );
+
+                    const requested =
+                        normalizeCategoryQuery(
+                            params.get("category") || params.get("filter")
+                        );
+
+                    if (!requested) {
+                        return;
+                    }
+
+                    const categoryInputs =
+                        document.querySelectorAll(
+                            'input[name="category"]'
+                        );
+
+                    if (requested === "new-arrivals") {
+                        categoryInputs.forEach(input => {
+                            input.checked = false;
+                        });
+                        return;
+                    }
+
+                    categoryInputs.forEach(input => {
+                        input.checked =
+                            input.value === requested;
+                    });
+
+                }
+
+
+                /* =========================================
+                   RENDER PRODUCTS
+                ========================================== */
+
+                function renderProducts(list) {
+
+                    if (!grid) return;
+
+
+                    grid.innerHTML = "";
+
+
+                    if (!list.length) {
+
+                        if (emptyState) {
+                            emptyState.style.display =
+                                "block";
+                        }
+
+                        if (count) {
+                            count.textContent = "0";
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (emptyState) {
+                        emptyState.style.display =
+                            "none";
+                    }
+
+
+                    list.forEach(product => {
+
+                        grid.insertAdjacentHTML(
+                            "beforeend",
+                            productCardHTML(product)
+                        );
+
+                    });
+
+
+                    if (count) {
+                        count.textContent =
+                            list.length;
+                    }
+
+
+                    bindCartButtons();
+
+                }
+
+
+
+                /* =========================================
+                   FILTER PRODUCTS
+                ========================================== */
+
+                function applyFilters() {
+
+                    const search =
+                        searchInput
+                            ? searchInput.value
+                                .trim()
+                                .toLowerCase()
+                            : "";
+
+
+                    const selectedCategories =
+                        Array.from(
+                            categoryInputs
+                        )
+                        .filter(input => input.checked)
+                        .map(input => input.value);
+
+                    const params = new URLSearchParams(
+                        window.location.search
+                    );
+
+                    const requested =
+                        normalizeCategoryQuery(
+                            params.get("category") || params.get("filter")
+                        );
+
+                    const selectedPrice =
+                        document.querySelector(
+                            'input[name="price"]:checked'
+                        );
+
+
+                    const price =
+                        selectedPrice
+                            ? selectedPrice.value
+                            : "all";
+
+
+                    filteredProducts =
+                        products.filter(product => {
+
+
+                            /* SEARCH */
+
+                            const searchable =
+                                (
+                                    product.name +
+                                    " " +
+                                    product.category +
+                                    " " +
+                                    product.fabric
+                                )
+                                .toLowerCase();
+
+
+                            if (
+                                search &&
+                                !searchable.includes(search)
+                            ) {
+
+                                return false;
+
+                            }
+
+
+
+                            /* CATEGORY */
+
+                            if (requested === "new-arrivals") {
+                                if (!isNewArrivalProduct(product)) {
+                                    return false;
+                                }
+                            }
+
+                            if (
+                                selectedCategories.length &&
+                                !selectedCategories.includes(
+                                    product.category
+                                )
+                            ) {
+
+                                return false;
+
+                            }
+
+
+
+                            /* PRICE */
+
+                            const productPrice =
+                                Number(
+                                    product.price || 0
+                                );
+
+
+                            if (
+                                price === "under-8000" &&
+                                productPrice >= 8000
+                            ) {
+
+                                return false;
+
+                            }
+
+
+                            if (
+                                price === "8000-12000" &&
+                                (
+                                    productPrice < 8000 ||
+                                    productPrice > 12000
+                                )
+                            ) {
+
+                                return false;
+
+                            }
+
+
+                            if (
+                                price === "over-12000" &&
+                                productPrice <= 12000
+                            ) {
+
+                                return false;
+
+                            }
+
+
+                            return true;
+
+                        });
+
+
+                    applySort();
+
+                }
+
+
+
+                /* =========================================
+                   SORT PRODUCTS
+                ========================================== */
+
+                function applySort() {
+
+                    const sort =
+                        sortSelect
+                            ? sortSelect.value
+                            : "featured";
+
+
+                    if (sort === "price-low") {
+
+                        filteredProducts.sort(
+                            (a, b) =>
+                                Number(a.price) -
+                                Number(b.price)
+                        );
+
+                    }
+
+
+                    if (sort === "price-high") {
+
+                        filteredProducts.sort(
+                            (a, b) =>
+                                Number(b.price) -
+                                Number(a.price)
+                        );
+
+                    }
+
+
+                    if (sort === "name") {
+
+                        filteredProducts.sort(
+                            (a, b) =>
+                                a.name.localeCompare(
+                                    b.name
+                                )
+                        );
+
+                    }
+
+
+                    renderProducts(
+                        filteredProducts
+                    );
+
+                }
+
+
+
+                /* =========================================
+                   SEARCH
+                ========================================== */
+
+                if (searchInput) {
+
+                    searchInput.addEventListener(
+                        "input",
+                        applyFilters
+                    );
+
+                }
+
+
+
+                /* =========================================
+                   CATEGORY FILTER
+                ========================================== */
+
+                categoryInputs.forEach(
+                    input => {
+
+                        input.addEventListener(
+                            "change",
+                            applyFilters
+                        );
+
+                    }
+                );
+
+
+
+                /* =========================================
+                   PRICE FILTER
+                ========================================== */
+
+                priceInputs.forEach(
+                    input => {
+
+                        input.addEventListener(
+                            "change",
+                            applyFilters
+                        );
+
+                    }
+                );
+
+
+
+                /* =========================================
+                   SORT
+                ========================================== */
+
+                if (sortSelect) {
+
+                    sortSelect.addEventListener(
+                        "change",
+                        applyFilters
+                    );
+
+                }
+
+
+
+                /* =========================================
+                   CLEAR FILTERS
+                ========================================== */
+
+                clearButtons.forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+
+                                categoryInputs.forEach(
+                                    input => {
+                                        input.checked =
+                                            false;
+                                    }
+                                );
+
+
+                                const allPrice =
+                                    document.querySelector(
+                                        'input[name="price"][value="all"]'
+                                    );
+
+
+                                if (allPrice) {
+                                    allPrice.checked =
+                                        true;
+                                }
+
+
+                                if (searchInput) {
+                                    searchInput.value =
+                                        "";
+                                }
+
+
+                                if (sortSelect) {
+                                    sortSelect.value =
+                                        "featured";
+                                }
+
+
+                                applyFilters();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+
+                /* =========================================
+                   NEWSLETTER
+                ========================================== */
+
+                const newsletter =
+                    document.querySelector(
+                        ".newsletter-form"
+                    );
+
+
+                if (newsletter) {
+
+                    newsletter.addEventListener(
+                        "submit",
+                        function (event) {
+
+                            event.preventDefault();
+
+                            alert(
+                                "Thank you for subscribing to Threadline."
+                            );
+
+                            newsletter.reset();
+
+                        }
+                    );
+
+                }
+
+
+
+                /* =========================================
+                   INITIAL LOAD
+                ========================================== */
+
+                applyQueryCategory();
+                applyFilters();
+                renderProducts(
+                    filteredProducts
+                );
+
+            }
+
+        );
+
+    </script>
+
 </body>
+
 </html>
