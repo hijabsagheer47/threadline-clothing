@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload a dress — Threadline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkout.html">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">SELLER PANEL</span>
+        <h2>Post a new dress.</h2>
+      </div>
+      <p>Add 3–4 photos, the name, price and details. It appears in the shop immediately.</p>
+    </div>
+
+    <div class="admin-shell">
+      <div class="form-card">
+        <form id="dressForm">
+          <div class="field">
+            <label for="fName">Dress name</label>
+            <input type="text" id="fName" required placeholder="e.g. Zareen Embroidered Suit">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="fPrice">Price (PKR)</label>
+              <input type="number" id="fPrice" min="0" required placeholder="8900">
+            </div>
+            <div class="field">
+              <label for="fCategory">Category</label>
+              <select id="fCategory" required>
+                <option value="Stitched">Stitched</option>
+                <option value="Unstitched">Unstitched</option>
+                <option value="Western">Western</option>
+                <option value="Eastern">Eastern</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="fFabric">Fabric (optional)</label>
+              <input type="text" id="fFabric" placeholder="e.g. Lawn, Net dupatta">
+            </div>
+            <div class="field">
+              <label for="fSizes">Sizes (optional)</label>
+              <input type="text" id="fSizes" placeholder="e.g. S · M · L · XL">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="fDetails">Details</label>
+            <textarea id="fDetails" required placeholder="Describe the cut, work, dupatta, occasion…"></textarea>
+          </div>
+
+          <div class="field">
+            <label>Photos — add 3 to 4</label>
+            <div class="upload-slots" id="uploadSlots"></div>
+            <p class="hint">Tap a box to choose a photo. JPG or PNG, first photo is used as the main image.</p>
+          </div>
+
+          <button type="submit" class="btn btn-solid btn-block">Post dress</button>
+          <div class="form-msg" id="formMsg"></div>
+        </form>
+      </div>
+
+      <div>
+        <h3>Currently listed</h3>
+        <p class="hint" style="margin-bottom:18px;">Everything posted here — remove anything that shouldn't be public.</p>
+        <div class="admin-list" id="adminList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const SLOT_COUNT = 4;
+  let slotImages = new Array(SLOT_COUNT).fill(null);
+
+  function renderSlots(){
+    const wrap = document.getElementById("uploadSlots");
+    wrap.innerHTML = "";
+    for(let i=0;i<SLOT_COUNT;i++){
+      const slot = document.createElement("div");
+      slot.className = "upload-slot";
+      if(slotImages[i]){
+        slot.innerHTML = `<img src="${slotImages[i]}" alt="Photo ${i+1}"><span class="remove" data-i="${i}">✕</span>`;
+      }else{
+        slot.innerHTML = `<span>${i < 3 ? "Photo " + (i+1) + " (required)" : "Photo 4 (optional)"}</span>
+          <input type="file" accept="image/*" data-i="${i}">`;
+      }
+      wrap.appendChild(slot);
+    }
+    wrap.querySelectorAll("input[type=file]").forEach(inp=>{
+      inp.addEventListener("change", (e)=>{
+        const i = Number(inp.dataset.i);
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ()=>{
+          slotImages[i] = reader.result;
+          renderSlots();
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+    wrap.querySelectorAll(".remove").forEach(btn=>{
+      btn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        const i = Number(btn.dataset.i);
+        slotImages[i] = null;
+        renderSlots();
+      });
+    });
+  }
+  renderSlots();
+
+  function showMsg(text, ok){
+    const el = document.getElementById("formMsg");
+    el.textContent = text;
+    el.className = "form-msg show " + (ok ? "ok" : "err");
+  }
+
+  document.getElementById("dressForm").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const images = slotImages.filter(Boolean);
+    if(images.length < 3){
+      showMsg("Add at least 3 photos before posting.", false);
+      return;
+    }
+    const product = {
+      name: document.getElementById("fName").value.trim(),
+      price: Number(document.getElementById("fPrice").value),
+      category: document.getElementById("fCategory").value,
+      fabric: document.getElementById("fFabric").value.trim(),
+      sizes: document.getElementById("fSizes").value.trim(),
+      details: document.getElementById("fDetails").value.trim(),
+      images
+    };
+    addProduct(product);
+    showMsg(`"${product.name}" was posted to the ${product.category} category.`, true);
+    document.getElementById("dressForm").reset();
+    slotImages = new Array(SLOT_COUNT).fill(null);
+    renderSlots();
+    renderAdminList();
+  });
+
+  function renderAdminList(){
+    const list = loadProducts();
+    const el = document.getElementById("adminList");
+    if(list.length === 0){
+      el.innerHTML = `<div class="empty-state"><h3>Nothing listed yet</h3><p>Post your first dress using the form.</p></div>`;
+      return;
+    }
+    el.innerHTML = list.map(p => `
+      <div class="admin-row">
+        <img class="thumb" src="${p.images[0]}" alt="${p.name}">
+        <div>
+          <div class="name">${p.name}</div>
+          <div class="meta">${p.category} · ${money(p.price)}</div>
+        </div>
+        <a href="product.html?id=${p.id}" class="btn btn-small">View</a>
+        <button class="del" data-id="${p.id}">Remove</button>
+      </div>
+    `).join("");
+    el.querySelectorAll(".del").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        if(confirm("Remove this dress from the shop?")){
+          deleteProduct(btn.dataset.id);
+          renderAdminList();
+        }
+      });
+    });
+  }
+  renderAdminList();
+</script>
+</body>
+</html>

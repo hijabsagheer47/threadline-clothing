@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart — Threadline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html" class="active">Cart</a></li>
+      <li><a href="checkout.html">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">YOUR BAG</span>
+        <h2>Shopping cart</h2>
+      </div>
+      <a href="shop.html" class="btn btn-small">Continue shopping</a>
+    </div>
+
+    <div class="cart-layout">
+      <div class="cart-items" id="cartItems"></div>
+      <aside class="order-card summary-card" id="cartSummary"></aside>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderCart(){
+    const cart = getCart();
+    const itemsWrap = document.getElementById('cartItems');
+    const summary = document.getElementById('cartSummary');
+
+    if (!cart.length) {
+      itemsWrap.innerHTML = `
+        <div class="empty-state">
+          <h3>Your cart is empty</h3>
+          <p>Choose a few looks and they will appear here.</p>
+          <a href="shop.html" class="btn btn-solid" style="margin-top:18px;">Browse collection</a>
+        </div>`;
+      summary.innerHTML = `
+        <h3>Order summary</h3>
+        <div class="summary-row"><span>Subtotal</span><strong>${money(0)}</strong></div>
+        <div class="summary-row"><span>Delivery</span><strong>${money(0)}</strong></div>
+        <div class="summary-row total"><span>Total</span><strong>${money(0)}</strong></div>
+      `;
+      syncCartBadge();
+      return;
+    }
+
+    itemsWrap.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <img src="${item.image || 'https://via.placeholder.com/240x320?text=Threadline'}" alt="${item.name}">
+        <div class="cart-copy">
+          <div class="cart-head">
+            <h3>${item.name}</h3>
+            <button type="button" class="remove-btn" data-id="${item.id}">Remove</button>
+          </div>
+          <div class="cart-meta">${money(item.price)} each</div>
+          <div class="qty-controls">
+            <button type="button" data-action="decrease" data-id="${item.id}">−</button>
+            <span>${item.qty}</span>
+            <button type="button" data-action="increase" data-id="${item.id}">+</button>
+          </div>
+          <div class="cart-line-total">${money(item.price * item.qty)}</div>
+        </div>
+      </div>
+    `).join('');
+
+    itemsWrap.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        removeCartItem(btn.dataset.id);
+        renderCart();
+      });
+    });
+
+    itemsWrap.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const nextQty = btn.dataset.action === 'increase' ? 1 : -1;
+        const updated = getCart().find(item => item.id === btn.dataset.id);
+        if (!updated) return;
+        const newQty = updated.qty + nextQty;
+        if (newQty <= 0) {
+          removeCartItem(btn.dataset.id);
+        } else {
+          updateCartItemQty(btn.dataset.id, newQty);
+        }
+        renderCart();
+      });
+    });
+
+    const totals = getCartTotals();
+    summary.innerHTML = `
+      <h3>Order summary</h3>
+      <div class="summary-row"><span>Subtotal</span><strong>${money(totals.subtotal)}</strong></div>
+      <div class="summary-row"><span>Delivery</span><strong>${money(totals.delivery)}</strong></div>
+      <div class="summary-row total"><span>Total</span><strong>${money(totals.total)}</strong></div>
+      <a href="checkout.html" class="btn btn-solid btn-block">Proceed to checkout</a>
+    `;
+    syncCartBadge();
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

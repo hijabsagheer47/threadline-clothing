@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop — Threadline</title>
+<meta name="description" content="Browse stitched, unstitched, western and eastern dresses with photos, pricing and details.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html" class="active">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkout.html">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">FULL CATALOGUE</span>
+        <h2>Shop all dresses.</h2>
+      </div>
+      <p id="resultCount"></p>
+    </div>
+
+    <div class="toolbar">
+      <div class="filter-tabs" id="filterTabs"></div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by name…" aria-label="Search dresses">
+      </div>
+    </div>
+
+    <div class="product-grid" id="shopGrid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <h3>No dresses match that search</h3>
+      <p>Try a different category or clear the search box.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  let activeCat = params.get("cat") || "All";
+  let query = "";
+
+  function renderTabs(){
+    const tabs = ["All", ...CATEGORIES];
+    document.getElementById("filterTabs").innerHTML = tabs.map(cat => `
+      <button data-cat="${cat}" class="${cat === activeCat ? "active" : ""}">${cat}</button>
+    `).join("");
+    document.querySelectorAll("#filterTabs button").forEach(btn=>{
+      btn.addEventListener("click", () => {
+        activeCat = btn.dataset.cat;
+        renderTabs();
+        renderGrid();
+      });
+    });
+  }
+
+  function renderGrid(){
+    let list = loadProducts();
+    if(activeCat !== "All") list = list.filter(p => p.category === activeCat);
+    if(query.trim()) list = list.filter(p => p.name.toLowerCase().includes(query.trim().toLowerCase()));
+
+    const grid = document.getElementById("shopGrid");
+    const empty = document.getElementById("emptyState");
+    document.getElementById("resultCount").textContent = list.length + (list.length === 1 ? " dress" : " dresses");
+
+    if(list.length === 0){
+      grid.innerHTML = "";
+      empty.style.display = "block";
+    }else{
+      empty.style.display = "none";
+      grid.innerHTML = list.map(productCardHTML).join("");
+    }
+  }
+
+  document.getElementById("searchInput").addEventListener("input", (e)=>{
+    query = e.target.value;
+    renderGrid();
+  });
+
+  renderTabs();
+  renderGrid();
+</script>
+</body>
+</html>

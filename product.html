@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dress details — Threadline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkout.html">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section-tight">
+  <div class="container" id="productRoot">
+    <!-- filled by JS -->
+  </div>
+</section>
+
+<section class="section alt" id="relatedSection" style="display:none;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">YOU MAY ALSO LIKE</span>
+        <h2>More from this category.</h2>
+      </div>
+    </div>
+    <div class="product-grid" id="relatedGrid"></div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  const id = new URLSearchParams(location.search).get("id");
+  const product = id ? getProductById(id) : null;
+  const root = document.getElementById("productRoot");
+
+  if(!product){
+    root.innerHTML = `
+      <div class="empty-state">
+        <h3>This dress could not be found</h3>
+        <p>It may have been removed. Have a look at the full catalogue instead.</p>
+        <a href="shop.html" class="btn btn-solid" style="margin-top:18px;">Back to shop</a>
+      </div>`;
+  }else{
+    document.title = product.name + " — Threadline";
+    let activeImg = 0;
+
+    function renderDetail(){
+      root.innerHTML = `
+        <div class="detail-wrap">
+          <div>
+            <div class="gallery-main"><img id="mainImg" src="${product.images[activeImg]}" alt="${product.name}"></div>
+            <div class="gallery-thumbs" id="thumbs">
+              ${product.images.map((img,i)=>`
+                <button class="${i===activeImg ? "active" : ""}" data-i="${i}" aria-label="Photo ${i+1}">
+                  <img src="${img}" alt="">
+                </button>`).join("")}
+            </div>
+          </div>
+          <div class="detail-info">
+            <span class="p-cat">${product.category.toUpperCase()}</span>
+            <h1>${product.name}</h1>
+            <div class="price">${money(product.price)}</div>
+            <p class="desc">${product.details}</p>
+            <div class="spec-row"><span>Fabric</span><span>${product.fabric || "—"}</span></div>
+            <div class="spec-row"><span>Sizes</span><span>${product.sizes || "—"}</span></div>
+            <div class="spec-row"><span>Category</span><span>${product.category}</span></div>
+            <a href="contact.html" class="btn btn-solid btn-block" style="margin-top:26px;">Enquire about this dress</a>
+          </div>
+        </div>`;
+
+      document.querySelectorAll("#thumbs button").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          activeImg = Number(btn.dataset.i);
+          renderDetail();
+        });
+      });
+    }
+    renderDetail();
+
+    const related = loadProducts().filter(p => p.category === product.category && p.id !== product.id).slice(0,4);
+    if(related.length){
+      document.getElementById("relatedSection").style.display = "block";
+      document.getElementById("relatedGrid").innerHTML = related.map(productCardHTML).join("");
+    }
+  }
+</script>
+</body>
+</html>

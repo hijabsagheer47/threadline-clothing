@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — Threadline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkout.html" class="active">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">CHECKOUT</span>
+        <h2>Complete your order</h2>
+      </div>
+    </div>
+
+    <div class="checkout-layout">
+      <form id="checkoutForm" class="checkout-form form-card">
+        <div class="field-row">
+          <div class="field">
+            <label for="customerName">Customer name</label>
+            <input id="customerName" type="text" required>
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input id="phone" type="tel" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email">
+          </div>
+          <div class="field">
+            <label for="city">City</label>
+            <input id="city" type="text" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="address">Address</label>
+          <textarea id="address" required></textarea>
+        </div>
+
+        <div class="field">
+          <label>Payment method</label>
+          <div class="payment-options">
+            <label class="radio-option"><input type="radio" name="paymentMethod" value="Easypaisa" checked> Easypaisa</label>
+            <label class="radio-option"><input type="radio" name="paymentMethod" value="JazzCash"> JazzCash</label>
+            <label class="radio-option"><input type="radio" name="paymentMethod" value="Bank Transfer"> Bank Transfer</label>
+            <label class="radio-option"><input type="radio" name="paymentMethod" value="Cash on Delivery"> Cash on Delivery (COD)</label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-solid btn-block">Place order</button>
+        <div id="checkoutMsg" class="form-msg"></div>
+      </form>
+
+      <aside class="order-card summary-card" id="checkoutSummary"></aside>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderCheckoutSummary(){
+    const summary = document.getElementById('checkoutSummary');
+    const cart = getCart();
+    if (!cart.length) {
+      summary.innerHTML = `
+        <h3>Cart summary</h3>
+        <div class="empty-state small">
+          <h3>Your cart is empty</h3>
+          <p>Add products before checkout.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const totals = getCartTotals();
+    summary.innerHTML = `
+      <h3>Cart summary</h3>
+      ${cart.map(item => `
+        <div class="mini-summary-item">
+          <span>${item.name} × ${item.qty}</span>
+          <strong>${money(item.price * item.qty)}</strong>
+        </div>
+      `).join('')}
+      <div class="summary-row"><span>Subtotal</span><strong>${money(totals.subtotal)}</strong></div>
+      <div class="summary-row"><span>Delivery</span><strong>${money(totals.delivery)}</strong></div>
+      <div class="summary-row total"><span>Total</span><strong>${money(totals.total)}</strong></div>
+    `;
+  }
+
+  document.getElementById('checkoutForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const cart = getCart();
+    if (!cart.length) {
+      document.getElementById('checkoutMsg').textContent = 'Your cart is empty.';
+      document.getElementById('checkoutMsg').className = 'form-msg show err';
+      return;
+    }
+
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'Cash on Delivery';
+    const order = placeOrder({
+      customerName: document.getElementById('customerName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      city: document.getElementById('city').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      paymentMethod
+    });
+
+    if (!order) {
+      document.getElementById('checkoutMsg').textContent = 'Unable to place order right now.';
+      document.getElementById('checkoutMsg').className = 'form-msg show err';
+      return;
+    }
+
+    sessionStorage.setItem('lastOrder', JSON.stringify(order));
+    window.location.href = 'order-confirmation.html';
+  });
+
+  renderCheckoutSummary();
+  syncCartBadge();
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Threadline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html" class="brand"><span class="brand-mark">T</span>hreadline</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="categories.html">Categories</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+      <li><a href="cart.html">Cart</a></li>
+      <li><a href="checkout.html">Checkout</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+        Cart <span class="cart-badge">0</span>
+      </a>
+      <a href="admin.html" class="btn btn-small">Upload Dress</a>
+      <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<section class="section">
+  <div class="container split">
+    <div>
+      <span class="kicker">OUR STORY</span>
+      <h1>Made to be worn, not just displayed.</h1>
+      <p>Threadline started as a single tailoring counter and grew into a full storefront covering four kinds of wear: ready-to-wear stitched suits, fabric-only unstitched sets, tailored western pieces, and hand-finished eastern occasion wear.</p>
+      <p>Every dress on this site is listed the same way — several photos, the fabric, the price and any sizing notes — so a decision can be made without needing to visit in person first.</p>
+      <div class="stat-row">
+        <div><div class="num" id="statCount">—</div><div class="lbl">dresses live now</div></div>
+        <div><div class="num">4</div><div class="lbl">categories</div></div>
+        <div><div class="num">10+</div><div class="lbl">years tailoring</div></div>
+      </div>
+    </div>
+    <div>
+      <div class="gallery-main" style="aspect-ratio:4/5;">
+        <svg viewBox="0 0 480 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+          <defs>
+            <linearGradient id="aboutG" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#AD8A4E"/>
+              <stop offset="1" stop-color="#7A2E3B"/>
+            </linearGradient>
+          </defs>
+          <rect width="480" height="600" fill="url(#aboutG)"/>
+          <g fill="none" stroke="#F6EFE4" stroke-width="1.2" opacity="0.55">
+            <circle cx="240" cy="230" r="90"/>
+            <path d="M120 420 C200 380 280 380 360 420"/>
+            <path d="M110 470 C200 430 280 430 370 470"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">WHAT WE STAND FOR</span>
+        <h2>Three things we don't compromise on.</h2>
+      </div>
+    </div>
+    <div class="category-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="category-card" style="min-height:220px;">
+        <h3>Honest photos</h3>
+        <span class="count">What you see is what gets packed and sent.</span>
+      </div>
+      <div class="category-card" style="min-height:220px;">
+        <h3>Fair pricing</h3>
+        <span class="count">One listed price, no back-and-forth bargaining.</span>
+      </div>
+      <div class="category-card" style="min-height:220px;">
+        <h3>Finished properly</h3>
+        <span class="count">Every seam checked before a dress goes up for sale.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>Threadline</h4>
+        <p>Stitched, unstitched, western and eastern wear — designed and finished in-house, one thread at a time.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="shop.html?cat=Stitched">Stitched</a></li>
+          <li><a href="shop.html?cat=Unstitched">Unstitched</a></li>
+          <li><a href="shop.html?cat=Western">Western</a></li>
+          <li><a href="shop.html?cat=Eastern">Eastern</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Customer Care</h4>
+        <ul>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping &amp; Delivery</a></li>
+          <li><a href="#">Return &amp; Exchange</a></li>
+          <li><a href="#">Order Tracking</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Information</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Cookie Policy</a></li>
+          <li><a href="#">Terms &amp; Conditions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Developed by</h4>
+        <p>Gopang IT Solution<br>+92 334 232232<br><a href="mailto:info@gopangitsolution.com">info@gopangitsolution.com</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Threadline. All rights reserved.</span>
+      <span>Demo storefront built to the project brief</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.getElementById("statCount").textContent = loadProducts().length;
+</script>
+</body>
+</html>
