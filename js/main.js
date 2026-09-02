@@ -3,7 +3,7 @@
    Maximum 35 products per category
    ============================================================ */
 
-const RH_KEY = "rh_products_v3";
+const RH_KEY = "rh_products_v6_local_clothing_images";
 
 const FALLBACK_CATEGORIES = [
   "Stitched",
@@ -995,6 +995,11 @@ function productCardHTML(product) {
       ? product.images[1]
       : img1;
 
+  const fallback =
+    typeof fallbackFashionImage === "function"
+      ? fallbackFashionImage(product.id)
+      : img1;
+
 
   return `
 
@@ -1013,6 +1018,7 @@ function productCardHTML(product) {
             src="${img1}"
             alt="${product.name}"
             loading="lazy"
+            onerror="this.onerror=null;this.src='${fallback}';"
           />
 
           <img
@@ -1020,6 +1026,7 @@ function productCardHTML(product) {
             src="${img2}"
             alt=""
             loading="lazy"
+            onerror="this.onerror=null;this.src='${fallback}';"
           />
 
           <span class="product-tag">

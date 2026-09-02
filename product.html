@@ -214,11 +214,11 @@
                 <button
                     class="product-thumb active"
                     type="button"
-                    onclick="changeProductImage(this, 'images/products/dress-1.jpg')"
+                    onclick="changeProductImage(this, 'images/products/catalog-001.jpg')"
                 >
 
                     <img
-                        src="images/products/dress-1.jpg"
+                        src="images/products/catalog-001.jpg"
                         alt="Threadline dress front view"
                     >
 
@@ -228,11 +228,11 @@
                 <button
                     class="product-thumb"
                     type="button"
-                    onclick="changeProductImage(this, 'images/products/dress-2.jpg')"
+                    onclick="changeProductImage(this, 'images/products/catalog-002.jpg')"
                 >
 
                     <img
-                        src="images/products/dress-2.jpg"
+                        src="images/products/catalog-002.jpg"
                         alt="Threadline dress side view"
                     >
 
@@ -242,11 +242,11 @@
                 <button
                     class="product-thumb"
                     type="button"
-                    onclick="changeProductImage(this, 'images/products/dress-3.jpg')"
+                    onclick="changeProductImage(this, 'images/products/catalog-003.jpg')"
                 >
 
                     <img
-                        src="images/products/dress-3.jpg"
+                        src="images/products/catalog-003.jpg"
                         alt="Threadline dress detail"
                     >
 
@@ -256,11 +256,11 @@
                 <button
                     class="product-thumb"
                     type="button"
-                    onclick="changeProductImage(this, 'images/products/dress-4.jpg')"
+                    onclick="changeProductImage(this, 'images/products/catalog-004.jpg')"
                 >
 
                     <img
-                        src="images/products/dress-4.jpg"
+                        src="images/products/catalog-004.jpg"
                         alt="Threadline dress back view"
                     >
 
@@ -1335,6 +1335,7 @@
      JAVASCRIPT
 ========================================================= -->
 
+<script src="js/data.js"></script>
 <script src="js/main.js"></script>
 
 
@@ -1350,6 +1351,10 @@ function changeProductImage(button, image) {
         document.getElementById("mainProductImage");
 
     mainImage.src = image;
+    mainImage.onerror = () => {
+        mainImage.onerror = null;
+        mainImage.src = fallbackFashionImage(currentProduct ? currentProduct.id : image);
+    };
 
     document
         .querySelectorAll(".product-thumb")
@@ -1360,6 +1365,54 @@ function changeProductImage(button, image) {
         });
 
     button.classList.add("active");
+}
+
+let currentProduct = null;
+
+function loadProductDetails() {
+    if (typeof loadProducts !== "function") return;
+
+    const productId = new URLSearchParams(window.location.search).get("id");
+    const products = loadProducts();
+    currentProduct = products.find(product => product.id === productId) || products[0];
+
+    if (!currentProduct) return;
+
+    const images = currentProduct.images || [];
+    const mainImage = document.getElementById("mainProductImage");
+    const thumbnails = document.querySelectorAll(".product-thumb");
+
+    document.querySelector(".product-title").textContent = currentProduct.name;
+    document.querySelector(".product-category").textContent = currentProduct.category;
+    document.querySelector(".current-price").textContent = money(currentProduct.price);
+    document.querySelector(".product-short-description").textContent = currentProduct.details;
+    document.querySelector("#selectedColor").textContent = "Signature";
+    document.querySelector(".product-category").setAttribute("data-category", currentProduct.category);
+
+    document.querySelectorAll(".product-tab-content p").forEach(content => {
+        if (content.closest("#description")) content.textContent = currentProduct.details;
+    });
+
+    thumbnails.forEach((thumbnail, index) => {
+        const image = images[index % images.length] || images[0];
+        const thumbnailImage = thumbnail.querySelector("img");
+        if (!image || !thumbnailImage) return;
+        thumbnailImage.src = image;
+        thumbnailImage.onerror = () => {
+            thumbnailImage.onerror = null;
+            thumbnailImage.src = fallbackFashionImage(`${currentProduct.id}-${index}`);
+        };
+        thumbnail.onclick = () => changeProductImage(thumbnail, image);
+    });
+
+    if (mainImage && images[0]) {
+        mainImage.src = images[0];
+        mainImage.alt = currentProduct.name;
+        mainImage.onerror = () => {
+            mainImage.onerror = null;
+            mainImage.src = fallbackFashionImage(`${currentProduct.id}-main`);
+        };
+    }
 }
 
 
@@ -1535,9 +1588,11 @@ function addProductToCart() {
 
     const product = {
 
-        name: "Premium Embroidered Dress",
+        id: currentProduct ? currentProduct.id : "product-detail",
 
-        price: 4999,
+        name: currentProduct ? currentProduct.name : "Premium Embroidered Dress",
+
+        price: currentProduct ? currentProduct.price : 4999,
 
         quantity: productQuantity,
 
@@ -1545,7 +1600,13 @@ function addProductToCart() {
 
         color: selectedColor,
 
-        image: "images/products/dress-1.jpg"
+        image: currentProduct && currentProduct.images
+            ? currentProduct.images[0]
+            : "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85",
+
+        images: currentProduct && currentProduct.images
+            ? currentProduct.images
+            : []
 
     };
 
@@ -1697,6 +1758,7 @@ if (yearElement) {
    INITIAL CART COUNT
 ========================================================= */
 
+loadProductDetails();
 updateCartCount();
 
 </script>
