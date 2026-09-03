@@ -20,10 +20,12 @@ test('cart helpers add and update item quantities', () => {
   addToCart({ id: 'sku-1', price: 500, name: 'Test dress' }, 1);
   assert.equal(getCart().length, 1);
   assert.equal(getCart()[0].qty, 3);
+  assert.equal(getCart()[0].quantity, 3);
   assert.equal(getCart()[0].price, 500);
 
   updateCartItemQty('sku-1', 5);
   assert.equal(getCart()[0].qty, 5);
+  assert.equal(getCart()[0].quantity, 5);
 
   removeCartItem('sku-1');
   assert.deepEqual(getCart(), []);

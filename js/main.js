@@ -432,7 +432,9 @@ function ensureVisibleCategoryLimit() {
    CART
    ============================================================ */
 
-const CART_KEY = "rh_cart_v1";
+const CART_KEY = "threadlineCart";
+
+const LEGACY_CART_KEY = "rh_cart_v1";
 
 const ORDERS_KEY = "rh_orders_v1";
 
@@ -451,7 +453,8 @@ function getCart() {
   try {
 
     cart = JSON.parse(
-      safeStorageGet(CART_KEY)
+      safeStorageGet(CART_KEY) ||
+      safeStorageGet(LEGACY_CART_KEY)
     );
 
   } catch (e) {
@@ -468,7 +471,18 @@ function getCart() {
   }
 
 
-  return cart;
+  return cart.map(item => {
+
+    const quantity =
+      Number(item.quantity || item.qty || 1);
+
+    return {
+      ...item,
+      qty: quantity,
+      quantity
+    };
+
+  });
 
 }
 
@@ -520,6 +534,7 @@ function addToCart(product, qty = 1) {
   if (existing) {
 
     existing.qty += itemQty;
+    existing.quantity = existing.qty;
 
   } else {
 
@@ -541,7 +556,8 @@ function addToCart(product, qty = 1) {
         ) ||
         "",
 
-      qty: itemQty
+      qty: itemQty,
+      quantity: itemQty
 
     });
 
@@ -581,7 +597,8 @@ function updateCartItemQty(
 
           return {
             ...item,
-            qty: nextQty
+            qty: nextQty,
+            quantity: nextQty
           };
 
         }
