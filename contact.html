@@ -15,6 +15,9 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
         rel="stylesheet">
 
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
   <link rel="stylesheet" href="css/style.css">
 
   <style>
@@ -464,7 +467,7 @@
        ============================================================ -->
 
   <div class="announcement-bar">
-    Free Shipping on Orders Over Rs. 8,000
+    <p>Free delivery on orders above Rs. 5,000</p>
   </div>
 
 
@@ -474,73 +477,40 @@
 
   <header class="site-header">
 
-    <div class="nav-container">
+    <div class="container nav-container">
 
       <a href="index.html" class="brand-logo">
         THREADLINE
       </a>
 
+      <button class="nav-toggle"
+              aria-label="Open navigation menu"
+              type="button">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
       <nav class="site-nav">
-
         <a href="index.html">Home</a>
-
         <a href="shop.html">Shop</a>
-
         <a href="categories.html">Collections</a>
-
-        <a href="shop.html?filter=new">
-          New Arrivals
-        </a>
-
-        <a href="about.html">
-          About
-        </a>
-
-        <a href="contact.html" class="active">
-          Contact
-        </a>
-
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
       </nav>
 
-
       <div class="nav-actions">
-
-        <button
-          class="nav-icon"
-          id="searchButton"
-          aria-label="Search"
-        >
-          ⌕
-        </button>
-
-        <a
-          href="#"
-          class="nav-icon"
-          aria-label="Account"
-        >
-          ♙
+        <a href="shop.html" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
         </a>
-
-        <a
-          href="#"
-          class="nav-icon"
-          aria-label="Wishlist"
-        >
-          ♡
+        <a href="#" aria-label="Account">
+          <i class="fa-regular fa-user"></i>
         </a>
-
-        <a href="cart.html" class="cart-link">
-          Cart
+        <a href="#" aria-label="Wishlist">
+          <i class="fa-regular fa-heart"></i>
+        </a>
+        <a href="cart.html" class="cart-link" aria-label="Shopping cart">
+          <i class="fa-solid fa-bag-shopping"></i>
           <span class="cart-count">0</span>
         </a>
-
-        <button
-          class="nav-toggle"
-          aria-label="Open menu"
-        >
-          ☰
-        </button>
-
       </div>
 
     </div>
