@@ -6,6 +6,10 @@
 Options -Indexes
 ServerSignature Off
 
+# Leftover static index.html files from the pre-PHP site must never win over
+# the PHP storefront when a directory is requested.
+DirectoryIndex index.php index.html
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
