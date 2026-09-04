@@ -61,7 +61,8 @@ jobs:
 
           # lftp's sftp backend shells out to ssh, which will not read a password
           # from lftp -- sshpass feeds it from the environment instead.
-          export SSHPASS="${SFTP_PASSWORD}"
+          # A stray newline pasted into the secret would fail auth silently.
+          export SSHPASS="$(printf '%s' "${SFTP_PASSWORD}" | tr -d '\r\n')"
           SSH_PROG="sshpass -e ssh -a -x -p ${PORT}"
           SSH_PROG="${SSH_PROG} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
           SSH_PROG="${SSH_PROG} -o PreferredAuthentications=password -o PubkeyAuthentication=no"
