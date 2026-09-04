@@ -19,11 +19,11 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Run unit tests
         run: node --test tests/*.test.js
@@ -33,12 +33,12 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Install lftp
+      - name: Install lftp and sshpass
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq lftp
+          sudo apt-get install -y -qq lftp sshpass
 
       - name: Sync files to IONOS via SFTP
         env:
@@ -53,21 +53,41 @@ jobs:
 
           if [ -z "${SFTP_HOST}" ] || [ -z "${SFTP_USERNAME}" ] || [ -z "${SFTP_PASSWORD}" ]; then
             echo "::error::SFTP_HOST / SFTP_USERNAME / SFTP_PASSWORD secrets set nahi hain."
-            echo "Repo Settings -> Secrets and variables -> Actions mein add karein."
             exit 1
           fi
 
           PORT="${SFTP_PORT:-22}"
           TARGET="${REMOTE_DIR:-/mytechrcm/tayyabacollective}"
-          URL="sftp://${SFTP_HOST}:${PORT}"
-          PREAMBLE="set sftp:auto-confirm yes; set net:max-retries 3; set net:timeout 20;"
 
+          # lftp's sftp backend shells out to ssh, which will not read a password
+          # from lftp -- sshpass feeds it from the environment instead.
+          export SSHPASS="${SFTP_PASSWORD}"
+          SSH_PROG="sshpass -e ssh -a -x -p ${PORT}"
+          SSH_PROG="${SSH_PROG} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+          SSH_PROG="${SSH_PROG} -o PreferredAuthentications=password -o PubkeyAuthentication=no"
+          SSH_PROG="${SSH_PROG} -o NumberOfPasswordPrompts=1 -o LogLevel=ERROR"
+
+          PREAMBLE="set sftp:auto-confirm yes;"
+          PREAMBLE="${PREAMBLE} set sftp:connect-program \"${SSH_PROG}\";"
+          PREAMBLE="${PREAMBLE} set net:max-retries 2; set net:timeout 30;"
+          PREAMBLE="${PREAMBLE} set mirror:parallel-transfer-count 4;"
+
+          # The password reaches ssh through SSHPASS, so lftp only needs the user.
           run_lftp() {
-            lftp -u "${SFTP_USERNAME},${SFTP_PASSWORD}" "${URL}" -e "${PREAMBLE} $1 bye"
+            lftp -u "${SFTP_USERNAME},unused" "sftp://${SFTP_HOST}" -e "${PREAMBLE} $1 bye"
           }
 
-          # IONOS SFTP accounts are scoped to a home directory, so the path may be
-          # reachable either in full or with that home prefix already stripped.
+          echo "Login check..."
+          if ! LOGIN_OUT=$(run_lftp "pwd; ls;" 2>&1); then
+            echo "::error::SFTP login nahi hua."
+            printf '%s\n' "${LOGIN_OUT}"
+            exit 1
+          fi
+          echo "Login ok. Home directory contents:"
+          printf '%s\n' "${LOGIN_OUT}"
+
+          # IONOS SFTP accounts are scoped to a home directory, so the configured
+          # path may be reachable in full or with that home prefix already stripped.
           CANDIDATES="${TARGET}"
           case "${TARGET}" in
             /*/*) CANDIDATES="${TARGET} /${TARGET#/*/}" ;;
@@ -86,9 +106,7 @@ jobs:
           done
 
           if [ -z "${RESOLVED}" ]; then
-            echo "::error::Remote directory '${TARGET}' SFTP par nahi mili."
-            echo "Login ke baad ye directories dikhti hain:"
-            run_lftp "pwd; ls;" || true
+            echo "::error::Remote directory '${TARGET}' SFTP par nahi mili. Upar home directory ki listing dekhein."
             exit 1
           fi
 
