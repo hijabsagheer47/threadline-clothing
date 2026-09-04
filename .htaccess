@@ -3,7 +3,10 @@
 # Pretty URLs, security hardening and error pages
 # ============================================================================
 
-Options -Indexes
+# mod_rewrite refuses to apply a substitution unless FollowSymLinks is on.
+# Without it the deny-only ([F]) rules still fire, which makes the breakage
+# look like a routing bug rather than a missing option.
+Options -Indexes +FollowSymLinks
 ServerSignature Off
 
 # Leftover static index.html files from the pre-PHP site must never win over
