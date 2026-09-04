@@ -2091,3 +2091,129 @@ textarea:focus {
 .section-empty i { color: var(--primary); font-size: 30px; }
 .section-empty h3 { margin-top: 14px; font-size: 22px; color: var(--ink); }
 .section-empty p { margin-top: 8px; color: var(--text-light); font-size: 14.5px; }
+
+/* ============================================================================
+   17. PRODUCT PAGE — breadcrumb, rating, info tabs
+   ----------------------------------------------------------------------------
+   The tab strip had working JS (it toggles .active) but no styles, so every
+   panel was visible at once and the buttons rendered as default browser
+   controls. The breadcrumb and details list were unstyled too.
+   ========================================================================== */
+
+.breadcrumb-section {
+    padding: 16px 0;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.breadcrumb a { color: var(--text-light); transition: color .2s var(--ease); }
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb span { color: var(--border-strong); }
+
+/* The trailing item is the current page, so it should not read as a link */
+.breadcrumb > :last-child { color: var(--ink); font-weight: 600; }
+
+.stars { display: inline-flex; gap: 3px; color: var(--gold); font-size: 13px; }
+
+.product-information-section {
+    width: min(92%, var(--container));
+    margin: 0 auto;
+    padding: clamp(40px, 4.5vw, 72px) 0 clamp(20px, 2vw, 32px);
+}
+
+.product-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.product-tab {
+    position: relative;
+    padding: 14px 22px;
+    border: 0;
+    background: transparent;
+    color: var(--text-light);
+    font-family: "DM Sans", sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    transition: color .25s var(--ease);
+}
+
+.product-tab::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transform: translateX(-50%);
+    transition: width .28s var(--ease-out);
+}
+
+.product-tab:hover { color: var(--primary); }
+.product-tab.active { color: var(--primary); }
+.product-tab.active::after { width: 100%; }
+
+/* Only the active panel shows; the JS toggles .active on both layers */
+.product-tab-content { display: none; padding: 28px 2px 0; }
+.product-tab-content.active { display: block; animation: tc-fade-in .35s var(--ease-out); }
+
+@keyframes tc-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+}
+
+.product-tab-content h3 {
+    margin-bottom: 12px;
+    font-size: 20px;
+    color: var(--ink);
+}
+
+.product-tab-content p {
+    max-width: 78ch;
+    color: var(--text-light);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.details-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 32px;
+    max-width: 880px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.details-list li {
+    display: flex;
+    gap: 10px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14.5px;
+    color: var(--text);
+}
+
+.details-list li strong {
+    flex: 0 0 108px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+@media (max-width: 700px) {
+    .details-list { grid-template-columns: minmax(0, 1fr); }
+    .product-tab { padding: 12px 15px; font-size: 12.5px; }
+}
