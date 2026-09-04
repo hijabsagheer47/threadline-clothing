@@ -1,0 +1,83 @@
+name: Deploy to IONOS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      delete_extra:
+        description: "Server par woh files bhi delete karein jo repo mein nahi hain"
+        type: boolean
+        default: false
+
+concurrency:
+  group: deploy-ionos
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run unit tests
+        run: node --test tests/*.test.js
+
+  deploy:
+    name: Deploy to webspace
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install lftp
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+
+      - name: Sync files to IONOS via SFTP
+        env:
+          SFTP_HOST: ${{ secrets.SFTP_HOST }}
+          SFTP_PORT: ${{ secrets.SFTP_PORT }}
+          SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+          REMOTE_DIR: ${{ vars.REMOTE_DIR }}
+          DELETE_EXTRA: ${{ inputs.delete_extra }}
+        run: |
+          set -euo pipefail
+
+          PORT="${SFTP_PORT:-22}"
+          TARGET="${REMOTE_DIR:-/mytechrcm/tayyabacollective}"
+
+          if [ "${DELETE_EXTRA:-false}" = "true" ]; then
+            DELETE_FLAG="--delete"
+          else
+            DELETE_FLAG=""
+          fi
+
+          EXCLUDES="-x ^\.git/ -x ^\.github/ -x ^\.gitignore$ -x ^node_modules/ -x ^tests/ -x ^images/sources/ -x ^README\.md$ -x ^DEPLOY\.md$"
+
+          lftp -u "${SFTP_USERNAME},${SFTP_PASSWORD}" "sftp://${SFTP_HOST}:${PORT}" <<LFTP
+          set sftp:auto-confirm yes
+          set net:max-retries 3
+          set net:timeout 20
+          set mirror:parallel-transfer-count 4
+          mirror --reverse --verbose --continue ${DELETE_FLAG} ${EXCLUDES} ./ ${TARGET}
+          bye
+          LFTP
+
+      - name: Summary
+        run: |
+          {
+            echo "### Deployed to IONOS :rocket:"
+            echo ""
+            echo "- Commit: \`${GITHUB_SHA::7}\`"
+            echo "- Remote path: \`${REMOTE_DIR:-/mytechrcm/tayyabacollective}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+        env:
+          REMOTE_DIR: ${{ vars.REMOTE_DIR }}
