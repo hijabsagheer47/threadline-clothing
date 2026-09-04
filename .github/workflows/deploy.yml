@@ -25,7 +25,12 @@ jobs:
         with:
           node-version: 22
 
-      - name: Run unit tests
+      - name: Install PHP for syntax linting
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq php-cli
+
+      - name: Run project tests
         run: node --test tests/*.test.js
 
   deploy:

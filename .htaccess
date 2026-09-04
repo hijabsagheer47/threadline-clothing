@@ -1,0 +1,59 @@
+# ============================================================================
+# TayyabaCollective — Apache configuration
+# Pretty URLs, security hardening and error pages
+# ============================================================================
+
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # --- Pretty URLs -------------------------------------------------------
+    # /product/{slug}  ->  product.php?slug={slug}
+    RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ product.php?slug=$1 [L,QSA]
+
+    # /category/{slug} ->  category.php?slug={slug}
+    RewriteRule ^category/([a-zA-Z0-9\-]+)/?$ category.php?slug=$1 [L,QSA]
+
+    # /admin            ->  /admin/index.php
+    RewriteRule ^admin/?$ admin/index.php [L,QSA]
+</IfModule>
+
+# --- Protect sensitive directories ------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^config(/|$) - [F,L]
+    RewriteRule ^includes(/|$) - [F,L]
+    RewriteRule ^scripts(/|$) - [F,L]
+    RewriteRule ^(database\.sql|SETUP\.md|README\.md|DEPLOY\.md)$ - [F,L]
+</IfModule>
+
+# --- Uploads: never execute scripts -----------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^uploads/.*\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|sh)$ - [F,L]
+</IfModule>
+
+# --- Error pages -------------------------------------------------------------
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
+
+# --- Basic security headers --------------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# --- Caching for static assets ------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+    ExpiresByType image/svg+xml "access plus 30 days"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+</IfModule>
