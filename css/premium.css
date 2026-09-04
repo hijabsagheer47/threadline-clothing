@@ -1520,7 +1520,7 @@ textarea:focus {
 .brand-logo img {
     grid-row: auto;
     width: auto;
-    height: 46px;
+    height: 54px;
     max-width: 100%;
     object-fit: contain;
     transition: opacity .25s var(--ease);
@@ -1528,5 +1528,5 @@ textarea:focus {
 
 .brand-logo:hover img { opacity: .82; }
 
-@media (max-width: 900px) { .brand-logo img { height: 40px; } }
-@media (max-width: 420px) { .brand-logo img { height: 34px; } }
+@media (max-width: 900px) { .brand-logo img { height: 44px; } }
+@media (max-width: 420px) { .brand-logo img { height: 36px; } }
