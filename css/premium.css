@@ -245,18 +245,39 @@ p { text-wrap: pretty; }
 
 .btn-primary:hover::before { transform: translateX(120%); }
 
+/* The white glass version only reads on a dark photo. It used to be the
+   default, which left "Buy Now", the 403/404 actions and the About CTA as
+   white text on a white page -- invisible. Light is now the default and the
+   white variant is scoped to the dark hero. */
 .btn-outline {
+    border-color: var(--primary);
+    background: transparent;
+    color: var(--primary);
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.hero-buttons .btn-outline,
+.hero-content .btn-outline,
+.shop-hero .btn-outline {
     border-color: rgba(255, 255, 255, .75);
     background: rgba(255, 255, 255, .08);
     backdrop-filter: blur(6px);
     color: #fff;
 }
 
-.btn-outline:hover {
+.hero-buttons .btn-outline:hover,
+.hero-content .btn-outline:hover,
+.shop-hero .btn-outline:hover {
     background: #fff;
-    color: var(--primary);
     border-color: #fff;
-    transform: translateY(-2px);
+    color: var(--primary);
 }
 
 /* Keyboard focus must stay obvious everywhere */
