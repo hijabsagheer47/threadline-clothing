@@ -97,7 +97,7 @@ require __DIR__ . '/includes/storefront-header.php';
              alt="<?= e(setting('store_name')) ?> featured fashion collection" loading="lazy">
     </div>
     <div class="featured-content">
-        <p class="section-label">THE TAYYABACOLLECTIVE EDIT</p>
+        <p class="section-label">THE <?= e(strtoupper(setting('store_name'))) ?> EDIT</p>
         <h2>Made for Moments<br>That Matter</h2>
         <p>
             From effortless everyday looks to statement pieces
@@ -108,11 +108,11 @@ require __DIR__ . '/includes/storefront-header.php';
     </div>
 </section>
 
-<!-- WHY TAYYABACOLLECTIVE -->
+<!-- WHY US -->
 <section class="why-section section-padding">
     <div class="container">
         <div class="section-heading">
-            <p class="section-label">WHY TAYYABACOLLECTIVE</p>
+            <p class="section-label">WHY <?= e(strtoupper(setting('store_name'))) ?></p>
             <h2>Designed With You In Mind</h2>
         </div>
         <div class="features-grid">
@@ -229,7 +229,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="gallery-section section-padding">
     <div class="container">
         <div class="section-heading">
-            <p class="section-label">@TAYYABACOLLECTIVE</p>
+            <p class="section-label">@<?= e(strtoupper(str_replace(' ', '', setting('store_name')))) ?></p>
             <h2>Follow Our Style</h2>
             <p>Everyday inspiration, new collections and more.</p>
         </div>

@@ -4,7 +4,7 @@
  */
 declare(strict_types=1);
 
-$storeName  = setting('store_name', 'TayyabaCollective');
+$storeName  = setting('store_name');
 $footerCats = get_categories(true); // first five, no nav filter
 $shopCats   = array_slice($footerCats, 0, 5);
 $credit     = setting('footer_credit', '');

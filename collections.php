@@ -15,7 +15,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="categories-hero">
     <div class="container">
         <div class="categories-hero-content">
-            <span class="eyebrow">TAYYABACOLLECTIVE COLLECTIONS</span>
+            <span class="eyebrow"><?= e(strtoupper(setting('store_name'))) ?> COLLECTIONS</span>
             <h1>Shop By Category</h1>
             <p>Explore thoughtfully curated fashion collections designed for every mood, occasion and personal style.</p>
         </div>

@@ -85,7 +85,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="categories-hero">
     <div class="container">
         <div class="categories-hero-content">
-            <span class="eyebrow">TAYYABACOLLECTIVE COLLECTION</span>
+            <span class="eyebrow"><?= e(strtoupper(setting('store_name'))) ?> COLLECTION</span>
             <h1><?= e($category['name']) ?></h1>
             <p><?= e($category['description'] ?: 'Discover the ' . $category['name'] . ' collection — thoughtfully designed pieces for every occasion.') ?></p>
         </div>

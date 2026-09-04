@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $storeEmail   = setting('store_email', 'hello@tayyabacollective.mytechrcm.com');
 $storePhone   = setting('store_phone', '+92 300 1234567');
-$storeAddress = setting('store_address', 'TayyabaCollective Studio, Islamabad, Pakistan');
+$storeAddress = setting('store_address');
 
 $page_title       = 'Contact Us';
 $meta_description = 'Get in touch with ' . setting('store_name') . ' — questions about collections, orders, shipping and more.';

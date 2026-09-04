@@ -10,7 +10,7 @@ $meta_description = $meta_description ?? setting('meta_description', '');
 $canonical       = $canonical       ?? abs_current();
 $active_nav      = $active_nav      ?? '';
 
-$storeName  = setting('store_name', 'TayyabaCollective');
+$storeName  = setting('store_name');
 $fullTitle  = $page_title !== ''
     ? (str_contains($page_title, $storeName) ? $page_title : $page_title . ' | ' . $storeName)
     : $storeName;

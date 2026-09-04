@@ -22,7 +22,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="about-intro section-padding">
     <div class="container about-intro-grid">
         <div class="about-intro-content">
-            <p class="section-label">ABOUT TAYYABACOLLECTIVE</p>
+            <p class="section-label">ABOUT <?= e(strtoupper(setting('store_name'))) ?></p>
             <h2>Where timeless style meets modern expression.</h2>
             <p><?= e(setting('store_name')) ?> was created with a simple idea — clothing should feel as beautiful as it looks.</p>
             <p>We bring together refined silhouettes, thoughtful details and carefully selected fabrics to create pieces that can become part of your everyday wardrobe.</p>
@@ -68,7 +68,7 @@ require __DIR__ . '/includes/storefront-header.php';
         <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1800&q=90" alt="Elegant fashion styling">
     </div>
     <div class="about-statement-content">
-        <p class="section-label">THE TAYYABACOLLECTIVE WOMAN</p>
+        <p class="section-label">THE <?= e(strtoupper(setting('store_name'))) ?> WOMAN</p>
         <h2>Confident. Individual. Unapologetically herself.</h2>
         <p><?= e(setting('store_name')) ?> is for every version of you — the woman who keeps things classic, the one who loves experimenting and the one who simply wants to feel good in what she wears.</p>
         <a href="<?= url('/shop.php') ?>" class="btn btn-primary">Explore Collection <i class="fa-solid fa-arrow-right"></i></a>

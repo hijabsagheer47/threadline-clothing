@@ -76,7 +76,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="shop-hero">
     <div class="shop-hero-overlay"></div>
     <div class="container shop-hero-content">
-        <p class="section-label">THE TAYYABACOLLECTIVE COLLECTION</p>
+        <p class="section-label">THE <?= e(strtoupper(setting('store_name'))) ?> COLLECTION</p>
         <h1>Shop Our Collection</h1>
         <p>Discover thoughtfully designed pieces, refined details and timeless styles for every occasion.</p>
     </div>
