@@ -13,6 +13,12 @@ DirectoryIndex index.php index.html
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # The domain maps to a sub-directory of the webspace, so a substitution
+    # without an explicit base is resolved against that filesystem path and
+    # 404s. Rules that only deny ([F]) are unaffected, which is why the
+    # protection rules below worked while these did not.
+    RewriteBase /
+
     # --- Pretty URLs -------------------------------------------------------
     # /product/{slug}  ->  product.php?slug={slug}
     RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ product.php?slug=$1 [L,QSA]
