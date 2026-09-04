@@ -49,6 +49,10 @@ Usi page par **Variables** tab → **New repository variable**:
 
 Ye variable na banayein to bhi default yahi path use hota hai.
 
+**Confirmed:** SFTP account `a1667790` `/mytechrcm` par chroot hai, is liye login ke
+baad asli path **`/tayyabacollective`** banta hai. Workflow ye khud detect kar leti hai —
+aapko `REMOTE_DIR` chhedne ki zaroorat nahi.
+
 ---
 
 ## 4. Test karein
@@ -81,6 +85,12 @@ server par manually upload ki hui cheezein bachi rehti hain).
 Agar server ko repo ka exact copy banana ho:
 Actions → **Deploy to IONOS** → **Run workflow** → *"Server par woh files bhi delete karein…"*
 ko tick karke chalayein.
+
+## Server par purani files
+
+Deploy se pehle manually upload ki gayi `README.md` aur `tests/` folder server par
+mojood hain. Workflow inhein exclude karti hai, is liye ye kabhi update nahi hongi.
+Chahein to IONOS Webspace Explorer se delete kar dein.
 
 ## Manually deploy
 
