@@ -67,28 +67,28 @@ require __DIR__ . '/includes/storefront-header.php';
 
                 <div class="contact-details">
                     <div class="contact-detail">
-                        <div class="contact-icon">⌖</div>
+                        <div class="contact-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
                         <div>
                             <h3>Address</h3>
                             <p><?= nl2br(e($storeAddress)) ?></p>
                         </div>
                     </div>
                     <div class="contact-detail">
-                        <div class="contact-icon">☎</div>
+                        <div class="contact-icon"><i class="fa-solid fa-phone" aria-hidden="true"></i></div>
                         <div>
                             <h3>Phone</h3>
                             <a href="tel:<?= e(preg_replace('/[^0-9+]/', '', $storePhone)) ?>"><?= e($storePhone) ?></a>
                         </div>
                     </div>
                     <div class="contact-detail">
-                        <div class="contact-icon">@</div>
+                        <div class="contact-icon"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
                         <div>
                             <h3>Email</h3>
                             <a href="mailto:<?= e($storeEmail) ?>"><?= e($storeEmail) ?></a>
                         </div>
                     </div>
                     <div class="contact-detail">
-                        <div class="contact-icon">◷</div>
+                        <div class="contact-icon"><i class="fa-regular fa-clock" aria-hidden="true"></i></div>
                         <div>
                             <h3>Opening Hours</h3>
                             <p>Monday – Saturday<br>10:00 AM – 7:00 PM</p>
@@ -99,9 +99,12 @@ require __DIR__ . '/includes/storefront-header.php';
                 <div class="contact-social">
                     <h3>Follow <?= e(setting('store_name')) ?></h3>
                     <div class="social-links">
-                        <a href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="<?= e(setting('tiktok_url', '#')) ?>" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a class="s-instagram" href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                        <a class="s-facebook" href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a class="s-linkedin" href="<?= e(setting('linkedin_url', '#')) ?>" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <?php $waUrl = whatsapp_url('Hello! I have a question.'); if ($waUrl !== ''): ?>
+                        <a class="s-whatsapp" href="<?= e($waUrl) ?>" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -170,19 +173,19 @@ require __DIR__ . '/includes/storefront-header.php';
 
             <div class="faq-list">
                 <div class="faq-item">
-                    <button class="faq-question" type="button"><span>How long does delivery take?</span><span>+</span></button>
+                    <button class="faq-question" type="button"><span>How long does delivery take?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
                     <div class="faq-answer">Standard delivery usually takes 3–5 working days, while express delivery takes approximately 1–2 working days.</div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" type="button"><span>Do you offer cash on delivery?</span><span>+</span></button>
+                    <button class="faq-question" type="button"><span>Do you offer cash on delivery?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
                     <div class="faq-answer">Yes, we offer Cash on Delivery across Pakistan. You can also pay securely online at checkout where available.</div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" type="button"><span>What is your return policy?</span><span>+</span></button>
+                    <button class="faq-question" type="button"><span>What is your return policy?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
                     <div class="faq-answer">We offer a 7-day return and exchange policy on unworn items in their original packaging.</div>
                 </div>
                 <div class="faq-item">
-                    <button class="faq-question" type="button"><span>How do I know which size to order?</span><span>+</span></button>
+                    <button class="faq-question" type="button"><span>How do I know which size to order?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
                     <div class="faq-answer">Each product page lists available sizes. If you need help choosing, message us with your measurements and we will guide you.</div>
                 </div>
             </div>
