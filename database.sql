@@ -332,7 +332,7 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('tiktok_url', '#'),
 ('whatsapp_number', '+92 334 232 2324'),
 ('store_status', 'open'),
-('meta_description', 'Discover TayyabaCollective — elegant stitched, unstitched, eastern and western wear designed for every occasion.'),
+('meta_description', 'Discover Fashlab Studio — elegant stitched, unstitched, eastern and western wear designed for every occasion.'),
 ('footer_credit', 'Developed by Gopang IT Solution');
 
 -- ============================================================================

@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 $page_title      = $page_title      ?? '';
 $meta_description = $meta_description ?? setting('meta_description', '');
-$canonical       = $canonical       ?? url($_SERVER['REQUEST_URI'] ?? '/');
+$canonical       = $canonical       ?? abs_current();
 $active_nav      = $active_nav      ?? '';
 
 $storeName  = setting('store_name', 'TayyabaCollective');
@@ -58,7 +58,7 @@ if ($navCategories) {
     <meta property="og:title" content="<?= e($fullTitle) ?>">
     <meta property="og:description" content="<?= e($meta_description) ?>">
     <meta property="og:url" content="<?= e($canonical) ?>">
-    <meta property="og:image" content="<?= e(asset_url('images/brand/logo-square.png')) ?>">
+    <meta property="og:image" content="<?= e(abs_url('/images/brand/logo-square.png')) ?>">
     <meta name="twitter:card" content="summary">
 
     <!-- Google Fonts -->

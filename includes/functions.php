@@ -70,6 +70,37 @@ function category_url(string $slug): string
  * Accepts whatever the admin typed -- "+92 334 232 2324", "0334-2322324" --
  * and normalises it, treating a leading 0 as a Pakistani local number.
  */
+/** scheme://host for the current request, or '' when it cannot be determined. */
+function site_origin(): string
+{
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    if ($host === '') {
+        return '';
+    }
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    return $scheme . '://' . $host;
+}
+
+/**
+ * Absolute URL for an app path. Open Graph and canonical links are ignored by
+ * crawlers when relative, so anything that leaves the page goes through here.
+ * Takes an app-relative path -- BASE_URL is applied, so do not pass REQUEST_URI
+ * (which already carries it); use abs_current() for that.
+ */
+function abs_url(string $path = ''): string
+{
+    $origin = site_origin();
+    return $origin === '' ? url($path) : $origin . url($path);
+}
+
+/** Absolute URL of the request as received, query string included. */
+function abs_current(): string
+{
+    $origin = site_origin();
+    $uri    = $_SERVER['REQUEST_URI'] ?? '/';
+    return $origin === '' ? $uri : $origin . $uri;
+}
+
 function whatsapp_number(): string
 {
     $raw = preg_replace('/\D+/', '', setting('whatsapp_number', '923342322324')) ?? '';
