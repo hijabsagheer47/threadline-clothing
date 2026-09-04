@@ -31,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($old['city'] === '')                           $errors['city'] = 'Please enter your city.';
     if ($old['address'] === '')                        $errors['address'] = 'Please enter your complete address.';
     if (!in_array($old['delivery'], ['standard', 'express'], true)) $old['delivery'] = 'standard';
-    if (!in_array($old['payment'], ['cod', 'card'], true))          $old['payment'] = 'cod';
+    // Card is not wired to a gateway yet, so accepting it would create an
+    // order that can never be settled. COD is forced until one exists.
+    $old['payment'] = 'cod';
 
     if (!$items) {
         $errors['cart'] = 'Your cart is empty.';
@@ -72,8 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 decimal($deliveryFee),
                 decimal($totals['discount']),
                 decimal($totals['subtotal'] + $deliveryFee - $totals['discount']),
-                $old['payment'] === 'cod' ? 'cod' : 'card',
-                $old['payment'] === 'cod' ? 'pending' : 'unpaid',
+                'cod',
+                'pending',
                 'pending',
             ]);
             $orderId = (int) $db->lastInsertId();
@@ -110,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'order_number' => $orderNumber,
                 'customer_name' => $old['fullName'],
                 'phone' => $old['phone'],
-                'payment_method' => $old['payment'] === 'cod' ? 'Cash on Delivery' : 'Card / Online Payment',
+                'payment_method' => 'Cash on Delivery',
                 'total' => $totals['subtotal'] + $deliveryFee - $totals['discount'],
                 'items' => array_map(static fn($it) => [
                     'name' => $it['name'], 'qty' => $it['qty'], 'price' => $it['unit_price'],
@@ -126,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title       = 'Checkout';
-$meta_description = 'Complete your order with TayyabaCollective.';
+$meta_description = 'Complete your order with ' . setting('store_name') . '.';
 $active_nav       = 'shop.php';
 
 require __DIR__ . '/includes/storefront-header.php';
@@ -134,7 +136,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
 <section class="checkout-hero">
     <h1>Checkout</h1>
-    <p>Complete your order with TayyabaCollective.</p>
+    <p>Complete your order with <?= e(setting('store_name')) ?>.</p>
 </section>
 
 <div class="checkout-container">
@@ -267,29 +269,32 @@ require __DIR__ . '/includes/storefront-header.php';
 
                         <div class="payment-options">
                             <div class="payment-option">
-                                <input type="radio" id="cod" name="payment" value="cod"
-                                       <?= ($old['payment'] ?? 'cod') === 'cod' ? 'checked' : '' ?>>
+                                <input type="radio" id="cod" name="payment" value="cod" checked>
                                 <label for="cod" class="payment-label">
                                     <div class="payment-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                                     <div>
                                         <strong>Cash on Delivery</strong>
-                                        <span>Pay when your order arrives</span>
+                                        <span>Pay in cash when your parcel reaches you</span>
                                     </div>
+                                    <span class="pay-flag">Recommended</span>
                                 </label>
                             </div>
-                            <div class="payment-option">
-                                <input type="radio" id="card" name="payment" value="card"
-                                       <?= ($old['payment'] ?? '') === 'card' ? 'checked' : '' ?>>
+                            <div class="payment-option is-disabled">
+                                <input type="radio" id="card" name="payment" value="card" disabled>
                                 <label for="card" class="payment-label">
                                     <div class="payment-icon"><i class="fa-solid fa-credit-card"></i></div>
                                     <div>
                                         <strong>Card / Online Payment</strong>
-                                        <span>Secure online payment</span>
+                                        <span>Coming soon</span>
                                     </div>
                                 </label>
                             </div>
                         </div>
-                        <div class="card-note">Card / Online Payment is not yet available. Cash on Delivery is used for all orders.</div>
+                        <div class="card-note">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Online card payment is not live yet, so every order is placed as
+                            <strong>Cash on Delivery</strong> &mdash; you pay the courier at your door.</span>
+                        </div>
                     </section>
 
                     <!-- NOTES -->

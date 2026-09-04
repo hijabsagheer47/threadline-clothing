@@ -74,7 +74,7 @@ if (is_ajax()) {
 }
 
 $page_title       = $category['name'];
-$meta_description = $category['description'] ?: 'Shop the ' . $category['name'] . ' collection at TayyabaCollective.';
+$meta_description = $category['description'] ?: 'Shop the ' . $category['name'] . ' collection at ' . setting('store_name') . '.';
 $canonical        = category_url($category['slug']);
 $active_nav       = 'shop.php';
 
@@ -85,7 +85,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="categories-hero">
     <div class="container">
         <div class="categories-hero-content">
-            <span class="eyebrow">TAYYABACOLLECTIVE COLLECTION</span>
+            <span class="eyebrow"><?= e(strtoupper(setting('store_name'))) ?> COLLECTION</span>
             <h1><?= e($category['name']) ?></h1>
             <p><?= e($category['description'] ?: 'Discover the ' . $category['name'] . ' collection — thoughtfully designed pieces for every occasion.') ?></p>
         </div>

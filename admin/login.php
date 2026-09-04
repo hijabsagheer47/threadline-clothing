@@ -39,7 +39,7 @@ $flashes = flash_get();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login | <?= e(setting('store_name', 'TayyabaCollective')) ?></title>
+    <title>Admin Login | <?= e(setting('store_name')) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -50,7 +50,7 @@ $flashes = flash_get();
 
     <div class="login-card">
         <div class="login-brand">
-            <h1><?= e(setting('store_name', 'TayyabaCollective')) ?></h1>
+            <h1><?= e(setting('store_name')) ?></h1>
             <p>Admin Panel — Sign in to continue</p>
         </div>
 

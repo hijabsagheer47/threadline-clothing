@@ -3,21 +3,35 @@
 # Pretty URLs, security hardening and error pages
 # ============================================================================
 
-Options -Indexes
+# mod_rewrite refuses to apply a substitution unless FollowSymLinks is on.
+# Without it the deny-only ([F]) rules still fire, which makes the breakage
+# look like a routing bug rather than a missing option.
+Options -Indexes +FollowSymLinks
 ServerSignature Off
+
+# Leftover static index.html files from the pre-PHP site must never win over
+# the PHP storefront when a directory is requested.
+DirectoryIndex index.php index.html
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
+    # The domain is served from a sub-directory of the webspace, so a relative
+    # substitution resolves against that path and 404s -- RewriteBase alone did
+    # not fix it here. Every target below is therefore an absolute URL path.
+    # Deny-only ([F]) rules need no target, which is why the protection rules
+    # kept working and hid this.
+    RewriteBase /
+
     # --- Pretty URLs -------------------------------------------------------
     # /product/{slug}  ->  product.php?slug={slug}
-    RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ product.php?slug=$1 [L,QSA]
+    RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ /product.php?slug=$1 [L,QSA]
 
     # /category/{slug} ->  category.php?slug={slug}
-    RewriteRule ^category/([a-zA-Z0-9\-]+)/?$ category.php?slug=$1 [L,QSA]
+    RewriteRule ^category/([a-zA-Z0-9\-]+)/?$ /category.php?slug=$1 [L,QSA]
 
     # /admin            ->  /admin/index.php
-    RewriteRule ^admin/?$ admin/index.php [L,QSA]
+    RewriteRule ^admin/?$ /admin/index.php [L,QSA]
 </IfModule>
 
 # --- Protect sensitive directories ------------------------------------------

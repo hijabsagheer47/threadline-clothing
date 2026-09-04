@@ -116,13 +116,17 @@ jobs:
             exit 1
           fi
 
+          EXCLUDES="-x ^\.git/ -x ^\.github/ -x ^\.gitignore$ -x ^node_modules/ -x ^tests/ -x ^images/sources/ -x ^README\.md$ -x ^DEPLOY\.md$"
+
           if [ "${DELETE_EXTRA:-false}" = "true" ]; then
             DELETE_FLAG="--delete"
+            # --delete wipes anything on the server that is not in the repo. The
+            # live DB credentials and the admin-uploaded images exist only on the
+            # server, so drop them out of the mirror entirely on these runs.
+            EXCLUDES="${EXCLUDES} -x ^config/config\.php$ -x ^uploads/"
           else
             DELETE_FLAG=""
           fi
-
-          EXCLUDES="-x ^\.git/ -x ^\.github/ -x ^\.gitignore$ -x ^node_modules/ -x ^tests/ -x ^images/sources/ -x ^README\.md$ -x ^DEPLOY\.md$"
 
           run_lftp "mirror --reverse --verbose --continue ${DELETE_FLAG} ${EXCLUDES} ./ \"${RESOLVED}\";"
 

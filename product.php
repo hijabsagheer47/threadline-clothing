@@ -85,7 +85,7 @@ require __DIR__ . '/includes/storefront-header.php';
                 <div class="stars">
                     <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
                 </div>
-                <span>Premium <?= e($categories[0]['name'] ?? 'TayyabaCollective') ?> piece</span>
+                <span>Premium <?= e($categories[0]['name'] ?? setting('store_name')) ?> piece</span>
             </div>
 
             <div class="product-price">

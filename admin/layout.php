@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-$storeName = setting('store_name', 'TayyabaCollective');
+$storeName = setting('store_name');
 $unreadMsgs = (int) db()->query('SELECT COUNT(*) FROM contact_messages WHERE status = 0')->fetchColumn();
 $pendingOrders = (int) db()->query("SELECT COUNT(*) FROM orders WHERE order_status = 'pending'")->fetchColumn();
 

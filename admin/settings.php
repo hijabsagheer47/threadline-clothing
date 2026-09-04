@@ -11,7 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'store_name', 'store_tagline', 'store_email', 'store_phone', 'store_address',
         'currency', 'currency_symbol', 'shipping_fee', 'free_shipping_threshold',
         'min_order_amount', 'low_stock_threshold', 'announcement_bar',
-        'instagram_url', 'facebook_url', 'tiktok_url', 'store_status', 'meta_description', 'footer_credit',
+        'instagram_url', 'facebook_url', 'linkedin_url', 'tiktok_url', 'whatsapp_number',
+        'store_status', 'meta_description', 'footer_credit',
     ];
 
     foreach ($fields as $key) {
@@ -115,6 +116,17 @@ ob_start();
                     <div class="form-group">
                         <label for="tiktok_url">TikTok URL</label>
                         <input type="url" id="tiktok_url" name="tiktok_url" value="<?= e($settings['tiktok_url'] ?? '') ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="linkedin_url">LinkedIn URL</label>
+                        <input type="url" id="linkedin_url" name="linkedin_url" value="<?= e($settings['linkedin_url'] ?? '') ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="whatsapp_number">WhatsApp Number</label>
+                        <input type="text" id="whatsapp_number" name="whatsapp_number" value="<?= e($settings['whatsapp_number'] ?? '') ?>" placeholder="+92 334 232 2324">
+                        <p class="help">Drives the floating chat button and the WhatsApp links. Any format works &mdash; a leading 0 is treated as a Pakistani number.</p>
                     </div>
                 </div>
             </div>

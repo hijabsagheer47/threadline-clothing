@@ -314,7 +314,7 @@ CREATE TABLE `login_attempts` (
 -- ============================================================================
 
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
-('store_name', 'TayyabaCollective'),
+('store_name', 'Fashlab Studio'),
 ('store_tagline', 'Where Style Meets Elegance'),
 ('store_email', 'hello@tayyabacollective.mytechrcm.com'),
 ('store_phone', '+92 300 1234567'),
@@ -328,9 +328,11 @@ INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
 ('announcement_bar', 'Free delivery on orders above Rs. 8,000'),
 ('instagram_url', '#'),
 ('facebook_url', '#'),
+('linkedin_url', '#'),
 ('tiktok_url', '#'),
+('whatsapp_number', '+92 334 232 2324'),
 ('store_status', 'open'),
-('meta_description', 'Discover TayyabaCollective — elegant stitched, unstitched, eastern and western wear designed for every occasion.'),
+('meta_description', 'Discover Fashlab Studio — elegant stitched, unstitched, eastern and western wear designed for every occasion.'),
 ('footer_credit', 'Developed by Gopang IT Solution');
 
 -- ============================================================================

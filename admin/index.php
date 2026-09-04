@@ -52,7 +52,7 @@ ob_start();
 <div class="page-header">
     <div>
         <h1>Welcome back, <?= e($admin['name']) ?> 👋</h1>
-        <p>Here's what's happening at <?= e(setting('store_name', 'TayyabaCollective')) ?> today.</p>
+        <p>Here's what's happening at <?= e(setting('store_name')) ?> today.</p>
     </div>
     <div class="page-actions">
         <a href="<?= url('/admin/product-form.php') ?>" class="btn btn-accent"><i class="fa-solid fa-plus"></i> Add Product</a>
