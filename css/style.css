@@ -1,6 +1,6 @@
 
 /* ============================================================
-   THREADLINE CLOTHING
+    TAYYABACOLLECTIVE
    Professional Fashion Store — Main Stylesheet
    ============================================================ */
 
@@ -146,12 +146,23 @@ ul {
 }
 
 .brand-logo {
+    display: grid;
+    grid-template-columns: 38px auto;
+    align-items: center;
+    column-gap: 10px;
     font-family: "Playfair Display", serif;
     font-size: 25px;
     font-weight: 700;
     letter-spacing: 3px;
     color: var(--primary);
     white-space: nowrap;
+}
+
+.brand-logo img {
+    grid-row: span 2;
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
 }
 
 .site-nav {
@@ -520,6 +531,59 @@ ul {
 
 .product-card {
     min-width: 0;
+}
+
+.related-products .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.related-products .product-card-image {
+    aspect-ratio: 0.78;
+    overflow: hidden;
+    background: var(--cream);
+}
+
+.related-products .product-card-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.related-products .product-card-content {
+    padding: 15px 2px 0;
+}
+
+.related-products .product-card-content > span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text-light);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.related-products .product-card-content h3 {
+    margin-bottom: 9px;
+    font-family: "Playfair Display", serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.related-products .product-card-content strong {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .related-products .products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px 14px;
+    }
 }
 
 .product-image {
@@ -1245,7 +1309,7 @@ ul {
 
 
 /* ============================================================
-   13. WHY THREADLINE
+    13. WHY TAYYABACOLLECTIVE
    ============================================================ */
 
 .why-section {
@@ -1478,6 +1542,19 @@ ul {
     font-size: 25px;
     font-weight: 700;
     letter-spacing: 3px;
+}
+
+.brand-logo::after {
+    content: "Where Style Meets Elegance";
+    display: block;
+    grid-column: 2;
+    font-family: "DM Sans", sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    text-align: left;
+    text-transform: none;
 }
 
 .footer-brand > p {
@@ -2018,7 +2095,7 @@ ul {
     }
 }
 /* =========================================================
-   THREADLINE — COLLECTIONS PAGE
+    TAYYABACOLLECTIVE — COLLECTIONS PAGE
 ========================================================= */
 
 .collections-hero {
@@ -2435,7 +2512,7 @@ ul {
 
 }
 /* =========================================================
-   THREADLINE — ABOUT PAGE
+    TAYYABACOLLECTIVE — ABOUT PAGE
 ========================================================= */
 
 /* =========================================================

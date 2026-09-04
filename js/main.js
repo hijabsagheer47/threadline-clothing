@@ -1,5 +1,5 @@
 /* ============================================================
-   THREADLINE — SHARED LOGIC
+  TAYYABACOLLECTIVE — SHARED LOGIC
    Maximum 35 products per category
    ============================================================ */
 

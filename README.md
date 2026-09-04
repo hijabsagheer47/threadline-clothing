@@ -1,4 +1,4 @@
-# Threadline — Clothing Brand Website
+# TayyabaCollective — Clothing Brand Website
 
 A complete, responsive storefront for a clothing brand, covering **Stitched**,
 **Unstitched**, **Western**, and **Eastern** wear.

@@ -1,5 +1,5 @@
 /* ============================================================
-   THREADLINE — PRODUCT IMAGE URL MAPPING
+  TAYYABACOLLECTIVE — PRODUCT IMAGE URL MAPPING
    30 Stitched
    30 Unstitched
    30 Western
