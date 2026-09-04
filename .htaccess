@@ -23,6 +23,11 @@ DirectoryIndex index.php index.html
     # kept working and hid this.
     RewriteBase /
 
+    # TEMPORARY probes -- removed once routing is confirmed.
+    # rwprobe1 tests pattern matching (no target); rwprobe2 tests substitution.
+    RewriteRule ^rwprobe1$ - [R=418,L]
+    RewriteRule ^rwprobe2$ /about.php [L]
+
     # --- Pretty URLs -------------------------------------------------------
     # /product/{slug}  ->  product.php?slug={slug}
     RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ /product.php?slug=$1 [L,QSA]
