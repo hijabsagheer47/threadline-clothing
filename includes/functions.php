@@ -65,6 +65,37 @@ function category_url(string $slug): string
         : url('/category.php?slug=' . $slug);
 }
 
+/**
+ * Digits-only WhatsApp number for wa.me links.
+ * Accepts whatever the admin typed -- "+92 334 232 2324", "0334-2322324" --
+ * and normalises it, treating a leading 0 as a Pakistani local number.
+ */
+function whatsapp_number(): string
+{
+    $raw = preg_replace('/\D+/', '', setting('whatsapp_number', '923342322324')) ?? '';
+    if ($raw === '') {
+        return '';
+    }
+    if (str_starts_with($raw, '0')) {
+        $raw = '92' . ltrim($raw, '0');
+    }
+    return $raw;
+}
+
+/** Full wa.me URL, with an optional pre-filled message. Empty when unset. */
+function whatsapp_url(string $message = ''): string
+{
+    $number = whatsapp_number();
+    if ($number === '') {
+        return '';
+    }
+    $url = 'https://wa.me/' . $number;
+    if ($message !== '') {
+        $url .= '?text=' . rawurlencode($message);
+    }
+    return $url;
+}
+
 function asset_url(string $path): string
 {
     return url('/' . ltrim($path, '/'));

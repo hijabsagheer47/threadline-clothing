@@ -8,8 +8,47 @@ $storeName  = setting('store_name', 'TayyabaCollective');
 $footerCats = get_categories(true); // first five, no nav filter
 $shopCats   = array_slice($footerCats, 0, 5);
 $credit     = setting('footer_credit', '');
+$waUrl      = whatsapp_url('Hello! I would like to know more about your collection.');
+$waNumber   = setting('whatsapp_number', '+92 334 232 2324');
+$freeOver   = (float) setting('free_shipping_threshold', '8000');
 ?>
 </main>
+
+<!-- Trust bar -->
+<section class="trust-bar">
+    <div class="container">
+        <div class="trust-grid">
+            <div class="trust-item">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <div>
+                    <h4>Cash on Delivery</h4>
+                    <p>Pay when your parcel arrives</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <i class="fa-solid fa-truck-fast"></i>
+                <div>
+                    <h4>Free Delivery</h4>
+                    <p>On orders above <?= e(money($freeOver)) ?></p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <i class="fa-solid fa-rotate-left"></i>
+                <div>
+                    <h4>Easy Exchange</h4>
+                    <p>7-day hassle-free exchange</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <i class="fa-brands fa-whatsapp"></i>
+                <div>
+                    <h4>Order on WhatsApp</h4>
+                    <p><?= e($waNumber) ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Footer -->
 <footer class="site-footer">
@@ -20,9 +59,12 @@ $credit     = setting('footer_credit', '');
             <p>Thoughtfully designed clothing for every version of you.</p>
 
             <div class="social-links">
-                <a href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="<?= e(setting('tiktok_url', '#')) ?>" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a class="s-instagram" href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram on <?= e($storeName) ?>" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a class="s-facebook" href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook page" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
+                <a class="s-linkedin" href="<?= e(setting('linkedin_url', '#')) ?>" aria-label="LinkedIn profile" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                <?php if ($waUrl !== ''): ?>
+                <a class="s-whatsapp" href="<?= e($waUrl) ?>" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -62,6 +104,15 @@ $credit     = setting('footer_credit', '');
     </div>
 </footer>
 
+<?php if ($waUrl !== ''): ?>
+<a class="wa-float" href="<?= e($waUrl) ?>" target="_blank" rel="noopener noreferrer"
+   aria-label="Chat with us on WhatsApp">
+    <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+    <span>Chat with us</span>
+</a>
+<?php endif; ?>
+
 <script src="<?= e(asset_url('assets/js/site.js')) ?>"></script>
+<script src="<?= e(asset_url('assets/js/premium.js')) ?>"></script>
 </body>
 </html>

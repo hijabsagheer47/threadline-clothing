@@ -55,6 +55,7 @@ if ($navCategories) {
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="<?= e(asset_url('css/style.css')) ?>">
+    <link rel="stylesheet" href="<?= e(asset_url('css/premium.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset_url('css/dynamic.css')) ?>">
 
     <script>
