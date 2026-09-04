@@ -38,14 +38,31 @@ function url(string $path = ''): string
     return BASE_URL . $path;
 }
 
+/**
+ * The production host matches mod_rewrite patterns but refuses to apply the
+ * substitution, so /product/{slug} permalinks 404 there while the equivalent
+ * query-string URL always resolves. Define PRETTY_URLS as true in config.php
+ * on any host that does honour the rewrites.
+ */
+function pretty_urls(): bool
+{
+    return defined('PRETTY_URLS') && PRETTY_URLS;
+}
+
 function product_url(string $slug): string
 {
-    return url('/product/' . rawurlencode($slug));
+    $slug = rawurlencode($slug);
+    return pretty_urls()
+        ? url('/product/' . $slug)
+        : url('/product.php?slug=' . $slug);
 }
 
 function category_url(string $slug): string
 {
-    return url('/category/' . rawurlencode($slug));
+    $slug = rawurlencode($slug);
+    return pretty_urls()
+        ? url('/category/' . $slug)
+        : url('/category.php?slug=' . $slug);
 }
 
 function asset_url(string $path): string
