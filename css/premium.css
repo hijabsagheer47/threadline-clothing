@@ -80,9 +80,10 @@ body {
     letter-spacing: -.005em;
 }
 
+/* No colour here on purpose: hero, newsletter and footer headings inherit
+   white from their dark parent, and setting one would black them out. */
 h1, h2, h3, h4 {
     font-family: "Playfair Display", Georgia, serif;
-    color: var(--ink);
     letter-spacing: -.02em;
     text-wrap: balance;
 }
