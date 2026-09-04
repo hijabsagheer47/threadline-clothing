@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page_title       = 'Checkout';
-$meta_description = 'Complete your order with TayyabaCollective.';
+$meta_description = 'Complete your order with ' . setting('store_name') . '.';
 $active_nav       = 'shop.php';
 
 require __DIR__ . '/includes/storefront-header.php';
@@ -136,7 +136,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
 <section class="checkout-hero">
     <h1>Checkout</h1>
-    <p>Complete your order with TayyabaCollective.</p>
+    <p>Complete your order with <?= e(setting('store_name')) ?>.</p>
 </section>
 
 <div class="checkout-container">

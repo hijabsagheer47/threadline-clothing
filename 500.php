@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Something Went Wrong | TayyabaCollective</title>
+    <title>Something Went Wrong | Fashlab Studio</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Georgia', 'Times New Roman', serif; background: #faf7f4; color: #3b2b26; display: flex; align-items: center; justify-content: center; min-height: 100vh; }

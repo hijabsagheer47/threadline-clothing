@@ -1494,3 +1494,39 @@ textarea:focus {
 }
 
 .btn-solid:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+/* ============================================================================
+   14. BRAND LOCKUP
+   ----------------------------------------------------------------------------
+   The header logo used to be a small icon plus the store name as live text,
+   with the tagline hardcoded in a ::after. The new artwork already contains
+   the wordmark and the tagline, so both text layers are switched off here and
+   the name is carried by a .sr-only span for screen readers and SEO.
+   ========================================================================== */
+
+.brand-logo {
+    display: inline-flex;
+    align-items: center;
+    /* Cancel the old two-column text grid */
+    grid-template-columns: none;
+    column-gap: 0;
+    letter-spacing: normal;
+    font-size: 0;              /* kills the stray whitespace text node */
+    line-height: 0;
+}
+
+.brand-logo::after { content: none; }
+
+.brand-logo img {
+    grid-row: auto;
+    width: auto;
+    height: 46px;
+    max-width: 100%;
+    object-fit: contain;
+    transition: opacity .25s var(--ease);
+}
+
+.brand-logo:hover img { opacity: .82; }
+
+@media (max-width: 900px) { .brand-logo img { height: 40px; } }
+@media (max-width: 420px) { .brand-logo img { height: 34px; } }

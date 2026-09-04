@@ -94,7 +94,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="featured-section">
     <div class="featured-image">
         <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=1400&q=90"
-             alt="TayyabaCollective featured fashion collection" loading="lazy">
+             alt="<?= e(setting('store_name')) ?> featured fashion collection" loading="lazy">
     </div>
     <div class="featured-content">
         <p class="section-label">THE TAYYABACOLLECTIVE EDIT</p>
@@ -234,7 +234,7 @@ require __DIR__ . '/includes/storefront-header.php';
             <p>Everyday inspiration, new collections and more.</p>
         </div>
         <div class="gallery-grid">
-            <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=700&q=85" alt="TayyabaCollective fashion style" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=700&q=85" alt="<?= e(setting('store_name')) ?> fashion style" loading="lazy">
             <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=700&q=85" alt="Fashion collection" loading="lazy">
             <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=700&q=85" alt="Women's fashion" loading="lazy">
             <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=700&q=85" alt="Elegant fashion outfit" loading="lazy">

@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/bootstrap.php';
 $cats = categories_with_counts();
 
 $page_title       = 'Shop By Category';
-$meta_description = 'Explore thoughtfully curated TayyabaCollective fashion collections — stitched, unstitched, formal, casual and more.';
+$meta_description = 'Explore thoughtfully curated ' . setting('store_name') . ' fashion collections — stitched, unstitched, formal, casual and more.';
 $active_nav       = 'shop.php';
 
 require __DIR__ . '/includes/storefront-header.php';

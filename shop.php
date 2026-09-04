@@ -66,7 +66,7 @@ if (is_ajax()) {
 }
 
 $page_title     = 'Shop Our Collection';
-$meta_description = 'Discover thoughtfully designed stitched and unstitched pieces, formal wear, casual wear and more from TayyabaCollective.';
+$meta_description = 'Discover thoughtfully designed stitched and unstitched pieces, formal wear, casual wear and more from ' . setting('store_name') . '.';
 $active_nav     = 'shop.php';
 
 require __DIR__ . '/includes/storefront-header.php';

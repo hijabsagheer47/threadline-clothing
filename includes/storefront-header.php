@@ -45,6 +45,22 @@ if ($navCategories) {
     <link rel="canonical" href="<?= e($canonical) ?>">
     <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 
+    <!-- Favicons -->
+    <link rel="icon" href="<?= e(asset_url('images/brand/favicon.ico')) ?>" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= e(asset_url('images/brand/favicon-32.png')) ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= e(asset_url('images/brand/favicon-16.png')) ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= e(asset_url('images/brand/favicon-180.png')) ?>">
+    <meta name="theme-color" content="#c9a35c">
+
+    <!-- Social preview -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="<?= e($storeName) ?>">
+    <meta property="og:title" content="<?= e($fullTitle) ?>">
+    <meta property="og:description" content="<?= e($meta_description) ?>">
+    <meta property="og:url" content="<?= e($canonical) ?>">
+    <meta property="og:image" content="<?= e(asset_url('images/brand/logo-square.png')) ?>">
+    <meta name="twitter:card" content="summary">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -78,8 +94,9 @@ if ($navCategories) {
     <div class="container nav-container">
 
         <a href="<?= url('/index.php') ?>" class="brand-logo">
-            <img src="<?= e(asset_url('images/tayyaba-collective-logo.svg')) ?>" alt="<?= e($storeName) ?> logo">
-            <?= e($storeName) ?>
+            <img src="<?= e(asset_url('images/brand/logo-wordmark.png')) ?>"
+                 alt="<?= e($storeName) ?>" width="267" height="96">
+            <span class="sr-only"><?= e($storeName) ?></span>
         </a>
 
         <button class="nav-toggle" aria-label="Open navigation menu" type="button">

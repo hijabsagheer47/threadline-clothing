@@ -74,7 +74,7 @@ if (is_ajax()) {
 }
 
 $page_title       = $category['name'];
-$meta_description = $category['description'] ?: 'Shop the ' . $category['name'] . ' collection at TayyabaCollective.';
+$meta_description = $category['description'] ?: 'Shop the ' . $category['name'] . ' collection at ' . setting('store_name') . '.';
 $canonical        = category_url($category['slug']);
 $active_nav       = 'shop.php';
 

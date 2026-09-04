@@ -377,7 +377,7 @@ function render_product_card(array $product): string
         ? '<span class="product-badge sale">SALE</span>'
         : ((int) ($product['featured'] ?? 0) === 1 ? '<span class="product-badge">FEATURED</span>' : '');
 
-    $categoryName = 'TayyabaCollective';
+    $categoryName = setting('store_name');
     if (!empty($product['category_names'])) {
         $categoryName = explode(', ', $product['category_names'])[0];
     }

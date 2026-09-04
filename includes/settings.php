@@ -7,7 +7,7 @@
 declare(strict_types=1);
 
 const SETTING_DEFAULTS = [
-    'store_name'             => 'TayyabaCollective',
+    'store_name'             => 'Fashlab Studio',
     'store_tagline'          => 'Where Style Meets Elegance',
     'store_email'            => '',
     'store_phone'            => '',
@@ -22,6 +22,8 @@ const SETTING_DEFAULTS = [
     'instagram_url'          => '#',
     'facebook_url'           => '#',
     'tiktok_url'             => '#',
+    'linkedin_url'           => '#',
+    'whatsapp_number'        => '+92 334 232 2324',
     'store_status'           => 'open',
     'meta_description'       => '',
     'footer_credit'          => '',

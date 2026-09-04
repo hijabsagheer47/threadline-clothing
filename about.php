@@ -3,7 +3,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/bootstrap.php';
 
 $page_title       = 'About Us';
-$meta_description = 'The story behind TayyabaCollective — thoughtfully designed clothing for every version of you.';
+$meta_description = 'The story behind ' . setting('store_name') . ' — thoughtfully designed clothing for every version of you.';
 $active_nav       = 'about.php';
 
 require __DIR__ . '/includes/storefront-header.php';
@@ -24,12 +24,12 @@ require __DIR__ . '/includes/storefront-header.php';
         <div class="about-intro-content">
             <p class="section-label">ABOUT TAYYABACOLLECTIVE</p>
             <h2>Where timeless style meets modern expression.</h2>
-            <p>TayyabaCollective was created with a simple idea — clothing should feel as beautiful as it looks.</p>
+            <p><?= e(setting('store_name')) ?> was created with a simple idea — clothing should feel as beautiful as it looks.</p>
             <p>We bring together refined silhouettes, thoughtful details and carefully selected fabrics to create pieces that can become part of your everyday wardrobe.</p>
             <p>From elegant eastern wear to contemporary western styles, every collection is designed to make you feel confident, comfortable and effortlessly yourself.</p>
         </div>
         <div class="about-intro-image">
-            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=90" alt="TayyabaCollective fashion collection">
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=90" alt="<?= e(setting('store_name')) ?> fashion collection">
         </div>
     </div>
 </section>
@@ -70,7 +70,7 @@ require __DIR__ . '/includes/storefront-header.php';
     <div class="about-statement-content">
         <p class="section-label">THE TAYYABACOLLECTIVE WOMAN</p>
         <h2>Confident. Individual. Unapologetically herself.</h2>
-        <p>TayyabaCollective is for every version of you — the woman who keeps things classic, the one who loves experimenting and the one who simply wants to feel good in what she wears.</p>
+        <p><?= e(setting('store_name')) ?> is for every version of you — the woman who keeps things classic, the one who loves experimenting and the one who simply wants to feel good in what she wears.</p>
         <a href="<?= url('/shop.php') ?>" class="btn btn-primary">Explore Collection <i class="fa-solid fa-arrow-right"></i></a>
     </div>
 </section>

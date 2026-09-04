@@ -314,7 +314,7 @@ CREATE TABLE `login_attempts` (
 -- ============================================================================
 
 INSERT INTO `settings` (`setting_key`, `setting_value`) VALUES
-('store_name', 'TayyabaCollective'),
+('store_name', 'Fashlab Studio'),
 ('store_tagline', 'Where Style Meets Elegance'),
 ('store_email', 'hello@tayyabacollective.mytechrcm.com'),
 ('store_phone', '+92 300 1234567'),

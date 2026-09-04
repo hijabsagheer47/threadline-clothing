@@ -42,7 +42,7 @@ $storePhone   = setting('store_phone', '+92 300 1234567');
 $storeAddress = setting('store_address', 'TayyabaCollective Studio, Islamabad, Pakistan');
 
 $page_title       = 'Contact Us';
-$meta_description = 'Get in touch with TayyabaCollective — questions about collections, orders, shipping and more.';
+$meta_description = 'Get in touch with ' . setting('store_name') . ' — questions about collections, orders, shipping and more.';
 $active_nav       = 'contact.php';
 
 require __DIR__ . '/includes/storefront-header.php';
@@ -63,7 +63,7 @@ require __DIR__ . '/includes/storefront-header.php';
             <div class="contact-info">
                 <div class="small-heading">We'd Love To Hear From You</div>
                 <h2>Let's Start a Conversation</h2>
-                <p>Whether you need help choosing the perfect outfit, have a question about your order, or simply want to know more about TayyabaCollective, our team is here to help.</p>
+                <p>Whether you need help choosing the perfect outfit, have a question about your order, or simply want to know more about <?= e(setting('store_name')) ?>, our team is here to help.</p>
 
                 <div class="contact-details">
                     <div class="contact-detail">
@@ -97,7 +97,7 @@ require __DIR__ . '/includes/storefront-header.php';
                 </div>
 
                 <div class="contact-social">
-                    <h3>Follow TayyabaCollective</h3>
+                    <h3>Follow <?= e(setting('store_name')) ?></h3>
                     <div class="social-links">
                         <a href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                         <a href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
@@ -112,7 +112,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
                 <?php if ($sent): ?>
                     <div class="flash flash-success">
-                        <span>Thank you for contacting TayyabaCollective. Your message has been received and we will reply shortly.</span>
+                        <span>Thank you for contacting <?= e(setting('store_name')) ?>. Your message has been received and we will reply shortly.</span>
                     </div>
                 <?php endif; ?>
 

@@ -26,7 +26,7 @@ require __DIR__ . '/includes/storefront-header.php';
                 <?php else: ?>
                     <span class="kicker">ORDER CONFIRMED</span>
                     <h1>Your order has been placed.</h1>
-                    <p class="lead">Thank you for shopping with TayyabaCollective. Your order details are below.</p>
+                    <p class="lead">Thank you for shopping with <?= e(setting('store_name')) ?>. Your order details are below.</p>
 
                     <div class="confirmation-box">
                         <div class="summary-row"><span>Order Number</span><strong><?= e($order['order_number']) ?></strong></div>
