@@ -11,12 +11,14 @@ Workflow file: [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
 
 IONOS panel → **Hosting → SFTP & SSH** (ya *Webspace / FTP Access*) par ye 4 cheezein milengi:
 
-| Cheez | Misaal |
+| Cheez | Value |
 |---|---|
-| Server / Host | `home123456789.1and1-data.host` |
+| Server / Host | `access-5020843190.webspace-host.com` |
 | Port | `22` (SFTP) |
-| Username | `u12345678` ya `a1b2c3d4` |
-| Password | jo aapne SFTP user ke liye set kiya |
+| Username | `a1667790` |
+| Password | jo aapne SFTP user `a1667790` ke liye set kiya |
+
+Ye account `/mytechrcm` directory tak restricted hai (IONOS panel -> **Manage secure FTP accounts**).
 
 > Agar password yaad nahi, IONOS panel se **naya password set** kar lein — GitHub ko wahi dena hai.
 
@@ -28,9 +30,9 @@ Repo → **Settings → Secrets and variables → Actions → Secrets → New re
 
 | Secret name | Value |
 |---|---|
-| `SFTP_HOST` | IONOS ka server/host |
-| `SFTP_USERNAME` | SFTP username |
-| `SFTP_PASSWORD` | SFTP password |
+| `SFTP_HOST` | `access-5020843190.webspace-host.com` |
+| `SFTP_USERNAME` | `a1667790` |
+| `SFTP_PASSWORD` | us user ka password |
 | `SFTP_PORT` | `22` *(optional — na dein to 22 use hoga)* |
 
 Direct link: https://github.com/hijabsagheer47/threadline-clothing/settings/secrets/actions
@@ -64,7 +66,9 @@ Phir dekhein: https://github.com/hijabsagheer47/threadline-clothing/actions
 ## Pipeline kya karti hai
 
 1. **test** job — `node --test tests/*.test.js` chalata hai. Test fail ho to deploy **nahi** hota.
-2. **deploy** job — `lftp` se SFTP mirror. Sirf badli hui files upload hoti hain (fast).
+2. **deploy** job — pehle remote path resolve karta hai (SFTP account `/mytechrcm` par
+   scoped hai, is liye `/mytechrcm/tayyabacollective` aur `/tayyabacollective` dono try
+   hote hain), phir `lftp` se SFTP mirror. Sirf badli hui files upload hoti hain (fast).
 
 Server par **upload nahi** hone wali cheezein:
 `.git/`, `.github/`, `.gitignore`, `node_modules/`, `tests/`, `images/sources/`, `README.md`, `DEPLOY.md`

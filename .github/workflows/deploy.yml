@@ -51,8 +51,46 @@ jobs:
         run: |
           set -euo pipefail
 
+          if [ -z "${SFTP_HOST}" ] || [ -z "${SFTP_USERNAME}" ] || [ -z "${SFTP_PASSWORD}" ]; then
+            echo "::error::SFTP_HOST / SFTP_USERNAME / SFTP_PASSWORD secrets set nahi hain."
+            echo "Repo Settings -> Secrets and variables -> Actions mein add karein."
+            exit 1
+          fi
+
           PORT="${SFTP_PORT:-22}"
           TARGET="${REMOTE_DIR:-/mytechrcm/tayyabacollective}"
+          URL="sftp://${SFTP_HOST}:${PORT}"
+          PREAMBLE="set sftp:auto-confirm yes; set net:max-retries 3; set net:timeout 20;"
+
+          run_lftp() {
+            lftp -u "${SFTP_USERNAME},${SFTP_PASSWORD}" "${URL}" -e "${PREAMBLE} $1 bye"
+          }
+
+          # IONOS SFTP accounts are scoped to a home directory, so the path may be
+          # reachable either in full or with that home prefix already stripped.
+          CANDIDATES="${TARGET}"
+          case "${TARGET}" in
+            /*/*) CANDIDATES="${TARGET} /${TARGET#/*/}" ;;
+          esac
+
+          RESOLVED=""
+          for candidate in ${CANDIDATES}; do
+            echo "Trying remote path: ${candidate}"
+            if OUT=$(run_lftp "cd \"${candidate}\"; pwd;" 2>&1) \
+               && ! printf '%s' "${OUT}" | grep -qi "no such file\|access failed\|login failed"; then
+              RESOLVED="${candidate}"
+              echo "Resolved remote path: ${RESOLVED}"
+              break
+            fi
+            echo "  not usable: $(printf '%s' "${OUT}" | tail -1)"
+          done
+
+          if [ -z "${RESOLVED}" ]; then
+            echo "::error::Remote directory '${TARGET}' SFTP par nahi mili."
+            echo "Login ke baad ye directories dikhti hain:"
+            run_lftp "pwd; ls;" || true
+            exit 1
+          fi
 
           if [ "${DELETE_EXTRA:-false}" = "true" ]; then
             DELETE_FLAG="--delete"
@@ -62,14 +100,9 @@ jobs:
 
           EXCLUDES="-x ^\.git/ -x ^\.github/ -x ^\.gitignore$ -x ^node_modules/ -x ^tests/ -x ^images/sources/ -x ^README\.md$ -x ^DEPLOY\.md$"
 
-          lftp -u "${SFTP_USERNAME},${SFTP_PASSWORD}" "sftp://${SFTP_HOST}:${PORT}" <<LFTP
-          set sftp:auto-confirm yes
-          set net:max-retries 3
-          set net:timeout 20
-          set mirror:parallel-transfer-count 4
-          mirror --reverse --verbose --continue ${DELETE_FLAG} ${EXCLUDES} ./ ${TARGET}
-          bye
-          LFTP
+          run_lftp "mirror --reverse --verbose --continue ${DELETE_FLAG} ${EXCLUDES} ./ \"${RESOLVED}\";"
+
+          echo "REMOTE_PATH_USED=${RESOLVED}" >> "$GITHUB_ENV"
 
       - name: Summary
         run: |
@@ -77,7 +110,5 @@ jobs:
             echo "### Deployed to IONOS :rocket:"
             echo ""
             echo "- Commit: \`${GITHUB_SHA::7}\`"
-            echo "- Remote path: \`${REMOTE_DIR:-/mytechrcm/tayyabacollective}\`"
+            echo "- Remote path: \`${REMOTE_PATH_USED}\`"
           } >> "$GITHUB_STEP_SUMMARY"
-        env:
-          REMOTE_DIR: ${{ vars.REMOTE_DIR }}
