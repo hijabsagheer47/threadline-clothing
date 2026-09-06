@@ -70,7 +70,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'notes'       => $old['notes'],
         'delivery'    => $old['delivery'],
         'country'     => 'Pakistan',
-        'customer_id' => current_customer_id(),
     ]);
 
     if (!$result['ok']) {

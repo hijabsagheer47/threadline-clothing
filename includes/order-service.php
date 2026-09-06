@@ -49,7 +49,7 @@ function order_validate(array $input): array
  * Place an order from the current cart.
  *
  * @param array $input name, email, phone, city, address, postal_code, notes,
- *                     delivery, country, customer_id, is_gift, gift_message
+ *                     delivery, country, is_gift, gift_message
  * @return array{ok: bool, errors?: array<string,string>, order_number?: string,
  *               order_id?: int, total?: float}
  */
@@ -135,10 +135,6 @@ function place_order(array $input): array
                 $orderId,
             ]);
         }
-        if (!empty($input['customer_id']) && tc_column_exists('orders', 'customer_id')) {
-            $db->prepare('UPDATE orders SET customer_id = ? WHERE id = ?')
-               ->execute([(int) $input['customer_id'], $orderId]);
-        }
         if (!empty($input['is_gift']) && tc_column_exists('orders', 'is_gift')) {
             $db->prepare('UPDATE orders SET is_gift = 1, gift_message = ? WHERE id = ?')
                ->execute([trim((string) ($input['gift_message'] ?? '')) ?: null, $orderId]);
@@ -155,11 +151,10 @@ function place_order(array $input): array
 
         /* Coupon ledger. */
         if ($couponState && tc_table_exists('coupon_usages')) {
-            $db->prepare('INSERT INTO coupon_usages (coupon_id, order_id, customer_id, email) VALUES (?, ?, ?, ?)')
+            $db->prepare('INSERT INTO coupon_usages (coupon_id, order_id, email) VALUES (?, ?, ?)')
                ->execute([
                    $couponState['id'],
                    $orderId,
-                   !empty($input['customer_id']) ? (int) $input['customer_id'] : null,
                    mb_strtolower(trim((string) $input['email'])),
                ]);
             $db->prepare('UPDATE coupons SET used_count = used_count + 1 WHERE id = ?')
@@ -262,58 +257,4 @@ function order_by_number(string $orderNumber): ?array
     $stmt->execute([mb_strtoupper(trim($orderNumber))]);
     $row = $stmt->fetch();
     return $row ?: null;
-}
-
-/**
- * Customer-initiated cancellation. Only allowed while the order has not been
- * processed, and stock is returned to the shelf.
- * @return array{ok: bool, message: string}
- */
-function order_cancel(array $order, string $reason = ''): array
-{
-    if (!in_array((string) $order['order_status'], ['pending', 'confirmed'], true)) {
-        return ['ok' => false, 'message' => 'This order can no longer be cancelled. Please contact us for help.'];
-    }
-
-    $db = db();
-    $db->beginTransaction();
-
-    try {
-        $db->prepare("UPDATE orders SET order_status = 'cancelled' WHERE id = ?")->execute([(int) $order['id']]);
-
-        $stmt = $db->prepare('SELECT * FROM order_items WHERE order_id = ?');
-        $stmt->execute([(int) $order['id']]);
-
-        $restock = $db->prepare('UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?');
-        $restockVariant = $db->prepare('UPDATE product_variants SET stock_quantity = stock_quantity + ? WHERE id = ?');
-        $hasVariantColumn = tc_column_exists('order_items', 'variant_id');
-
-        foreach ($stmt->fetchAll() as $line) {
-            if (!empty($line['product_id'])) {
-                $restock->execute([(int) $line['quantity'], (int) $line['product_id']]);
-            }
-            if ($hasVariantColumn && !empty($line['variant_id'])) {
-                $restockVariant->execute([(int) $line['quantity'], (int) $line['variant_id']]);
-            }
-        }
-
-        if (tc_table_exists('order_status_history')) {
-            $db->prepare('INSERT INTO order_status_history (order_id, status, note) VALUES (?, ?, ?)')
-               ->execute([
-                   (int) $order['id'],
-                   'cancelled',
-                   trim('Cancelled by customer. ' . $reason) ?: 'Cancelled by customer',
-               ]);
-        }
-
-        $db->commit();
-    } catch (Throwable $e) {
-        if ($db->inTransaction()) {
-            $db->rollBack();
-        }
-        error_log('[order-service] cancel: ' . $e->getMessage());
-        return ['ok' => false, 'message' => 'We could not cancel this order. Please contact us.'];
-    }
-
-    return ['ok' => true, 'message' => 'Your order has been cancelled.'];
 }

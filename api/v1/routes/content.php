@@ -261,12 +261,10 @@ route('POST', '/newsletter', static function (): void {
 
 /** POST /contact — Body: { name, email, phone?, subject?, message } */
 route('POST', '/contact', static function (): void {
-    $customer = current_customer();
-
-    $name    = api_input('name', (string) ($customer['name'] ?? ''));
-    $email   = api_input('email', (string) ($customer['email'] ?? ''));
+    $name    = api_input('name');
+    $email   = api_input('email');
     $message = api_input('message');
-    $phone   = api_input('phone', (string) ($customer['phone'] ?? ''));
+    $phone   = api_input('phone');
 
     $errors = [];
     if ($name === '')            $errors['name']    = 'Please enter your name.';
@@ -301,9 +299,8 @@ route('POST', '/personal-shopper', static function (): void {
         api_fail('This service is not available.', 503);
     }
 
-    $customer = current_customer();
-    $name  = api_input('name', (string) ($customer['name'] ?? ''));
-    $phone = api_input('phone', (string) ($customer['phone'] ?? ''));
+    $name  = api_input('name');
+    $phone = api_input('phone');
 
     $errors = [];
     if ($name === '')          $errors['name']  = 'Please enter your name.';
@@ -319,7 +316,7 @@ route('POST', '/personal-shopper', static function (): void {
     )->execute([
         mb_substr($name, 0, 150),
         mb_substr($phone, 0, 40),
-        api_input('email', (string) ($customer['email'] ?? '')) ?: null,
+        api_input('email') ?: null,
         api_input('occasion') ?: null,
         api_input('budget') ?: null,
         api_input('preferred_style') ?: null,

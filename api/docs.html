@@ -39,9 +39,9 @@
 </div>
 
 <div class="fs-steps">
-  <b>To try any endpoint:</b> you need a bearer token first — the token carries the cart and
-  wishlist, so even guest browsing uses one.
-  <button id="fs-token">Get a guest token &amp; authorize me</button>
+  <b>To try any endpoint:</b> you need a device token first. It is not a login — there are no
+  customer accounts; the token just carries the cart and wishlist.
+  <button id="fs-token">Get a device token &amp; authorize me</button>
   <span class="fs-status" id="fs-status"></span>
 </div>
 
@@ -64,14 +64,14 @@ window.ui = SwaggerUIBundle({
   layout: 'StandaloneLayout'
 });
 
-// One click to mint a guest token and hand it to Swagger's Authorize box --
+// One click to mint a device token and hand it to Swagger's Authorize box --
 // otherwise every "Try it out" needs the two-step dance by hand.
 document.getElementById('fs-token').addEventListener('click', async function () {
   var status = document.getElementById('fs-status');
   status.textContent = 'requesting…';
   status.style.color = '#6b4e00';
   try {
-    var res = await fetch('v1/index.php/auth/guest', {
+    var res = await fetch('v1/index.php/session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ platform: 'web', device_name: 'Swagger UI' })

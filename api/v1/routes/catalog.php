@@ -150,9 +150,9 @@ route('GET', '/products/{slug}', static function (array $params): void {
     if (tc_table_exists('recently_viewed')) {
         db()->prepare(
             'INSERT INTO recently_viewed (customer_id, session_id, product_id, viewed_at)
-             VALUES (?, ?, ?, NOW())
+             VALUES (NULL, ?, ?, NOW())
              ON DUPLICATE KEY UPDATE viewed_at = NOW()'
-        )->execute([current_customer_id(), api_token(), (int) $product['id']]);
+        )->execute([api_token(), (int) $product['id']]);
     }
 
     api_ok([
@@ -198,9 +198,10 @@ route('GET', '/products/{slug}/reviews', static function (array $params): void {
 
 /**
  * POST /products/{slug}/reviews
- * Body: { rating, name?, email?, title?, body?, fit_feedback? }
+ * Body: { rating, name, email, title?, body?, fit_feedback? }
  *
- * Reviews are held for moderation, exactly as they are on the website.
+ * Reviews are held for moderation, exactly as they are on the website. Name
+ * and email are typed in by the reviewer, as there are no accounts.
  */
 route('POST', '/products/{slug}/reviews', static function (array $params): void {
     $product = get_product($params['slug']);
@@ -208,12 +209,10 @@ route('POST', '/products/{slug}/reviews', static function (array $params): void 
         api_fail('Product not found.', 404);
     }
 
-    $customer = current_customer();
-
     $result = tc_submit_review([
         'product_id'   => (int) $product['id'],
-        'name'         => api_input('name', $customer['name'] ?? ''),
-        'email'        => api_input('email', $customer['email'] ?? ''),
+        'name'         => api_input('name'),
+        'email'        => api_input('email'),
         'rating'       => api_input_int('rating', 5),
         'title'        => api_input('title'),
         'body'         => api_input('body'),
@@ -360,11 +359,11 @@ route('GET', '/recently-viewed', static function (): void {
            FROM recently_viewed rv
            JOIN products p ON p.id = rv.product_id AND p.status = 1
            LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_primary = 1
-          WHERE rv.session_id = ? OR (rv.customer_id IS NOT NULL AND rv.customer_id = ?)
+          WHERE rv.session_id = ?
           ORDER BY rv.viewed_at DESC
           LIMIT 20'
     );
-    $stmt->execute([api_token(), current_customer_id()]);
+    $stmt->execute([api_token()]);
 
     api_ok(['items' => array_map('api_product_card', $stmt->fetchAll())]);
 });

@@ -84,7 +84,6 @@ require_once __DIR__ . '/product-functions.php';
 require_once __DIR__ . '/enterprise.php';
 require_once __DIR__ . '/order-service.php';
 require_once __DIR__ . '/auth.php';
-require_once __DIR__ . '/customer-auth.php';
 
 /* ---------------------------------------------------------------------------
    5. Store maintenance mode (admin unaffected)

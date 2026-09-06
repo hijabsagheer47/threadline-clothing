@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "Fashlab Studio \u2014 Customer API v1",
-    "description": "Customer-side API for the Flutter app.\n\nRun **Auth > Guest token** first: it saves the bearer token into the `token` variable and every other request picks it up automatically. Register or Login upgrades that same token, so the guest cart and wishlist carry over.\n\nSet `baseUrl` in the collection variables if you are testing against a staging URL.\n\n**Base URL note:** this webspace drops mod_rewrite substitutions, so the API routes on PATH_INFO \u2014 `baseUrl` ends in `/index.php` and the paths hang off it (`.../index.php/products`). If a client mangles that, the query-string form `.../index.php?_route=products` works everywhere.\n\nIf `Authorization` is stripped by the host, send the token in the `X-Api-Token` header instead \u2014 the API accepts either.",
+    "description": "Customer-side API for the Flutter app.\n\n**There are no customer accounts.** The app mirrors the website: browse, fill in the checkout form, order as a guest. The only login anywhere is the admin panel on the website, which this API does not expose.\n\nRun **Session > Device token** first: it saves the token into the `token` variable and every other request picks it up. The token is not a credential \u2014 it just carries the cart and wishlist.\n\n**Base URL note:** this webspace drops mod_rewrite substitutions, so the API routes on PATH_INFO \u2014 `baseUrl` ends in `/index.php` and paths hang off it (`.../index.php/products`). The query-string form `.../index.php?_route=products` works everywhere.\n\nIf `Authorization` is stripped by a host, send the token in `X-Api-Token` instead.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -20,8 +20,8 @@
       "script": {
         "type": "text/javascript",
         "exec": [
-          "// The API re-issues a token whenever the one sent is missing or",
-          "// expired, and returns it in X-Api-Token. Keep ours in step.",
+          "// The API re-issues a token whenever the one sent is missing or stale,",
+          "// and returns it in X-Api-Token. Keep ours in step.",
           "const issued = pm.response.headers.get('X-Api-Token');",
           "if (issued) { pm.collectionVariables.set('token', issued); }",
           "",
@@ -70,10 +70,10 @@
   ],
   "item": [
     {
-      "name": "Auth",
+      "name": "Session",
       "item": [
         {
-          "name": "Guest token (call first)",
+          "name": "Device token (run this first)",
           "request": {
             "method": "POST",
             "header": [
@@ -83,16 +83,15 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/auth/guest",
+              "raw": "{{baseUrl}}/session",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "auth",
-                "guest"
+                "session"
               ]
             },
-            "description": "Issues the token everything else uses. The test script stores it in {{token}} automatically.",
+            "description": "Not a login \u2014 there are no customer accounts. This token carries the cart and wishlist. The collection test script stores it in {{token}} automatically.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"platform\": \"android\",\n  \"device_name\": \"Pixel 8\"\n}",
@@ -102,252 +101,6 @@
                 }
               }
             }
-          }
-        },
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "register"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Ayesha Khan\",\n  \"email\": \"ayesha@example.com\",\n  \"password\": \"secret123\",\n  \"phone\": \"03001234567\",\n  \"newsletter\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "login"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"ayesha@example.com\",\n  \"password\": \"secret123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Me",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/me",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "me"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Update profile",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/profile",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "profile"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Ayesha K.\",\n  \"phone\": \"03001234567\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Change password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/change-password",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "change-password"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"current_password\": \"secret123\",\n  \"new_password\": \"newsecret123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Forgot password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/forgot-password",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "forgot-password"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"ayesha@example.com\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Reset password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/auth/reset-password",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "reset-password"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"token\": \"\",\n  \"password\": \"newsecret123\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/logout",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "logout"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Logout all devices",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/auth/logout-all",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "auth",
-                "logout-all"
-              ]
-            },
-            "description": ""
           }
         },
         {
@@ -519,7 +272,7 @@
                 "reviews"
               ]
             },
-            "description": "",
+            "description": "Name and email are typed in by the reviewer. Held for moderation.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"rating\": 5,\n  \"name\": \"Ayesha\",\n  \"email\": \"ayesha@example.com\",\n  \"title\": \"Beautiful\",\n  \"body\": \"The fabric and fit are lovely.\"\n}",
@@ -589,13 +342,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/collections/summer-edit",
+              "raw": "{{baseUrl}}/collections/signature-collection",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "collections",
-                "summer-edit"
+                "signature-collection"
               ]
             },
             "description": ""
@@ -799,6 +552,39 @@
           }
         },
         {
+          "name": "Update quantity (path form)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/92%3A0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "92%3A0"
+              ]
+            },
+            "description": "A cart key looks like 92:0 \u2014 percent-encode the colon. The body form above avoids this.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
           "name": "Remove item (body form - preferred)",
           "request": {
             "method": "POST",
@@ -829,6 +615,25 @@
                 }
               }
             }
+          }
+        },
+        {
+          "name": "Remove item (path form)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cart/items/92%3A0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cart",
+                "items",
+                "92%3A0"
+              ]
+            },
+            "description": ""
           }
         },
         {
@@ -896,58 +701,6 @@
               ]
             },
             "description": ""
-          }
-        },
-        {
-          "name": "Update quantity (path form)",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/cart/items/92%3A0",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "cart",
-                "items",
-                "92%3A0"
-              ]
-            },
-            "description": "Path form. A cart key looks like 92:0 \u2014 percent-encode the colon (92%3A0) or some clients will mangle it. The body forms above avoid the problem entirely.",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"quantity\": 3\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Remove item (path form)",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/cart/items/92%3A0",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "cart",
-                "items",
-                "92%3A0"
-              ]
-            },
-            "description": "Path form. A cart key looks like 92:0 \u2014 percent-encode the colon (92%3A0) or some clients will mangle it. The body forms above avoid the problem entirely."
           }
         }
       ]
@@ -1144,7 +897,7 @@
           }
         },
         {
-          "name": "Place order",
+          "name": "Place order (guest form)",
           "request": {
             "method": "POST",
             "header": [
@@ -1162,7 +915,7 @@
                 "orders"
               ]
             },
-            "description": "Signed-in customers can send {\"address_id\": 3} instead of the address fields.",
+            "description": "Guest checkout, exactly like the website. Keep order_number from the response \u2014 with no account, that number plus the email or phone is the only way back to the order.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Ayesha Khan\",\n  \"email\": \"ayesha@example.com\",\n  \"phone\": \"03001234567\",\n  \"address\": \"House 12, Street 4, DHA Phase 5\",\n  \"city\": \"Karachi\",\n  \"postal_code\": \"75500\",\n  \"delivery\": \"standard\",\n  \"notes\": \"\"\n}",
@@ -1175,79 +928,7 @@
           }
         },
         {
-          "name": "Place order (saved address)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/orders",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"address_id\": 1,\n  \"delivery\": \"express\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "My orders",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders?page=1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                }
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Order detail",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders/{{orderNumber}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderNumber}}"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Track order (guest)",
+          "name": "Track order",
           "request": {
             "method": "POST",
             "header": [
@@ -1266,7 +947,7 @@
                 "track"
               ]
             },
-            "description": "",
+            "description": "contact must be the email or phone used on the order.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"order_number\": \"{{orderNumber}}\",\n  \"contact\": \"ayesha@example.com\"\n}",
@@ -1279,260 +960,27 @@
           }
         },
         {
-          "name": "Cancel order",
+          "name": "Look up order (GET)",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/orders/{{orderNumber}}/cancel",
+              "raw": "{{baseUrl}}/orders/{{orderNumber}}?contact=ayesha@example.com",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "orders",
-                "{{orderNumber}}",
-                "cancel"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"reason\": \"Changed my mind\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+                "{{orderNumber}}"
+              ],
+              "query": [
+                {
+                  "key": "contact",
+                  "value": "ayesha@example.com"
                 }
-              }
-            }
-          }
-        },
-        {
-          "name": "Reorder",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/orders/{{orderNumber}}/reorder",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "orders",
-                "{{orderNumber}}",
-                "reorder"
               ]
             },
             "description": ""
-          }
-        }
-      ]
-    },
-    {
-      "name": "Account",
-      "item": [
-        {
-          "name": "Addresses",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/addresses",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "addresses"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Add address",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/addresses",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "addresses"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"label\": \"Home\",\n  \"name\": \"Ayesha Khan\",\n  \"phone\": \"03001234567\",\n  \"address\": \"House 12, Street 4, DHA Phase 5\",\n  \"city\": \"Karachi\",\n  \"postal_code\": \"75500\",\n  \"is_default\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Update address",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/addresses/1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "addresses",
-                "1"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"city\": \"Lahore\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "name": "Delete address",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/addresses/1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "addresses",
-                "1"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Notifications",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/notifications",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notifications"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Mark notification read",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/notifications/1/read",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notifications",
-                "1",
-                "read"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Mark all read",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/notifications/read-all",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "notifications",
-                "read-all"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Rewards",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/rewards",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "rewards"
-              ]
-            },
-            "description": ""
-          }
-        },
-        {
-          "name": "Back-in-stock alert",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/product-alerts",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "product-alerts"
-              ]
-            },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"product_id\": 92,\n  \"email\": \"ayesha@example.com\",\n  \"type\": \"back_in_stock\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
           }
         }
       ]

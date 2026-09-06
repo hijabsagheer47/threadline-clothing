@@ -13,7 +13,6 @@ define('TC_API', true);
 
 require_once __DIR__ . '/../../includes/bootstrap.php';
 require_once __DIR__ . '/../../includes/api-auth.php';
-require_once __DIR__ . '/../../includes/customer-auth.php';
 require_once __DIR__ . '/helpers.php';
 
 /* ---------------------------------------------------------------------------
@@ -54,41 +53,29 @@ if (!api_tokens_available()) {
 }
 
 /* ---------------------------------------------------------------------------
-   Authenticate the caller.
+   Identify the device.
 
-   Every request carries a token: a guest token for browsing and building a
-   cart, the same token bound to a customer once they sign in. A missing or
-   stale token is not an error for public endpoints — a fresh guest token is
-   issued and returned in the X-Api-Token response header so the app can store
-   it and carry on.
+   There is nothing to authenticate: the app shops as a guest, exactly as a
+   visitor does on the website. The token is an anonymous device identity that
+   carries the cart and wishlist, nothing more, so a missing or stale one is
+   never an error — a fresh token is issued and returned in the X-Api-Token
+   response header for the app to store.
 --------------------------------------------------------------------------- */
-$GLOBALS['api_token']     = '';
-$GLOBALS['api_token_row'] = null;
-$GLOBALS['tc_customer']   = null;
+$GLOBALS['api_token']        = '';
+$GLOBALS['api_token_row']    = null;
 $GLOBALS['api_token_is_new'] = false;
 
 $presented = api_bearer_token();
 $row = $presented !== '' ? api_token_row($presented) : null;
 
 if ($row === null) {
-    $issued = api_token_issue(null, api_header('X-Device-Name'), api_header('X-Platform'));
+    $issued = api_token_issue(api_header('X-Device-Name'), api_header('X-Platform'));
     $row = api_token_row($issued);
     $GLOBALS['api_token_is_new'] = true;
 }
 
 $GLOBALS['api_token']     = (string) $row['token'];
 $GLOBALS['api_token_row'] = $row;
-
-if (!empty($row['customer_id'])) {
-    $customer = customer_by_id((int) $row['customer_id']);
-    if ($customer) {
-        $GLOBALS['tc_customer'] = $customer;
-    } else {
-        // Account deleted or disabled since the token was issued.
-        api_token_revoke((string) $row['token']);
-        api_fail('Your session has expired. Please sign in again.', 401);
-    }
-}
 
 header('X-Api-Token: ' . $GLOBALS['api_token']);
 

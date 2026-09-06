@@ -164,19 +164,10 @@ function api_paginated(array $items, int $page, int $perPage, int $total): array
 }
 
 /* ============================================================================
-   AUTH GUARDS
+   TOKEN
    ============================================================================ */
 
-/** The signed-in customer, or a 401. Use on every account-only endpoint. */
-function api_require_customer(): array
-{
-    $customer = current_customer();
-    if (!$customer) {
-        api_fail('Please sign in to continue.', 401);
-    }
-    return $customer;
-}
-
+/** This device's token. Anonymous — there are no customer accounts. */
 function api_token(): string
 {
     return (string) ($GLOBALS['api_token'] ?? '');
@@ -393,36 +384,6 @@ function api_cart_payload(): array
             'amount_to_free_shipping' => max(0.0, round($freeAbove - (float) $totals['subtotal'], 2)),
         ],
         'currency' => setting('currency_symbol', 'Rs.'),
-    ];
-}
-
-function api_customer(array $c): array
-{
-    return [
-        'id'               => (int) $c['id'],
-        'name'             => $c['name'] ?? null,
-        'email'            => (string) $c['email'],
-        'phone'            => $c['phone'] ?? null,
-        'preferred_size'   => $c['preferred_size'] ?? null,
-        'newsletter_optin' => (bool) ($c['newsletter_optin'] ?? 0),
-        'referral_code'    => $c['referral_code'] ?? null,
-        'created_at'       => $c['created_at'] ?? null,
-    ];
-}
-
-function api_address(array $a): array
-{
-    return [
-        'id'          => (int) $a['id'],
-        'label'       => $a['label'] ?? null,
-        'name'        => $a['name'] ?? null,
-        'phone'       => $a['phone'] ?? null,
-        'address'     => (string) $a['address'],
-        'city'        => (string) $a['city'],
-        'state'       => $a['state'] ?? null,
-        'postal_code' => $a['postal_code'] ?? null,
-        'country'     => $a['country'] ?? 'Pakistan',
-        'is_default'  => (bool) $a['is_default'],
     ];
 }
 

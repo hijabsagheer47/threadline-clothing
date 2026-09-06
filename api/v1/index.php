@@ -65,12 +65,11 @@ function api_request_path(): string
     return trim(rawurldecode($path), '/');
 }
 
-require __DIR__ . '/routes/auth.php';
+require __DIR__ . '/routes/session.php';
 require __DIR__ . '/routes/catalog.php';
 require __DIR__ . '/routes/cart.php';
 require __DIR__ . '/routes/wishlist.php';
 require __DIR__ . '/routes/orders.php';
-require __DIR__ . '/routes/account.php';
 require __DIR__ . '/routes/content.php';
 
 $method = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));

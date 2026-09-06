@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Fashlab Studio \u2014 Customer API",
-    "version": "1.0.0",
-    "description": "Customer-side REST API for the Fashlab Studio mobile app. Admin functionality is deliberately not exposed here.\n\n### Start here\n1. **POST `/auth/guest`** \u2014 issues the bearer token everything else uses. Copy the `token` from the response, click **Authorize** above, and paste it in.\n2. Browse `/home`, `/products`, add to `/cart` \u2014 all of that works as a guest.\n3. **POST `/auth/register`** or **`/auth/login`** binds that same token to an account, so the guest cart and wishlist carry over.\n\n### Every response has the same shape\n```json\n{ \"success\": true, \"message\": null, \"data\": { }, \"errors\": { } }\n```\nBranch on `success`, show `message` to the customer, and map `errors` (`{\"field\": \"message\"}`) straight onto form validators on a 422.\n\n### Base URL\nThis webspace applies mod_rewrite patterns but drops the substitution \u2014 the same reason the storefront serves `/product.php?slug=\u2026` instead of pretty permalinks \u2014 so the API routes on `PATH_INFO` and the base URL ends in `/index.php`. `\u2026/index.php?_route=products` works too, and needs no server support at all.\n\n### Notes\n- Prices come back pre-formatted (`\"Rs. 6,050\"`); the app does no money maths.\n- Image URLs are absolute.\n- Payment is **Cash on Delivery only** \u2014 no gateway is connected.\n- If a host strips `Authorization`, send the token in `X-Api-Token` instead.\n- No CSRF token is needed; this is a bearer-token API."
+    "version": "2.0.0",
+    "description": "Customer-side REST API for the Fashlab Studio mobile app.\n\n### There are no customer accounts\nThe app mirrors the website: a visitor browses, fills in the checkout form and orders as a guest. There is no registration, no sign-in and no order history. The only login anywhere is the admin panel on the website, which this API does not expose.\n\nAn order is reached afterwards by its **order number plus the email or phone used on it** \u2014 `/orders/track` \u2014 which is what the site's track-order page does.\n\n### Start here\n1. **POST `/session`** \u2014 returns a device token. It is not a credential; it just carries the cart and wishlist, because a phone has no session cookie. Click **Authorize** above and paste it in.\n2. Browse `/home` and `/products`, add to `/cart`, save to `/wishlist`.\n3. **POST `/orders`** with the form fields to place the order.\n\nIf a request arrives with no token, or a stale one, a fresh token is issued and returned in the **`X-Api-Token`** response header \u2014 read that header on every response and replace your stored token when it differs.\n\n### Every response has the same shape\n```json\n{ \"success\": true, \"message\": null, \"data\": { }, \"errors\": { } }\n```\nBranch on `success`, show `message` to the customer, and map `errors` (`{\"field\": \"message\"}`) straight onto form validators on a 422.\n\n### Base URL\nThis webspace applies mod_rewrite patterns but drops the substitution \u2014 the same reason the storefront serves `/product.php?slug=\u2026` instead of pretty permalinks \u2014 so the API routes on `PATH_INFO` and the base URL ends in `/index.php`. `\u2026/index.php?_route=products` works too, and needs no server support at all.\n\n### Notes\n- Prices come back pre-formatted (`\"Rs. 6,050\"`); the app does no money maths.\n- Image URLs are absolute.\n- Payment is **Cash on Delivery only** \u2014 no gateway is connected.\n- If a host strips `Authorization`, send the token in `X-Api-Token` instead.\n- No CSRF token is needed."
   },
   "servers": [
     {
@@ -13,8 +13,8 @@
   ],
   "tags": [
     {
-      "name": "Auth",
-      "description": "Tokens, accounts, passwords"
+      "name": "Session",
+      "description": "The anonymous device token \u2014 not a login"
     },
     {
       "name": "Catalogue",
@@ -26,15 +26,11 @@
     },
     {
       "name": "Wishlist",
-      "description": "Saved products; works for guests too"
+      "description": "Saved products, held against the device token"
     },
     {
       "name": "Checkout & Orders",
-      "description": "Placing, tracking and cancelling orders"
-    },
-    {
-      "name": "Account",
-      "description": "Addresses, notifications, rewards, stock alerts"
+      "description": "Guest checkout and order tracking"
     },
     {
       "name": "Content",
@@ -46,7 +42,7 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "The token from POST /auth/guest, /auth/register or /auth/login."
+        "description": "The device token from POST /session."
       }
     },
     "schemas": {
@@ -341,7 +337,7 @@
           "key": {
             "type": "string",
             "example": "92:0",
-            "description": "product:variant. Prefer the body forms of update/remove; percent-encode this in a path."
+            "description": "product:variant. Prefer the body forms of update/remove."
           },
           "product_id": {
             "type": "integer"
@@ -470,79 +466,6 @@
           }
         }
       },
-      "Customer": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "preferred_size": {
-            "type": "string",
-            "nullable": true
-          },
-          "newsletter_optin": {
-            "type": "boolean"
-          },
-          "referral_code": {
-            "type": "string",
-            "nullable": true
-          },
-          "created_at": {
-            "type": "string"
-          }
-        }
-      },
-      "Address": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "label": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string"
-          },
-          "city": {
-            "type": "string"
-          },
-          "state": {
-            "type": "string",
-            "nullable": true
-          },
-          "postal_code": {
-            "type": "string",
-            "nullable": true
-          },
-          "country": {
-            "type": "string"
-          },
-          "is_default": {
-            "type": "boolean"
-          }
-        }
-      },
       "OrderSummary": {
         "type": "object",
         "properties": {
@@ -590,6 +513,7 @@
             "properties": {
               "customer": {
                 "type": "object",
+                "description": "The details typed into the checkout form.",
                 "properties": {
                   "name": {
                     "type": "string"
@@ -808,7 +732,7 @@
     "/health": {
       "get": {
         "tags": [
-          "Auth"
+          "Session"
         ],
         "summary": "Connectivity check",
         "operationId": "get_health",
@@ -857,16 +781,16 @@
             }
           }
         },
-        "description": "Confirms the API is installed and reachable. No token needed."
+        "description": "Confirms the API is installed and reachable."
       }
     },
-    "/auth/guest": {
+    "/session": {
       "post": {
         "tags": [
-          "Auth"
+          "Session"
         ],
-        "summary": "Issue / confirm a token",
-        "operationId": "post_auth_guest",
+        "summary": "Get a device token",
+        "operationId": "post_session",
         "responses": {
           "200": {
             "description": "Success",
@@ -892,10 +816,6 @@
                         "is_new": {
                           "type": "boolean"
                         },
-                        "customer": {
-                          "nullable": true,
-                          "$ref": "#/components/schemas/Customer"
-                        },
                         "cart_count": {
                           "type": "integer"
                         },
@@ -916,7 +836,7 @@
             }
           }
         },
-        "description": "**Call this on first launch.** Returns the bearer token that carries the cart and wishlist.\n\nSafe to call on every launch: presented with a valid token it returns that same token. Register or Login binds this same token to the account, so a guest cart is never lost.",
+        "description": "**Call this on first launch and store the token.**\n\nThis is not a login \u2014 there are no customer accounts. The token is an anonymous device identity that carries the cart and the wishlist between requests, because a phone has no session cookie.\n\nSafe to call on every launch: presented with a valid token it returns that same token rather than starting a new cart.",
         "requestBody": {
           "required": true,
           "content": {
@@ -933,808 +853,6 @@
                     "example": "Pixel 8"
                   }
                 }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/register": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Create an account",
-        "operationId": "post_auth_register",
-        "responses": {
-          "201": {
-            "description": "Registered",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "token": {
-                          "type": "string"
-                        },
-                        "customer": {
-                          "$ref": "#/components/schemas/Customer"
-                        },
-                        "cart": {
-                          "$ref": "#/components/schemas/Cart"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Already signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation failed \u2014 see `errors`",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "newsletter": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "name",
-                  "email",
-                  "password"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Sign in",
-        "operationId": "post_auth_login",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "token": {
-                          "type": "string"
-                        },
-                        "customer": {
-                          "$ref": "#/components/schemas/Customer"
-                        },
-                        "cart": {
-                          "$ref": "#/components/schemas/Cart"
-                        },
-                        "wishlist_count": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Wrong credentials, or locked out after repeated failures",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Binds the current token to the account and carries the guest wishlist across.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "email",
-                  "password"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/logout": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Sign out this device",
-        "operationId": "post_auth_logout",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Revokes this token. Call `/auth/guest` afterwards to get a fresh one.\n\n**Requires a signed-in customer.**"
-      }
-    },
-    "/auth/logout-all": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Sign out everywhere",
-        "operationId": "post_auth_logout-all",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/auth/me": {
-      "get": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Current customer",
-        "operationId": "get_auth_me",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "customer": {
-                          "$ref": "#/components/schemas/Customer"
-                        },
-                        "order_count": {
-                          "type": "integer"
-                        },
-                        "cart_count": {
-                          "type": "integer"
-                        },
-                        "wishlist_count": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/auth/profile": {
-      "put": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Update profile",
-        "operationId": "put_auth_profile",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "customer": {
-                          "$ref": "#/components/schemas/Customer"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "preferred_size": {
-                    "type": "string"
-                  },
-                  "newsletter_optin": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/auth/change-password": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Change password",
-        "operationId": "post_auth_change-password",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "current_password": {
-                    "type": "string"
-                  },
-                  "new_password": {
-                    "type": "string",
-                    "minLength": 8
-                  }
-                },
-                "required": [
-                  "current_password",
-                  "new_password"
-                ]
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/auth/forgot-password": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Request a reset link",
-        "operationId": "post_auth_forgot-password",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Always answers the same way whether or not the email has an account, so it cannot be used to discover which emails are registered.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  }
-                },
-                "required": [
-                  "email"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/reset-password": {
-      "post": {
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Reset with a token",
-        "operationId": "post_auth_reset-password",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 8
-                  }
-                },
-                "required": [
-                  "token",
-                  "password"
-                ]
               }
             }
           }
@@ -1779,23 +897,27 @@
                                 "type": "integer"
                               },
                               "eyebrow": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "title": {
                                 "type": "string"
                               },
                               "subtitle": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "image": {
                                 "type": "string",
                                 "format": "uri"
                               },
                               "cta_text": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "cta_link": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               }
                             }
                           }
@@ -1938,6 +1060,7 @@
             "in": "query",
             "schema": {
               "type": "string",
+              "default": "newest",
               "enum": [
                 "newest",
                 "featured",
@@ -1945,8 +1068,7 @@
                 "price_low",
                 "price_high",
                 "name"
-              ],
-              "default": "newest"
+              ]
             },
             "description": ""
           },
@@ -1962,7 +1084,7 @@
                 "over-15000"
               ]
             },
-            "description": "Preset band. Overrides price_min/price_max."
+            "description": "Preset band. Overrides price_min / price_max."
           },
           {
             "name": "price_min",
@@ -2056,7 +1178,7 @@
           "Catalogue"
         ],
         "summary": "Product detail",
-        "operationId": "get_products_slug",
+        "operationId": "get_products__slug_",
         "responses": {
           "200": {
             "description": "Success",
@@ -2083,6 +1205,37 @@
                           "type": "array",
                           "items": {
                             "$ref": "#/components/schemas/ProductCard"
+                          }
+                        },
+                        "reviews": {
+                          "type": "object",
+                          "properties": {
+                            "summary": {
+                              "type": "object",
+                              "properties": {
+                                "avg": {
+                                  "type": "number"
+                                },
+                                "count": {
+                                  "type": "integer"
+                                },
+                                "breakdown": {
+                                  "type": "object"
+                                }
+                              }
+                            },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/Review"
+                              }
+                            }
+                          }
+                        },
+                        "size_chart": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
                           }
                         },
                         "in_wishlist": {
@@ -2152,7 +1305,7 @@
           "Catalogue"
         ],
         "summary": "Product reviews",
-        "operationId": "get_products_slug_reviews",
+        "operationId": "get_products__slug__reviews",
         "responses": {
           "200": {
             "description": "Success",
@@ -2230,10 +1383,10 @@
           "Catalogue"
         ],
         "summary": "Submit a review",
-        "operationId": "post_products_slug_reviews",
+        "operationId": "post_products__slug__reviews",
         "responses": {
           "201": {
-            "description": "Submitted",
+            "description": "Submitted for moderation",
             "content": {
               "application/json": {
                 "schema": {
@@ -2293,7 +1446,7 @@
             }
           }
         },
-        "description": "Held for moderation before it appears, exactly as on the website.",
+        "description": "Name and email are typed in by the reviewer, as there are no accounts. Reviews are held for moderation before they appear, exactly as on the website.",
         "parameters": [
           {
             "name": "slug",
@@ -2336,7 +1489,10 @@
                   }
                 },
                 "required": [
-                  "rating"
+                  "rating",
+                  "name",
+                  "email",
+                  "body"
                 ]
               }
             }
@@ -2398,7 +1554,7 @@
           "Catalogue"
         ],
         "summary": "Category detail",
-        "operationId": "get_categories_slug",
+        "operationId": "get_categories__slug_",
         "responses": {
           "200": {
             "description": "Success",
@@ -2508,7 +1664,7 @@
           "Catalogue"
         ],
         "summary": "Collection detail",
-        "operationId": "get_collections_slug",
+        "operationId": "get_collections__slug_",
         "responses": {
           "200": {
             "description": "Success",
@@ -2837,7 +1993,8 @@
               }
             }
           }
-        }
+        },
+        "description": "Tracked per device token."
       }
     },
     "/looks": {
@@ -3177,7 +2334,7 @@
           "Cart"
         ],
         "summary": "Update quantity (path form)",
-        "operationId": "patch_cart_items_key",
+        "operationId": "patch_cart_items__key_",
         "responses": {
           "200": {
             "description": "The complete cart",
@@ -3245,7 +2402,7 @@
           "Cart"
         ],
         "summary": "Remove an item (path form)",
-        "operationId": "delete_cart_items_key",
+        "operationId": "delete_cart_items__key_",
         "responses": {
           "200": {
             "description": "The complete cart",
@@ -3526,7 +2683,7 @@
             }
           }
         },
-        "description": "Works for guests too \u2014 the list is carried onto the account at sign-in."
+        "description": "Held against the device token, like the website holds it against the session."
       },
       "post": {
         "tags": [
@@ -3760,7 +2917,7 @@
           "Wishlist"
         ],
         "summary": "Remove a product",
-        "operationId": "delete_wishlist_product_id",
+        "operationId": "delete_wishlist__product_id_",
         "responses": {
           "200": {
             "description": "Success",
@@ -3807,7 +2964,8 @@
             "required": true,
             "schema": {
               "type": "integer"
-            }
+            },
+            "description": ""
           }
         ]
       }
@@ -3913,16 +3071,6 @@
                         "cart": {
                           "$ref": "#/components/schemas/Cart"
                         },
-                        "customer": {
-                          "nullable": true,
-                          "$ref": "#/components/schemas/Customer"
-                        },
-                        "addresses": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Address"
-                          }
-                        },
                         "delivery_options": {
                           "type": "array",
                           "items": {
@@ -3935,7 +3083,8 @@
                                 "type": "string"
                               },
                               "description": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               },
                               "fee": {
                                 "type": "number"
@@ -3944,7 +3093,8 @@
                                 "type": "string"
                               },
                               "estimated_days": {
-                                "type": "string"
+                                "type": "string",
+                                "nullable": true
                               }
                             }
                           }
@@ -3983,7 +3133,7 @@
             }
           }
         },
-        "description": "Live totals, the customer's saved addresses, delivery options and the payment methods actually accepted."
+        "description": "Live totals, delivery options and the payment methods actually accepted."
       }
     },
     "/orders": {
@@ -4062,7 +3212,7 @@
             }
           }
         },
-        "description": "Prices, shipping and the coupon are recalculated server-side \u2014 anything the client sends about money is ignored.\n\nA signed-in customer can send `address_id` alone instead of the address fields, and name / email / phone then default to their profile.\n\n**Payment is Cash on Delivery only.** No gateway is connected, so a card order could never be settled.",
+        "description": "Guest checkout, exactly like the website: fill in the form and order. There is no account.\n\nPrices, shipping and the coupon are recalculated server-side \u2014 anything the client sends about money is ignored.\n\n**Keep `order_number` from the response.** With no account, that number plus the email or phone is the only way back to the order.\n\n**Payment is Cash on Delivery only.** No gateway is connected, so a card order could never be settled.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4104,130 +3254,33 @@
                     "type": "string",
                     "default": "Pakistan"
                   },
-                  "address_id": {
-                    "type": "integer",
-                    "description": "Saved address; replaces the address fields"
-                  },
                   "is_gift": {
                     "type": "boolean"
                   },
                   "gift_message": {
                     "type": "string"
                   }
-                }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "phone",
+                  "address",
+                  "city"
+                ]
               }
             }
           }
         }
-      },
-      "get": {
-        "tags": [
-          "Checkout & Orders"
-        ],
-        "summary": "Order history",
-        "operationId": "get_orders",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/OrderSummary"
-                          }
-                        },
-                        "meta": {
-                          "$ref": "#/components/schemas/Meta"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1
-            },
-            "description": ""
-          },
-          {
-            "name": "per_page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 20
-            },
-            "description": ""
-          }
-        ],
-        "description": "**Requires a signed-in customer.**"
       }
     },
-    "/orders/{order_number}": {
-      "get": {
+    "/orders/track": {
+      "post": {
         "tags": [
           "Checkout & Orders"
         ],
-        "summary": "Order detail",
-        "operationId": "get_orders_order_number",
+        "summary": "Track an order",
+        "operationId": "post_orders_track",
         "responses": {
           "200": {
             "description": "Success",
@@ -4264,7 +3317,7 @@
             }
           },
           "404": {
-            "description": "Not found, or not yours",
+            "description": "No order matches that number and contact",
             "content": {
               "application/json": {
                 "schema": {
@@ -4294,71 +3347,7 @@
             }
           }
         },
-        "description": "A signed-in customer sees their own orders. A guest may pass `contact` \u2014 the email or phone used on the order.",
-        "parameters": [
-          {
-            "name": "order_number",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": ""
-          },
-          {
-            "name": "contact",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Email or phone on the order (guests)"
-          }
-        ]
-      }
-    },
-    "/orders/track": {
-      "post": {
-        "tags": [
-          "Checkout & Orders"
-        ],
-        "summary": "Track an order (guest)",
-        "operationId": "post_orders_track",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "order": {
-                          "$ref": "#/components/schemas/OrderDetail"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
+        "description": "`contact` must be the email or phone used on the order. Requiring it is what stops an order number on its own from exposing someone's address.",
         "requestBody": {
           "required": true,
           "content": {
@@ -4384,13 +3373,13 @@
         }
       }
     },
-    "/orders/{order_number}/cancel": {
-      "post": {
+    "/orders/{order_number}": {
+      "get": {
         "tags": [
           "Checkout & Orders"
         ],
-        "summary": "Cancel an order",
-        "operationId": "post_orders_order_number_cancel",
+        "summary": "Look up an order",
+        "operationId": "get_orders__order_number_",
         "responses": {
           "200": {
             "description": "Success",
@@ -4426,8 +3415,8 @@
               }
             }
           },
-          "409": {
-            "description": "Too late to cancel",
+          "404": {
+            "description": "No order matches",
             "content": {
               "application/json": {
                 "schema": {
@@ -4444,278 +3433,6 @@
                     "data": {
                       "type": "object",
                       "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Allowed while the order is still `pending` or `confirmed`. Stock is returned to the shelf.\n\n**Requires a signed-in customer.**",
-        "parameters": [
-          {
-            "name": "order_number",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": ""
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "reason": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/orders/{order_number}/reorder": {
-      "post": {
-        "tags": [
-          "Checkout & Orders"
-        ],
-        "summary": "Reorder",
-        "operationId": "post_orders_order_number_reorder",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "cart": {
-                          "$ref": "#/components/schemas/Cart"
-                        },
-                        "skipped": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Puts the order's items back in the cart. Items no longer available are reported in `skipped`.\n\n**Requires a signed-in customer.**",
-        "parameters": [
-          {
-            "name": "order_number",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": ""
-          }
-        ]
-      }
-    },
-    "/addresses": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Saved addresses",
-        "operationId": "get_addresses",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "$ref": "#/components/schemas/Address"
-                          }
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      },
-      "post": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Add an address",
-        "operationId": "post_addresses",
-        "responses": {
-          "201": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "address": {
-                          "$ref": "#/components/schemas/Address"
-                        }
-                      }
                     },
                     "errors": {
                       "type": "object",
@@ -4729,37 +3446,7 @@
             }
           },
           "422": {
-            "description": "Validation failed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
+            "description": "contact was not supplied",
             "content": {
               "application/json": {
                 "schema": {
@@ -4789,693 +3476,27 @@
             }
           }
         },
-        "description": "The first address a customer saves automatically becomes their default.\n\n**Requires a signed-in customer.**",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "address": {
-                    "type": "string"
-                  },
-                  "city": {
-                    "type": "string"
-                  },
-                  "state": {
-                    "type": "string"
-                  },
-                  "postal_code": {
-                    "type": "string"
-                  },
-                  "country": {
-                    "type": "string"
-                  },
-                  "is_default": {
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "address",
-                  "city"
-                ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/addresses/{id}": {
-      "put": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Update an address",
-        "operationId": "put_addresses_id",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "address": {
-                          "$ref": "#/components/schemas/Address"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Only the fields you send are changed.\n\n**Requires a signed-in customer.**",
+        "description": "The same lookup as `/orders/track`, for deep links and for polling an order just placed. `contact` is required for the same reason.",
         "parameters": [
           {
-            "name": "id",
+            "name": "order_number",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "address": {
-                    "type": "string"
-                  },
-                  "city": {
-                    "type": "string"
-                  },
-                  "state": {
-                    "type": "string"
-                  },
-                  "postal_code": {
-                    "type": "string"
-                  },
-                  "country": {
-                    "type": "string"
-                  },
-                  "is_default": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Delete an address",
-        "operationId": "delete_addresses_id",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
+              "type": "string"
+            },
+            "description": ""
           },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "contact",
+            "in": "query",
             "schema": {
-              "type": "integer"
-            }
+              "type": "string"
+            },
+            "description": "Email or phone used on the order",
+            "required": true
           }
-        ],
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/notifications": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Notifications",
-        "operationId": "get_notifications",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "items": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer"
-                              },
-                              "type": {
-                                "type": "string"
-                              },
-                              "title": {
-                                "type": "string"
-                              },
-                              "body": {
-                                "type": "string"
-                              },
-                              "link": {
-                                "type": "string"
-                              },
-                              "is_read": {
-                                "type": "boolean"
-                              },
-                              "created_at": {
-                                "type": "string"
-                              },
-                              "human": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        },
-                        "unread": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/notifications/{id}/read": {
-      "post": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Mark one read",
-        "operationId": "post_notifications_id_read",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/notifications/read-all": {
-      "post": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Mark all read",
-        "operationId": "post_notifications_read-all",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/rewards": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Points balance and ledger",
-        "operationId": "get_rewards",
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "enabled": {
-                          "type": "boolean"
-                        },
-                        "points": {
-                          "type": "integer"
-                        },
-                        "lifetime": {
-                          "type": "integer"
-                        },
-                        "tier": {
-                          "type": "string"
-                        },
-                        "transactions": {
-                          "type": "array",
-                          "items": {
-                            "type": "object"
-                          }
-                        },
-                        "referral_code": {
-                          "type": "string",
-                          "nullable": true
-                        }
-                      }
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Not signed in",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "**Requires a signed-in customer.**"
-      }
-    },
-    "/product-alerts": {
-      "post": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Tell me when it's back",
-        "operationId": "post_product-alerts",
-        "responses": {
-          "201": {
-            "description": "Alert registered",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "nullable": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "nullable": true
-                    },
-                    "errors": {
-                      "type": "object",
-                      "additionalProperties": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "description": "Open to guests \u2014 an email is all that is needed.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "product_id": {
-                    "type": "integer"
-                  },
-                  "email": {
-                    "type": "string",
-                    "format": "email"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "back_in_stock",
-                      "price_drop",
-                      "new_color",
-                      "new_size",
-                      "launch"
-                    ],
-                    "default": "back_in_stock"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "desired_price": {
-                    "type": "number"
-                  }
-                },
-                "required": [
-                  "product_id"
-                ]
-              }
-            }
-          }
-        }
+        ]
       }
     },
     "/settings": {
@@ -5709,7 +3730,7 @@
           "Content"
         ],
         "summary": "CMS page",
-        "operationId": "get_pages_slug",
+        "operationId": "get_pages__slug_",
         "responses": {
           "200": {
             "description": "Success",
@@ -5954,7 +3975,7 @@
           "Content"
         ],
         "summary": "Journal post",
-        "operationId": "get_journal_slug",
+        "operationId": "get_journal__slug_",
         "responses": {
           "200": {
             "description": "Success",
@@ -6009,7 +4030,7 @@
         "tags": [
           "Content"
         ],
-        "summary": "Subscribe",
+        "summary": "Subscribe to the newsletter",
         "operationId": "post_newsletter",
         "responses": {
           "200": {
