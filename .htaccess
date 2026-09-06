@@ -62,6 +62,12 @@ AcceptPathInfo On
 # --- Protect sensitive directories ------------------------------------------
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Dot-files and dot-directories (.git, tooling caches, editor state) are
+    # never site content, and a stray one had been reachable. .well-known must
+    # stay open -- certificate renewal is validated through it.
+    RewriteRule ^\.well-known/ - [L]
+    RewriteRule (^|/)\. - [F,L]
+
     RewriteRule ^config(/|$) - [F,L]
     RewriteRule ^includes(/|$) - [F,L]
     RewriteRule ^scripts(/|$) - [F,L]
