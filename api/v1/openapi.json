@@ -2574,7 +2574,7 @@
             }
           }
         },
-        "description": "Validity, minimum order and usage limits are all checked server-side.",
+        "description": "Validity, minimum order and usage limits are all checked server-side.\n\n`WELCOME10` in the example is a placeholder \u2014 replace it with a code that exists in Admin -> Coupons, or the response is a 422 saying the code is not valid.",
         "requestBody": {
           "required": true,
           "content": {

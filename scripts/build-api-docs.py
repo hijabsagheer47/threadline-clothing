@@ -1,12 +1,19 @@
 #!/usr/bin/env python3
 """
-Generate api/v1/openapi.json from a description of the customer API, then check
-it against the routes actually registered in api/v1/routes/*.php.
+Build the API artefacts from one description of the customer API:
 
-Hand-maintaining the spec meant it drifted from the code the moment an endpoint
-moved. Run this after changing routes:
+  api/v1/openapi.json                  OpenAPI 3 spec (served, and read by
+                                       the Swagger UI page)
+  Fashlab-API.postman_collection.json  Postman collection, derived from that
+                                       same spec
 
-    python3 scripts/build-openapi.py
+...then check both against the routes actually registered in
+api/v1/routes/*.php, and fail if they have drifted.
+
+Hand-maintaining either one meant it went stale the moment an endpoint moved,
+so neither is written by hand any more. Run this after changing routes:
+
+    python3 scripts/build-api-docs.py
 """
 
 import collections, glob, json, os, re, sys
@@ -301,7 +308,9 @@ op("DELETE", "/cart/items/{key}", "Cart", "Remove an item (path form)",
 op("DELETE", "/cart", "Cart", "Empty the cart",
    "Also drops any applied coupon.", responses=CART)
 op("POST", "/cart/coupon", "Cart", "Apply a coupon",
-   "Validity, minimum order and usage limits are all checked server-side.",
+   "Validity, minimum order and usage limits are all checked server-side.\n\n"
+   "`WELCOME10` in the example is a placeholder — replace it with a code that exists in "
+   "Admin -> Coupons, or the response is a 422 saying the code is not valid.",
    reqbody=body({"code": dict(STR, example="WELCOME10")}, ("code",)),
    responses={"200": envelope(REF("Cart")),
               "422": envelope(None, "Coupon not valid for this cart")})
@@ -488,11 +497,292 @@ spec = {
     "paths": paths,
 }
 
-out = os.path.join(ROOT, "api/v1/openapi.json")
-with open(out, "w") as f:
+spec_path = os.path.join(ROOT, "api/v1/openapi.json")
+with open(spec_path, "w") as f:
     json.dump(spec, f, indent=2)
 
-# ---- check the spec against the routes actually registered -----------------
+
+# ============================================================================
+# POSTMAN COLLECTION, derived from the spec above
+# ============================================================================
+
+# A path parameter's meaning depends on the endpoint, not just its name: the
+# "slug" in /products/{slug} and /categories/{slug} are different things, so
+# each one gets its own collection variable rather than sharing "productSlug".
+PATH_VARS = {
+    "/products/{slug}":                {"slug": "{{productSlug}}"},
+    "/products/{slug}/reviews":        {"slug": "{{productSlug}}"},
+    "/categories/{slug}":              {"slug": "{{categorySlug}}"},
+    "/collections/{slug}":             {"slug": "{{collectionSlug}}"},
+    "/pages/{slug}":                   {"slug": "{{pageSlug}}"},
+    "/journal/{slug}":                 {"slug": "{{journalSlug}}"},
+    "/orders/{order_number}":          {"order_number": "{{orderNumber}}"},
+    "/wishlist/{product_id}":          {"product_id": "{{productId}}"},
+    # The cart-key path form needs the colon percent-encoded, which a variable
+    # cannot carry cleanly; the body form alongside it uses the raw {{cartKey}}.
+    "/cart/items/{key}":               {"key": "92%3A0"},
+}
+
+# Seeded values so the collection answers on the first send, before any
+# chaining has run. They are overwritten by the test script as soon as the
+# matching list endpoint is called.
+VAR_DEFAULTS = {
+    "baseUrl":        SERVER,
+    "token":          "",
+    # A product that is actually in stock, so "add to cart" works on the first
+    # send rather than answering "out of stock".
+    "productSlug":    "hania-eastern-angrakha",
+    "productId":      "92",
+    "categorySlug":   "stitched",
+    "collectionSlug": "signature-collection",
+    "pageSlug":       "shipping-policy",
+    "journalSlug":    "",
+    "cartKey":        "92:0",
+    "orderNumber":    "",
+}
+
+# Readable stand-ins, so a request can be sent as-is and get a real response.
+FIELD_EXAMPLES = {
+    "name": "Ayesha Khan", "email": "ayesha@example.com", "phone": "03001234567",
+    "address": "House 12, Street 4, DHA Phase 5", "city": "Karachi",
+    "postal_code": "75500", "country": "Pakistan", "notes": "Please call before delivery",
+    "message": "Do you ship to Quetta?", "subject": "Question",
+    "title": "Beautiful", "body": "The fabric and fit are lovely.",
+    "code": "WELCOME10", "contact": "ayesha@example.com",
+    "order_number": "{{orderNumber}}", "key": "{{cartKey}}",
+    "product_id": "{{productId}}", "quantity": 2, "rating": 5,
+    "device_name": "Pixel 8", "platform": "android",
+    "occasion": "Wedding", "budget": "20000-30000",
+    "gift_message": "Happy birthday!",
+    "q": "lawn", "category": "stitched", "collection": "signature-collection",
+    "fabric": "Premium lawn fabric", "color": "Blush Pink",
+    "reason": "Changed my mind",
+}
+
+
+def example_for(field, schema):
+    """A sendable value for one field, or None when there is nothing sensible."""
+    # The curated list wins over the schema's own example, because several of
+    # these are {{variables}} that make the requests chain -- and where they are
+    # not, the two agree anyway.
+    if field in FIELD_EXAMPLES:
+        return FIELD_EXAMPLES[field]
+    if "example" in schema:
+        return schema["example"]
+    if "default" in schema:
+        return schema["default"]
+    if "enum" in schema:
+        return schema["enum"][0]
+    if schema.get("format") == "email":
+        return "ayesha@example.com"
+
+    t = schema.get("type")
+    if t == "boolean":
+        return False
+    if t == "string":
+        return ""
+    # An invented integer id (a variant, say) would just make the request fail,
+    # so leave it out rather than guess.
+    return None
+
+
+def postman_request(method, path, operation):
+    raw_path = path
+    for name, value in PATH_VARS.get(path, {}).items():
+        raw_path = raw_path.replace("{%s}" % name, value)
+
+    params = operation.get("parameters", [])
+    query = [p for p in params if p.get("in") == "query"]
+
+    url = {
+        "raw": "{{baseUrl}}" + raw_path,
+        "host": ["{{baseUrl}}"],
+        "path": [s for s in raw_path.strip("/").split("/") if s],
+    }
+
+    if query:
+        entries = []
+        for p in query:
+            value = example_for(p["name"], p.get("schema", {}))
+            entry = {"key": p["name"], "value": "" if value is None else str(value),
+                     "description": p.get("description", "")}
+            # Optional filters ship disabled: visible in Postman for discovery,
+            # but not silently narrowing the first response someone sends.
+            if not p.get("required") and "default" not in p.get("schema", {}):
+                entry["disabled"] = True
+            entries.append(entry)
+        url["query"] = entries
+        enabled = [e for e in entries if not e.get("disabled")]
+        if enabled:
+            url["raw"] += "?" + "&".join("%s=%s" % (e["key"], e["value"]) for e in enabled)
+
+    request = {
+        "method": method.upper(),
+        "header": [],
+        "url": url,
+        "description": operation.get("description", operation.get("summary", "")),
+    }
+
+    schema = (operation.get("requestBody", {})
+                       .get("content", {})
+                       .get("application/json", {})
+                       .get("schema"))
+    if schema:
+        props = schema.get("properties", {})
+        required = schema.get("required", [])
+        # Required fields first: that is the order someone reads them in.
+        ordered = ([k for k in props if k in required]
+                   + [k for k in props if k not in required])
+        payload = {}
+        for k in ordered:
+            value = example_for(k, props[k])
+            # Required fields always ship, even if only as a blank to fill in.
+            if value is None:
+                if k not in required:
+                    continue
+                value = ""
+            payload[k] = value
+        raw = json.dumps(payload, indent=2)
+        # A {{variable}} standing in for a number has to go into the JSON
+        # unquoted, or the body advertises a string where the schema says
+        # integer. Postman substitutes the raw text, so dropping the quotes is
+        # all it takes.
+        for key, value in payload.items():
+            if (props[key].get("type") in ("integer", "number")
+                    and isinstance(value, str) and value.startswith("{{")):
+                raw = raw.replace('"%s": "%s"' % (key, value), '"%s": %s' % (key, value))
+
+        request["header"] = [{"key": "Content-Type", "value": "application/json"}]
+        request["body"] = {"mode": "raw", "raw": raw,
+                           "options": {"raw": {"language": "json"}}}
+
+    return {"name": operation.get("summary", method + " " + path), "request": request}
+
+
+# Spec order is grouped by resource, which puts DELETE /cart before the request
+# that fills the cart -- fine to read, useless to run. These folders get an
+# explicit lifecycle instead, so "Run folder" works top to bottom. Anything not
+# listed keeps spec order, after the listed ones.
+FOLDER_ORDER = {
+    "Cart": [
+        ("post", "/cart/items"),
+        ("get", "/cart"),
+        ("get", "/cart/count"),
+        ("patch", "/cart/items"),
+        ("patch", "/cart/items/{key}"),
+        ("post", "/cart/coupon"),
+        ("delete", "/cart/coupon"),
+        ("post", "/cart/items/remove"),
+        ("delete", "/cart/items/{key}"),
+        ("delete", "/cart"),
+    ],
+    "Wishlist": [
+        ("post", "/wishlist"),
+        ("get", "/wishlist"),
+        ("get", "/wishlist/count"),
+        ("get", "/wishlist/ids"),
+        ("post", "/wishlist/toggle"),
+        ("post", "/wishlist/move-to-cart"),
+        ("delete", "/wishlist/{product_id}"),
+    ],
+    "Catalogue": [
+        # List first: it fills productSlug for the detail requests below.
+        ("get", "/home"),
+        ("get", "/products"),
+        ("get", "/products/{slug}"),
+    ],
+}
+
+by_tag = collections.OrderedDict((t["name"], []) for t in spec["tags"])
+for path, methods in spec["paths"].items():
+    for method, operation in methods.items():
+        if method not in ("get", "post", "put", "patch", "delete"):
+            continue
+        tag = (operation.get("tags") or ["Other"])[0]
+        by_tag.setdefault(tag, []).append((method, path, operation))
+
+for tag, entries in by_tag.items():
+    order = FOLDER_ORDER.get(tag, [])
+    def rank(entry, order=order):
+        key = (entry[0], entry[1])
+        return order.index(key) if key in order else len(order)
+    entries.sort(key=rank)  # stable: unlisted keep spec order
+    by_tag[tag] = [postman_request(m, p, op) for m, p, op in entries]
+
+collection = {
+    "info": {
+        "name": "Fashlab Studio — Customer API v1",
+        "description": (
+            spec["info"]["description"]
+            + "\n\n---\n\n**Using this collection:** run **Session → Get a device token** "
+              "first. Its response is saved into the `token` variable and every other request "
+              "picks it up automatically. Listing products, categories, collections, pages or "
+              "the journal fills that list's own slug variable; adding to the cart fills "
+              "`cartKey`; placing an order fills `orderNumber` — so the requests chain without "
+              "copying values by hand. The variables also ship with working defaults, so any "
+              "request answers on the first send.\n\n"
+              "Optional query filters ship **disabled** — tick them in Postman's Params tab to "
+              "use them.\n\n"
+            + "_Generated by scripts/build-api-docs.py — do not edit by hand._"
+        ),
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    },
+    "auth": {"type": "bearer",
+             "bearer": [{"key": "token", "value": "{{token}}", "type": "string"}]},
+    "event": [{"listen": "test", "script": {"type": "text/javascript", "exec": [
+        "// The API re-issues a token whenever the one sent is missing or stale,",
+        "// and returns it in X-Api-Token. Keep ours in step.",
+        "const issued = pm.response.headers.get('X-Api-Token');",
+        "if (issued) { pm.collectionVariables.set('token', issued); }",
+        "",
+        "let body;",
+        "try { body = pm.response.json(); } catch (e) { body = null; }",
+        "if (!body || !body.data) { return; }",
+        "",
+        "const d = body.data;",
+        "if (d.token) { pm.collectionVariables.set('token', d.token); }",
+        "if (d.product && d.product.slug) { pm.collectionVariables.set('productSlug', d.product.slug); }",
+        "if (d.order && d.order.order_number) { pm.collectionVariables.set('orderNumber', d.order.order_number); }",
+        "",
+        "// A 'slug' means something different per endpoint, so key off the path",
+        "// rather than writing every list's first slug into productSlug.",
+        "const path = pm.request.url.getPath();",
+        "const SLUG_VARS = {",
+        "    '/products': 'productSlug',",
+        "    '/categories': 'categorySlug',",
+        "    '/collections': 'collectionSlug',",
+        "    '/pages': 'pageSlug',",
+        "    '/journal': 'journalSlug',",
+        "};",
+        "",
+        "if (Array.isArray(d.items) && d.items.length) {",
+        "    // Prefer something in stock, so the cart requests below work on",
+        "    // the first run instead of hitting a sold-out item.",
+        "    const first = d.items.find(function (i) { return i.in_stock; }) || d.items[0];",
+        "    if (first.key) { pm.collectionVariables.set('cartKey', first.key); }",
+        "    if (first.id && path.endsWith('/products')) {",
+        "        pm.collectionVariables.set('productId', String(first.id));",
+        "    }",
+        "    if (first.slug) {",
+        "        for (const [suffix, variable] of Object.entries(SLUG_VARS)) {",
+        "            if (path.endsWith(suffix)) {",
+        "                pm.collectionVariables.set(variable, first.slug);",
+        "                break;",
+        "            }",
+        "        }",
+        "    }",
+        "}",
+    ]}}],
+    "variable": [{"key": k, "value": v} for k, v in VAR_DEFAULTS.items()],
+    "item": [{"name": tag, "item": items} for tag, items in by_tag.items() if items],
+}
+
+collection_path = os.path.join(ROOT, "Fashlab-API.postman_collection.json")
+with open(collection_path, "w") as f:
+    json.dump(collection, f, indent=2)
+
+
+# ---- check both artefacts against the routes actually registered -----------
 declared = set()
 for f in glob.glob(os.path.join(ROOT, "api/v1/routes/*.php")):
     for m in re.finditer(r"route\('([A-Z]+)',\s*'([^']+)'", open(f).read()):
@@ -506,10 +796,42 @@ extra = documented - declared
 refs = set(re.findall(r'"#/components/schemas/([A-Za-z]+)"', json.dumps(spec)))
 unresolved = refs - set(schemas)
 
-print("routes in code: %d   operations in spec: %d" % (len(declared), len(documented)))
-if missing:    print("UNDOCUMENTED:", sorted(missing))
-if extra:      print("DOCUMENTED BUT MISSING FROM CODE:", sorted(extra))
-if unresolved: print("UNRESOLVED $refs:", sorted(unresolved))
-if missing or extra or unresolved:
+# The collection is derived from the spec, so it can only drift if the
+# generator above drops something -- check it the same way.
+def route_shape(path):
+    return "/".join("{x}" if s.startswith("{") else s
+                    for s in path.strip("/").split("/"))
+
+declared_shapes = {(m, route_shape(p)) for m, p in declared}
+collected = set()
+for folder in collection["item"]:
+    for item in folder["item"]:
+        raw = item["request"]["url"]["raw"].replace("{{baseUrl}}", "").split("?")[0]
+        segments = raw.strip("/").split("/")
+        # A concrete value stands in for a path parameter, so try every
+        # combination of literal and placeholder to find the route it maps to.
+        options = {""}
+        for seg in segments:
+            options = {(prefix + "/" + part).lstrip("/")
+                       for prefix in options for part in (seg, "{x}")}
+        hit = next((o for o in options
+                    if (item["request"]["method"], o) in declared_shapes), None)
+        if hit:
+            collected.add((item["request"]["method"], hit))
+
+uncollected = declared_shapes - collected
+
+print("routes in code:      %d" % len(declared))
+print("operations in spec:  %d" % len(documented))
+print("requests in Postman: %d" % sum(len(f["item"]) for f in collection["item"]))
+if missing:      print("UNDOCUMENTED:", sorted(missing))
+if extra:        print("DOCUMENTED BUT MISSING FROM CODE:", sorted(extra))
+if unresolved:   print("UNRESOLVED $refs:", sorted(unresolved))
+if uncollected:  print("MISSING FROM THE POSTMAN COLLECTION:", sorted(uncollected))
+if missing or extra or unresolved or uncollected:
     sys.exit(1)
-print("spec matches the code exactly ->", out)
+
+print()
+print("both match the code exactly:")
+print("  " + spec_path)
+print("  " + collection_path)
