@@ -3,6 +3,10 @@
 REST API for the Flutter mobile app. Customer side only — nothing here touches
 the admin panel.
 
+**Interactive docs (live):** <https://fashlabstudio.mytechrcm.com/api/docs.html>
+Swagger UI over the live API. Click **“Get a guest token & authorize me”** once,
+then every endpoint can be run from the browser with *Try it out*.
+
 **Base URL:** `https://fashlabstudio.mytechrcm.com/api/v1/index.php`
 
 > This webspace applies mod_rewrite *patterns* but silently drops the
@@ -38,6 +42,10 @@ the admin panel.
    ```bash
    curl https://fashlabstudio.mytechrcm.com/api/v1/index.php/health
    ```
+
+Both migrations are already imported on the live database, so the API is live.
+The OpenAPI 3 spec is served at `/api/v1/openapi.json` — import it into
+Postman, Insomnia or a Dart client generator.
 
    ```json
    { "success": true, "data": { "status": "ok", "api_version": "v1", "store": "Fashlab Studio" } }
