@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Fashlab Studio — Customer API</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui.css">
+<style>
+  body { margin: 0; background: #fafafa; }
+  .topbar { display: none; }
+  .fs-header {
+    background: #4a2230; color: #fff; padding: 20px 24px;
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .fs-header h1 { margin: 0 0 6px; font-size: 20px; font-weight: 600; letter-spacing: .01em; }
+  .fs-header p { margin: 0; opacity: .85; font-size: 13px; }
+  .fs-header code {
+    background: rgba(255,255,255,.14); padding: 2px 6px; border-radius: 3px; font-size: 12px;
+  }
+  .fs-steps {
+    background: #fff3cd; border-bottom: 1px solid #ffe08a; color: #6b4e00;
+    padding: 12px 24px; font: 13px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .fs-steps b { color: #4a3600; }
+  .fs-steps button {
+    margin-left: 10px; border: 1px solid #b58900; background: #fff; color: #6b4e00;
+    padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;
+  }
+  .fs-steps button:hover { background: #fffbe8; }
+  .fs-steps .fs-status { margin-left: 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="fs-header">
+  <h1>Fashlab Studio — Customer API v1</h1>
+  <p>Live API for the mobile app. Base URL <code>https://fashlabstudio.mytechrcm.com/api/v1/index.php</code></p>
+</div>
+
+<div class="fs-steps">
+  <b>To try any endpoint:</b> you need a bearer token first — the token carries the cart and
+  wishlist, so even guest browsing uses one.
+  <button id="fs-token">Get a guest token &amp; authorize me</button>
+  <span class="fs-status" id="fs-status"></span>
+</div>
+
+<div id="swagger-ui"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+<script>
+window.ui = SwaggerUIBundle({
+  url: 'v1/openapi.json',
+  dom_id: '#swagger-ui',
+  deepLinking: true,
+  displayRequestDuration: true,
+  filter: true,
+  docExpansion: 'none',
+  defaultModelsExpandDepth: 0,
+  tryItOutEnabled: true,
+  presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+  plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+  layout: 'StandaloneLayout'
+});
+
+// One click to mint a guest token and hand it to Swagger's Authorize box --
+// otherwise every "Try it out" needs the two-step dance by hand.
+document.getElementById('fs-token').addEventListener('click', async function () {
+  var status = document.getElementById('fs-status');
+  status.textContent = 'requesting…';
+  status.style.color = '#6b4e00';
+  try {
+    var res = await fetch('v1/index.php/auth/guest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ platform: 'web', device_name: 'Swagger UI' })
+    });
+    var body = await res.json();
+    if (!body.success) { throw new Error(body.message || 'request failed'); }
+    window.ui.preauthorizeApiKey('bearerAuth', body.data.token);
+    status.textContent = '✓ authorized — token ' + body.data.token.slice(0, 12) + '…';
+    status.style.color = '#1a7f37';
+  } catch (err) {
+    status.textContent = '✗ ' + err.message;
+    status.style.color = '#b3261e';
+  }
+});
+</script>
+</body>
+</html>
