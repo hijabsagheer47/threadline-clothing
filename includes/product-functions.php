@@ -357,6 +357,38 @@ function categories_with_counts(int $limit = 0): array
    CARD RENDERING
    ============================================================================ */
 
+/**
+ * Badge labels for a product (SALE / NEW / BEST SELLER / TRENDING / FEATURED).
+ * Uses the migration columns when present, else derives NEW from created_at
+ * so the storefront works before and after the schema upgrade.
+ */
+function product_badges(array $product): array
+{
+    $badges = [];
+
+    if (product_has_sale($product)) {
+        $badges[] = ['text' => 'SALE', 'class' => 'sale'];
+    }
+
+    $isNew = tc_column_exists('products', 'is_new')
+        ? (int) ($product['is_new'] ?? 0) === 1
+        : strtotime((string) ($product['created_at'] ?? '')) > time() - 60 * 86400;
+    $isBest = tc_column_exists('products', 'is_best_seller') && (int) ($product['is_best_seller'] ?? 0) === 1;
+    $isTrending = tc_column_exists('products', 'is_trending') && (int) ($product['is_trending'] ?? 0) === 1;
+
+    if ($isNew) {
+        $badges[] = ['text' => 'NEW', 'class' => 'new'];
+    } elseif ($isBest) {
+        $badges[] = ['text' => 'BEST SELLER', 'class' => 'best'];
+    } elseif ($isTrending) {
+        $badges[] = ['text' => 'TRENDING', 'class' => 'trending'];
+    } elseif ((int) ($product['featured'] ?? 0) === 1) {
+        $badges[] = ['text' => 'FEATURED', 'class' => 'featured'];
+    }
+
+    return $badges;
+}
+
 /** HTML for a product card (matches the existing shop-grid design). */
 function render_product_card(array $product): string
 {
@@ -370,12 +402,16 @@ function render_product_card(array $product): string
     $name = e($product['name']);
     $slug = e($product['slug']);
     $href = e(product_url($product['slug']));
+    $productId = (int) ($product['id'] ?? 0);
 
     $price = money(effective_price($product));
     $oldPrice = product_has_sale($product) ? '<span class="old-price">' . money((float) $product['price']) . '</span> ' : '';
-    $badge = product_has_sale($product)
-        ? '<span class="product-badge sale">SALE</span>'
-        : ((int) ($product['featured'] ?? 0) === 1 ? '<span class="product-badge">FEATURED</span>' : '');
+
+    $badges = product_badges($product);
+    $badgeHtml = '';
+    foreach ($badges as $badge) {
+        $badgeHtml .= '<span class="product-badge ' . e($badge['class']) . '">' . e($badge['text']) . '</span>';
+    }
 
     $categoryName = setting('store_name');
     if (!empty($product['category_names'])) {
@@ -391,16 +427,26 @@ function render_product_card(array $product): string
         ? '<img class="img-alt" src="' . e($img2) . '" alt="" loading="lazy">'
         : '';
 
+    $wished = in_array($productId, wishlist_ids(), true);
+    $actionsHtml = '<div class="product-actions">'
+        . '<button type="button" class="quick-view-btn" data-product-id="' . $productId
+        . '" aria-label="Quick view of ' . $name . '" title="Quick view"><i class="fa-regular fa-eye"></i></button>'
+        . '<button type="button" class="wishlist-toggle' . ($wished ? ' active' : '') . '" data-product-id="' . $productId
+        . '" data-added="' . ($wished ? '1' : '0') . '" aria-label="' . ($wished ? 'Remove from wishlist' : 'Add to wishlist')
+        . '" aria-pressed="' . ($wished ? 'true' : 'false') . '" title="Wishlist"><i class="fa-' . ($wished ? 'solid' : 'regular') . ' fa-heart"></i></button>'
+        . '</div>';
+
     $addBtn = $outOfStock
         ? '<button type="button" class="mini-cart-btn" disabled>Sold Out</button>'
-        : '<button type="button" class="mini-cart-btn" data-product-id="' . (int) $product['id']
+        : '<button type="button" class="mini-cart-btn" data-product-id="' . $productId
           . '" data-product-name="' . $name . '" data-product-price="' . effective_price($product)
           . '" data-product-image="' . e($img1) . '">Add to Cart</button>';
 
-    return '<article class="product-card">
+    return '<article class="product-card" data-product-id="' . $productId . '">
         <a class="product-card-link" href="' . $href . '">
             <div class="product-thumb">
-                ' . $badge . '
+                <div class="product-badges">' . $badgeHtml . '</div>
+                ' . $actionsHtml . '
                 <img src="' . e($img1) . '" alt="' . $name . '" loading="lazy">
                 ' . $altImg . '
                 ' . $stockHtml . '

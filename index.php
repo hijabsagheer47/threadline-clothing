@@ -9,6 +9,7 @@ $homeCategories = categories_with_counts(8);
 $newIn          = new_arrivals(8);
 $bestSellers    = best_sellers(8);
 $saleItems      = sale_products(4);
+$heroSlides     = tc_hero_slides();
 
 function section_empty(string $label): string
 {
@@ -22,7 +23,29 @@ function section_empty(string $label): string
 require __DIR__ . '/includes/storefront-header.php';
 ?>
 
-<!-- HERO -->
+<?php if ($heroSlides): ?>
+<!-- HERO (admin-managed slides) -->
+<?php $hero = $heroSlides[0]; ?>
+<section class="hero-section" style="background-image: linear-gradient(rgba(28,28,28,.45), rgba(28,28,28,.55)), url('<?= e(image_url($hero['image'] ?? '')) ?>')">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <?php if (!empty($hero['eyebrow'])): ?><p class="hero-eyebrow"><?= e($hero['eyebrow']) ?></p><?php endif; ?>
+        <h1><?= nl2br(e($hero['title'])) ?></h1>
+        <?php if (!empty($hero['subtitle'])): ?><p class="hero-description"><?= e($hero['subtitle']) ?></p><?php endif; ?>
+        <?php if (!empty($hero['cta_text']) || !empty($hero['cta_secondary_text'])): ?>
+        <div class="hero-buttons">
+            <?php if (!empty($hero['cta_text'])): ?>
+                <a href="<?= e($hero['cta_link'] !== '' ? tc_menu_url(['url' => $hero['cta_link']]) : url('/shop.php')) ?>" class="btn btn-primary"><?= e($hero['cta_text']) ?></a>
+            <?php endif; ?>
+            <?php if (!empty($hero['cta_secondary_text'])): ?>
+                <a href="<?= e($hero['cta_secondary_link'] !== '' ? tc_menu_url(['url' => $hero['cta_secondary_link']]) : url('/collections.php')) ?>" class="btn btn-outline"><?= e($hero['cta_secondary_text']) ?></a>
+            <?php endif; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+</section>
+<?php else: ?>
+<!-- HERO (default) -->
 <section class="hero-section">
     <div class="hero-overlay"></div>
     <div class="container hero-content">
@@ -38,6 +61,7 @@ require __DIR__ . '/includes/storefront-header.php';
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- SHOP BY CATEGORY (dynamic) -->
 <section class="category-section section-padding">

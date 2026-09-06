@@ -65,6 +65,14 @@ function category_url(string $slug): string
         : url('/category.php?slug=' . $slug);
 }
 
+function collection_url(string $slug): string
+{
+    $slug = rawurlencode($slug);
+    return pretty_urls()
+        ? url('/collection/' . $slug)
+        : url('/collection.php?slug=' . $slug);
+}
+
 /**
  * Digits-only WhatsApp number for wa.me links.
  * Accepts whatever the admin typed -- "+92 334 232 2324", "0334-2322324" --

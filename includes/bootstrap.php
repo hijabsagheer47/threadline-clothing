@@ -81,13 +81,20 @@ require_once __DIR__ . '/settings.php';
 require_once __DIR__ . '/uploads.php';
 require_once __DIR__ . '/cart.php';
 require_once __DIR__ . '/product-functions.php';
+require_once __DIR__ . '/enterprise.php';
+require_once __DIR__ . '/order-service.php';
 require_once __DIR__ . '/auth.php';
+require_once __DIR__ . '/customer-auth.php';
 
 /* ---------------------------------------------------------------------------
    5. Store maintenance mode (admin unaffected)
 --------------------------------------------------------------------------- */
+// /api/ is exempt: the mobile app cannot parse an HTML maintenance page, so
+// the API bootstrap answers a closed store with a JSON 503 instead.
 if (!store_is_open()
     && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/admin/')
+    && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')
+    && !defined('TC_API')
     && basename($_SERVER['SCRIPT_NAME'] ?? '') !== 'maintenance.php'
 ) {
     http_response_code(503);

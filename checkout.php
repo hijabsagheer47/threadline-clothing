@@ -7,11 +7,34 @@ $totals = cart_totals();
 $errors = [];
 $old    = [];
 
+$couponState = tc_checkout_coupon($totals['subtotal']);
+$couponDiscount = $couponState ? (float) $couponState['discount'] : 0.0;
+$discountTotal  = $totals['discount'] + $couponDiscount;
+$grandTotal     = max(0.0, $totals['subtotal'] + $totals['shipping'] - $discountTotal);
+
 /* ---------------------------------------------------------------------------
-   POST: place the order
+   POST: coupon apply / remove (server-side validation only)
 --------------------------------------------------------------------------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_require($_POST['csrf_token'] ?? null);
+
+    $couponAction = post('coupon_action', 20);
+    if ($couponAction === 'apply') {
+        $result = tc_apply_coupon(post('coupon_code', 50), $totals['subtotal']);
+        if ($result['ok']) {
+            $_SESSION['tc_coupon_code'] = $result['code'];
+            flash_set('success', 'Coupon applied — ' . money((float) $result['discount']) . ' off.');
+        } else {
+            flash_set('error', $result['error']);
+        }
+        redirect(url('/checkout.php'));
+    }
+    if ($couponAction === 'remove') {
+        unset($_SESSION['tc_coupon_code']);
+        flash_set('success', 'Coupon removed.');
+        redirect(url('/checkout.php'));
+    }
+
 
     $old = [
         'fullName'  => post('fullName', 120),
@@ -35,95 +58,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // order that can never be settled. COD is forced until one exists.
     $old['payment'] = 'cod';
 
-    if (!$items) {
-        $errors['cart'] = 'Your cart is empty.';
-    }
+    // Order placement lives in includes/order-service.php so the website and
+    // the mobile API create orders through exactly the same code path.
+    $result = $errors ? ['ok' => false, 'errors' => []] : place_order([
+        'name'        => $old['fullName'],
+        'email'       => $old['email'],
+        'phone'       => $old['phone'],
+        'city'        => $old['city'],
+        'address'     => $old['address'],
+        'postal_code' => $old['postal'],
+        'notes'       => $old['notes'],
+        'delivery'    => $old['delivery'],
+        'country'     => 'Pakistan',
+        'customer_id' => current_customer_id(),
+    ]);
 
-    if (!$errors && $totals['has_unavailable']) {
-        $errors['cart'] = 'One or more items in your cart are no longer available. Please review your cart.';
-    }
-
-    if (!$errors) {
-        $deliveryFee = $totals['shipping'];
-        if ($old['delivery'] === 'express') {
-            $deliveryFee += 250;
+    if (!$result['ok']) {
+        // The service names the field 'name'; this form's input is 'fullName'.
+        $serviceErrors = $result['errors'];
+        if (isset($serviceErrors['name'])) {
+            $serviceErrors['fullName'] = $serviceErrors['name'];
+            unset($serviceErrors['name']);
         }
+        $errors += $serviceErrors;
+    } else {
+        $_SESSION['last_order'] = [
+            'order_number'   => $result['order_number'],
+            'customer_name'  => $old['fullName'],
+            'phone'          => $old['phone'],
+            'payment_method' => 'Cash on Delivery',
+            'total'          => $result['total'],
+            'items'          => array_map(static fn ($it) => [
+                'name' => $it['name'], 'qty' => $it['qty'], 'price' => $it['unit_price'],
+            ], $result['items']),
+        ];
 
-        $orderNumber = 'TC-' . date('Ymd') . '-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 6));
-
-        try {
-            $db = db();
-
-            $stmt = $db->prepare(
-                'INSERT INTO orders (order_number, customer_name, customer_email, customer_phone,
-                                     shipping_address, city, postal_code, notes,
-                                     subtotal, shipping_fee, discount, total,
-                                     payment_method, payment_status, order_status)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-            );
-            $stmt->execute([
-                $orderNumber,
-                $old['fullName'],
-                $old['email'],
-                $old['phone'],
-                $old['address'],
-                $old['city'],
-                $old['postal'],
-                $old['notes'],
-                decimal($totals['subtotal']),
-                decimal($deliveryFee),
-                decimal($totals['discount']),
-                decimal($totals['subtotal'] + $deliveryFee - $totals['discount']),
-                'cod',
-                'pending',
-                'pending',
-            ]);
-            $orderId = (int) $db->lastInsertId();
-
-            $itemStmt = $db->prepare(
-                'INSERT INTO order_items (order_id, product_id, product_name, quantity, price, subtotal)
-                 VALUES (?, ?, ?, ?, ?, ?)'
-            );
-            $stockStmt = $db->prepare(
-                'UPDATE products SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?'
-            );
-            $variantStockStmt = $db->prepare(
-                'UPDATE product_variants SET stock_quantity = GREATEST(0, stock_quantity - ?) WHERE id = ?'
-            );
-
-            foreach ($items as $item) {
-                $itemStmt->execute([
-                    $orderId,
-                    (int) $item['product_id'],
-                    $item['name'],
-                    (int) $item['qty'],
-                    decimal($item['unit_price']),
-                    decimal($item['line_total']),
-                ]);
-                $stockStmt->execute([(int) $item['qty'], (int) $item['product_id']]);
-                if (!empty($item['variant_id'])) {
-                    $variantStockStmt->execute([(int) $item['qty'], (int) $item['variant_id']]);
-                }
-            }
-
-            cart_clear();
-
-            $_SESSION['last_order'] = [
-                'order_number' => $orderNumber,
-                'customer_name' => $old['fullName'],
-                'phone' => $old['phone'],
-                'payment_method' => 'Cash on Delivery',
-                'total' => $totals['subtotal'] + $deliveryFee - $totals['discount'],
-                'items' => array_map(static fn($it) => [
-                    'name' => $it['name'], 'qty' => $it['qty'], 'price' => $it['unit_price'],
-                ], $items),
-            ];
-
-            redirect(url('/order-confirmation.php'));
-        } catch (PDOException $ex) {
-            error_log('[checkout] ' . $ex->getMessage());
-            $errors['cart'] = 'We could not place your order right now. Please try again.';
-        }
+        redirect(url('/order-confirmation.php'));
     }
 }
 
@@ -331,17 +301,38 @@ require __DIR__ . '/includes/storefront-header.php';
                     <?php endforeach; ?>
                 </div>
 
+                <!-- Coupon -->
+                <div class="summary-coupon">
+                    <?php if ($couponState): ?>
+                        <div class="coupon-applied">
+                            <span><i class="fa-solid fa-tag"></i> <?= e($couponState['code']) ?> &mdash; <?= money($couponDiscount) ?> off</span>
+                            <form method="post" action="<?= e(url('/checkout.php')) ?>">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="coupon_action" value="remove">
+                                <button type="submit" class="coupon-remove" aria-label="Remove coupon">&times;</button>
+                            </form>
+                        </div>
+                    <?php else: ?>
+                        <form method="post" action="<?= e(url('/checkout.php')) ?>" class="coupon-form">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="coupon_action" value="apply">
+                            <input type="text" name="coupon_code" placeholder="Coupon code" aria-label="Coupon code" maxlength="50">
+                            <button type="submit" class="coupon-apply">Apply</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+
                 <div class="summary-lines">
                     <div class="summary-line"><span>Subtotal</span><strong><?= money($totals['subtotal']) ?></strong></div>
                     <div class="summary-line"><span>Shipping</span><strong id="checkoutShipping"><?= $totals['shipping'] > 0 ? money($totals['shipping']) : 'FREE' ?></strong></div>
-                    <?php if ($totals['discount'] > 0): ?>
-                        <div class="summary-line"><span>Discount</span><strong>-<?= money($totals['discount']) ?></strong></div>
+                    <?php if ($discountTotal > 0): ?>
+                        <div class="summary-line"><span>Discount</span><strong>-<?= money($discountTotal) ?></strong></div>
                     <?php endif; ?>
                 </div>
 
                 <div class="summary-total">
                     <span>Total</span>
-                    <span id="checkoutTotal"><?= money($totals['total']) ?></span>
+                    <span id="checkoutTotal"><?= money($grandTotal) ?></span>
                 </div>
 
                 <div class="secure-note"><i class="fa-solid fa-lock"></i> Secure &amp; encrypted checkout</div>
@@ -355,6 +346,7 @@ require __DIR__ . '/includes/storefront-header.php';
     window.TC_CHECKOUT = {
         shipping: <?= (float) $totals['shipping'] ?>,
         subtotal: <?= (float) $totals['subtotal'] ?>,
+        discount: <?= (float) $discountTotal ?>,
         expressExtra: 250
     };
 </script>

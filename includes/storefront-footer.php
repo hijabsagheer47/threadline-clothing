@@ -4,10 +4,32 @@
  */
 declare(strict_types=1);
 
-$storeName  = setting('store_name');
-$footerCats = get_categories(true); // first five, no nav filter
-$shopCats   = array_slice($footerCats, 0, 5);
-$credit     = setting('footer_credit', '');
+$storeName = setting('store_name');
+$credit    = setting('footer_credit', '');
+
+// Footer columns from menu_items (migration) with the original layout as fallback.
+$footerColumns = tc_render_footer_columns();
+if (!$footerColumns) {
+    $footerCats = get_categories(true);
+    $shopCats   = array_slice($footerCats, 0, 5);
+    $shopLinks  = '<a href="' . url('/shop.php?sort=newest') . '">New Arrivals</a>';
+    foreach ($shopCats as $cat) {
+        $shopLinks .= '<a href="' . e(category_url($cat['slug'])) . '">' . e($cat['name']) . '</a>';
+    }
+    $footerColumns = [
+        'Shop' => $shopLinks,
+        'Customer Care' => '<a href="' . url('/contact.php') . '">Contact Us</a>'
+            . '<a href="' . url('/shop.php') . '">Shipping &amp; Delivery</a>'
+            . '<a href="' . url('/contact.php') . '">Returns &amp; Exchange</a>'
+            . '<a href="' . url('/contact.php') . '">Size Guide</a>'
+            . '<a href="' . url('/contact.php') . '#faq">FAQs</a>',
+        'Information' => '<a href="' . url('/about.php') . '">About ' . e($storeName) . '</a>'
+            . '<a href="' . url('/contact.php') . '">Privacy Policy</a>'
+            . '<a href="' . url('/contact.php') . '">Terms &amp; Conditions</a>'
+            . '<a href="' . url('/order-confirmation.php') . '">Track Order</a>'
+            . '<a href="' . url('/contact.php') . '">Help</a>',
+    ];
+}
 $waUrl      = whatsapp_url('Hello! I would like to know more about your collection.');
 $waNumber   = setting('whatsapp_number', '+92 334 232 2324');
 $freeOver   = (float) setting('free_shipping_threshold', '8000');
@@ -68,31 +90,12 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
             </div>
         </div>
 
+        <?php foreach ($footerColumns as $colTitle => $colLinks): ?>
         <div class="footer-column">
-            <h3>Shop</h3>
-            <a href="<?= url('/shop.php?sort=newest') ?>">New Arrivals</a>
-            <?php foreach ($shopCats as $cat): ?>
-                <a href="<?= e(category_url($cat['slug'])) ?>"><?= e($cat['name']) ?></a>
-            <?php endforeach; ?>
+            <h3><?= e($colTitle) ?></h3>
+            <?= $colLinks ?>
         </div>
-
-        <div class="footer-column">
-            <h3>Customer Care</h3>
-            <a href="<?= url('/contact.php') ?>">Contact Us</a>
-            <a href="<?= url('/shop.php') ?>">Shipping &amp; Delivery</a>
-            <a href="<?= url('/contact.php') ?>">Returns &amp; Exchange</a>
-            <a href="<?= url('/contact.php') ?>">Size Guide</a>
-            <a href="<?= url('/contact.php') ?>#faq">FAQs</a>
-        </div>
-
-        <div class="footer-column">
-            <h3>Information</h3>
-            <a href="<?= url('/about.php') ?>">About <?= e($storeName) ?></a>
-            <a href="<?= url('/contact.php') ?>">Privacy Policy</a>
-            <a href="<?= url('/contact.php') ?>">Terms &amp; Conditions</a>
-            <a href="<?= url('/order-confirmation.php') ?>">Track Order</a>
-            <a href="<?= url('/contact.php') ?>">Help</a>
-        </div>
+        <?php endforeach; ?>
 
     </div>
 

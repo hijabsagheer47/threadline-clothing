@@ -2,11 +2,12 @@
 declare(strict_types=1);
 require_once __DIR__ . '/includes/bootstrap.php';
 
-$cats = categories_with_counts();
+$collections = tc_collections();
+$cats        = $collections ? [] : categories_with_counts();
 
-$page_title       = 'Shop By Category';
+$page_title       = 'Collections';
 $meta_description = 'Explore thoughtfully curated ' . setting('store_name') . ' fashion collections — stitched, unstitched, formal, casual and more.';
-$active_nav       = 'shop.php';
+$active_nav       = 'collections.php';
 
 require __DIR__ . '/includes/storefront-header.php';
 ?>
@@ -37,7 +38,7 @@ require __DIR__ . '/includes/storefront-header.php';
 <section class="fashion-categories">
     <div class="container">
 
-        <?php if (!$cats): ?>
+        <?php if (!$collections && !$cats): ?>
             <div class="section-empty">
                 <i class="fa-regular fa-sparkles"></i>
                 <h3>Collections coming soon</h3>
@@ -46,10 +47,12 @@ require __DIR__ . '/includes/storefront-header.php';
         <?php else: ?>
 
         <div class="fashion-category-grid">
-            <?php foreach ($cats as $i => $cat): ?>
+            <?php $collectionCards = $collections ?: $cats; ?>
+            <?php foreach ($collectionCards as $i => $cat): ?>
                 <?php
                 $isLarge = $i < 2;
                 $img = image_url($cat['image'] ?? '');
+                $target = $collections ? collection_url($cat['slug']) : category_url($cat['slug']);
                 ?>
                 <article class="fashion-category-card<?= $isLarge ? ' large' : '' ?>">
                     <div class="fashion-category-image">
@@ -57,10 +60,10 @@ require __DIR__ . '/includes/storefront-header.php';
                     </div>
                     <div class="fashion-category-overlay"></div>
                     <div class="fashion-category-content">
-                        <span class="category-number"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?> / <?= str_pad((string) count($cats), 2, '0', STR_PAD_LEFT) ?></span>
+                        <span class="category-number"><?= str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) ?> / <?= str_pad((string) count($collectionCards), 2, '0', STR_PAD_LEFT) ?></span>
                         <h3><?= e(strtoupper($cat['name'])) ?></h3>
                         <p><?= (int) $cat['product_count'] ?> piece<?= (int) $cat['product_count'] === 1 ? '' : 's' ?></p>
-                        <a href="<?= e(category_url($cat['slug'])) ?>" class="category-shop-btn">
+                        <a href="<?= e($target) ?>" class="category-shop-btn">
                             Shop Collection <i class="fa-solid fa-arrow-right"></i>
                         </a>
                     </div>

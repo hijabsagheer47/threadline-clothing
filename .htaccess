@@ -13,6 +13,11 @@ ServerSignature Off
 # the PHP storefront when a directory is requested.
 DirectoryIndex index.php index.html
 
+# The mobile API front controller reads its route from PATH_INFO
+# (/api/v1/index.php/products). This host drops mod_rewrite substitutions, so
+# PATH_INFO -- not a rewrite -- is what gives the API clean URLs.
+AcceptPathInfo On
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
@@ -23,12 +28,32 @@ DirectoryIndex index.php index.html
     # kept working and hid this.
     RewriteBase /
 
+    # --- Mobile API --------------------------------------------------------
+    # PHP-CGI and FastCGI strip the Authorization header before PHP sees it,
+    # which would make every bearer token look missing. Copy it into an
+    # environment variable the API reads as a fallback. This must come before
+    # the [L] rules below, or it never runs for API requests.
+    RewriteCond %{HTTP:Authorization} ^(.+)$
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%1]
+
+    # Everything under /api/v1/ goes to one front controller. The matched path
+    # travels as _route because REQUEST_URI is not reliable on every
+    # IONOS/Apache configuration. !-f keeps the rewritten /api/v1/index.php
+    # from matching itself on the second pass.
+    # Placed before the pretty URLs so an API path never falls through to the
+    # storefront routes below.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^api/v1/?(.*)$ /api/v1/index.php?_route=$1 [L,QSA]
+
     # --- Pretty URLs -------------------------------------------------------
     # /product/{slug}  ->  product.php?slug={slug}
     RewriteRule ^product/([a-zA-Z0-9\-]+)/?$ /product.php?slug=$1 [L,QSA]
 
     # /category/{slug} ->  category.php?slug={slug}
     RewriteRule ^category/([a-zA-Z0-9\-]+)/?$ /category.php?slug=$1 [L,QSA]
+
+    # /collection/{slug} ->  collection.php?slug={slug}
+    RewriteRule ^collection/([a-zA-Z0-9\-]+)/?$ /collection.php?slug=$1 [L,QSA]
 
     # /admin            ->  /admin/index.php
     RewriteRule ^admin/?$ /admin/index.php [L,QSA]
@@ -40,7 +65,10 @@ DirectoryIndex index.php index.html
     RewriteRule ^config(/|$) - [F,L]
     RewriteRule ^includes(/|$) - [F,L]
     RewriteRule ^scripts(/|$) - [F,L]
-    RewriteRule ^(database\.sql|SETUP\.md|README\.md|DEPLOY\.md)$ - [F,L]
+    # Only the API front controller is reachable; its internals are includes.
+    RewriteRule ^api/v1/routes(/|$) - [F,L]
+    RewriteRule ^api/v1/(bootstrap|helpers)\.php$ - [F,L]
+    RewriteRule ^(database\.sql|migration-fashlab-upgrade\.sql|migration-mobile-api\.sql|SETUP\.md|README\.md|DEPLOY\.md|API\.md)$ - [F,L]
 </IfModule>
 
 # --- Uploads: never execute scripts -----------------------------------------
