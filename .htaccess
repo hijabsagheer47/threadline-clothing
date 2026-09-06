@@ -93,6 +93,16 @@ ErrorDocument 500 /500.php
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # The Postman collection is meant to be saved, not read in the browser.
+    # Served as application/json it opens in Chrome's JSON viewer instead, and
+    # the link's download attribute is not enough on its own -- this makes it
+    # download however it is reached.
+    # openapi.json deliberately has no such header: Swagger UI fetches it.
+    <Files "Fashlab-API.postman_collection.json">
+        Header set Content-Disposition "attachment; filename=\"Fashlab-API.postman_collection.json\""
+        Header set Cache-Control "no-cache"
+    </Files>
 </IfModule>
 
 # --- Caching for static assets ------------------------------------------------
