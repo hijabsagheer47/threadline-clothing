@@ -95,24 +95,39 @@ function api_tokens_gc(): void
 
     $db->exec('DELETE FROM api_tokens WHERE expires_at IS NOT NULL AND expires_at < NOW()');
 
-    // Abandoned guest tokens: never signed in, empty cart, untouched for a week.
-    $db->exec(
+    // Abandoned guest tokens: never signed in, nothing saved, untouched for a
+    // week. The literals cover the current empty state and the bare-cart rows
+    // written before the wishlist moved in alongside it.
+    $db->prepare(
         "DELETE FROM api_tokens
           WHERE customer_id IS NULL
-            AND (cart_json IS NULL OR cart_json IN ('', '[]', '{}'))
+            AND (cart_json IS NULL OR cart_json IN ('', '[]', '{}', ?))
             AND last_used_at < DATE_SUB(NOW(), INTERVAL 7 DAY)"
-    );
+    )->execute([API_EMPTY_STATE]);
 }
 
 /* ---------------------------------------------------------------------------
    Cart / coupon / wishlist state carried by the token
 --------------------------------------------------------------------------- */
 
+/** The empty state, as api_state_save() encodes it. Used by the collector. */
+const API_EMPTY_STATE = '{"cart":[],"wishlist":[]}';
+
 /** Copy the token's stored state into the request session. */
 function api_state_load(array $tokenRow): void
 {
-    $cart = json_decode((string) ($tokenRow['cart_json'] ?? ''), true);
-    $_SESSION['cart'] = is_array($cart) ? $cart : [];
+    $state = json_decode((string) ($tokenRow['cart_json'] ?? ''), true);
+
+    if (isset($state['cart']) || isset($state['wishlist'])) {
+        $_SESSION['cart']        = is_array($state['cart'] ?? null) ? $state['cart'] : [];
+        $_SESSION['tc_wishlist'] = is_array($state['wishlist'] ?? null) ? $state['wishlist'] : [];
+    } else {
+        // Rows written before the wishlist was carried here held a bare cart.
+        // (Cart keys look like "92:0", so they can never be mistaken for the
+        // "cart"/"wishlist" keys above.)
+        $_SESSION['cart']        = is_array($state) ? $state : [];
+        $_SESSION['tc_wishlist'] = [];
+    }
 
     // wishlist_items rows are keyed by tc_visitor_id(); pinning it to the
     // token gives the app a wishlist that survives across requests.
@@ -126,12 +141,21 @@ function api_state_load(array $tokenRow): void
     }
 }
 
-/** Persist the session cart/coupon back onto the token row. */
+/**
+ * Persist the session cart/wishlist/coupon back onto the token row.
+ *
+ * The wishlist normally lives in wishlist_items, but enterprise.php falls back
+ * to the session when that table is absent. Without carrying that fallback
+ * here the app's wishlist would vanish between requests on the base schema.
+ */
 function api_state_save(string $token): void
 {
     db()->prepare('UPDATE api_tokens SET cart_json = ?, coupon_code = ? WHERE token = ?')
         ->execute([
-            json_encode($_SESSION['cart'] ?? [], JSON_UNESCAPED_UNICODE),
+            json_encode([
+                'cart'     => $_SESSION['cart'] ?? [],
+                'wishlist' => $_SESSION['tc_wishlist'] ?? [],
+            ], JSON_UNESCAPED_UNICODE),
             $_SESSION['tc_coupon_code'] ?? null,
             $token,
         ]);
