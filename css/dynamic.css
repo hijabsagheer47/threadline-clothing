@@ -707,3 +707,78 @@
 .featured-image img { border-radius: 10px; }
 .product-details-wrapper { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; padding: 44px 0 0; }
 @media (max-width: 991px) { .product-details-wrapper { grid-template-columns: 1fr; gap: 28px; } }
+
+/* ============================================================================
+   Mobile hardening & polish
+   ============================================================================ */
+
+/* --- Header on phones: logo pinned left, actions + burger grouped right --- */
+@media (max-width: 768px) {
+    .nav-container {
+        justify-content: flex-start;
+        gap: 14px;
+    }
+    .brand-logo {
+        margin-right: auto;
+        min-width: 0;
+    }
+    .brand-logo img {
+        height: 38px;
+        max-width: 46vw; /* never let the wordmark crowd the icons out */
+    }
+    .nav-actions {
+        margin-left: 0;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .nav-actions a {
+        width: 38px;
+        height: 38px;
+    }
+    /* Guest store: account icon hidden on phones, but wishlist stays reachable */
+    .nav-actions a:nth-child(2) {
+        display: none;
+    }
+    .nav-actions a:nth-child(3) {
+        display: inline-flex;
+    }
+    .nav-toggle {
+        order: 4;
+        margin-left: 2px;
+        flex-shrink: 0;
+    }
+}
+
+/* Count badges get a little breathing room next to the burger */
+@media (max-width: 768px) {
+    .nav-actions .wishlist-count,
+    .nav-actions .cart-count {
+        top: -6px;
+    }
+}
+
+/* --- Contact cards: long emails/numbers must wrap instead of widening the card --- */
+.contact-detail {
+    min-width: 0;
+}
+.contact-detail > div {
+    min-width: 0;
+}
+.contact-detail p,
+.contact-detail a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* --- Small screens: never let a single long token push the layout wider --- */
+@media (max-width: 480px) {
+    p, a, h1, h2, h3, h4, span, li {
+        overflow-wrap: break-word;
+    }
+    .footer-grid {
+        gap: 34px 20px;
+    }
+    .footer-column a {
+        font-size: 13px;
+    }
+}
