@@ -14,6 +14,7 @@ $navItems = [
     'products'  => ['label' => 'All Products',        'icon' => 'fa-shirt',          'href' => '/admin/products.php'],
     'add_product' => ['label' => 'Add Product',       'icon' => 'fa-plus',           'href' => '/admin/product-form.php'],
     'categories'=> ['label' => 'Categories',          'icon' => 'fa-table-cells-large', 'href' => '/admin/categories.php'],
+    'collections'=> ['label' => 'Collections',         'icon' => 'fa-gem',            'href' => '/admin/collections.php'],
     'orders'    => ['label' => 'Orders',              'icon' => 'fa-receipt',        'href' => '/admin/orders.php', 'badge' => $pendingOrders],
     'customers' => ['label' => 'Customers',           'icon' => 'fa-users',          'href' => '/admin/customers.php'],
     'subscribers'=> ['label' => 'Subscribers',        'icon' => 'fa-envelope-open-text', 'href' => '/admin/subscribers.php'],

@@ -15,24 +15,36 @@ $fullTitle  = $page_title !== ''
     ? (str_contains($page_title, $storeName) ? $page_title : $page_title . ' | ' . $storeName)
     : $storeName;
 
-$navCategories = get_categories(true, true);
-$cartCount     = cart_count();
+$cartCount = cart_count();
+$wishCount = wishlist_count();
 
-$navItem = static fn(string $key, string $label): string =>
-    '<a href="' . url('/' . $key) . '"' . ($active_nav === $key ? ' class="active"' : '') . '>' . e($label) . '</a>';
+// Main navigation from menu_items (migration table) when available, otherwise
+// fall back to the original static navigation so nothing breaks pre-migration.
+$mainNav = tc_render_main_nav($active_nav);
+if ($mainNav === '') {
+    $navItem = static fn(string $key, string $label): string =>
+        '<a href="' . url('/' . $key) . '"' . ($active_nav === $key ? ' class="active"' : '') . '>' . e($label) . '</a>';
 
-$dropdownHtml = '';
-if ($navCategories) {
-    $dropdownLinks = '<a href="' . url('/collections.php') . '">All Collections</a>';
-    foreach ($navCategories as $cat) {
-        $dropdownLinks .= '<a href="' . e(category_url($cat['slug'])) . '">' . e($cat['name']) . '</a>';
+    $navCategories = get_categories(true, true);
+    $dropdownHtml = '';
+    if ($navCategories) {
+        $dropdownLinks = '<a href="' . url('/collections.php') . '">All Collections</a>';
+        foreach ($navCategories as $cat) {
+            $dropdownLinks .= '<a href="' . e(category_url($cat['slug'])) . '">' . e($cat['name']) . '</a>';
+        }
+        $dropdownHtml = '<div class="nav-dropdown">
+            <button type="button" class="nav-dropdown-toggle" aria-expanded="false">
+                Collections <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div class="nav-dropdown-menu">' . $dropdownLinks . '</div>
+        </div>';
     }
-    $dropdownHtml = '<div class="nav-dropdown">
-        <button type="button" class="nav-dropdown-toggle" aria-expanded="false">
-            Collections <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="nav-dropdown-menu">' . $dropdownLinks . '</div>
-    </div>';
+
+    $mainNav = $navItem('index.php', 'Home')
+             . $navItem('shop.php', 'Shop')
+             . $dropdownHtml
+             . $navItem('about.php', 'About')
+             . $navItem('contact.php', 'Contact');
 }
 ?><!DOCTYPE html>
 <html lang="en">
@@ -103,19 +115,18 @@ if ($navCategories) {
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <nav class="site-nav">
-            <?= $navItem('index.php', 'Home') ?>
-            <?= $navItem('shop.php', 'Shop') ?>
-            <?= $dropdownHtml ?>
-            <?= $navItem('about.php', 'About') ?>
-            <?= $navItem('contact.php', 'Contact') ?>
+        <nav class="site-nav" aria-label="Main navigation">
+            <?= $mainNav ?>
         </nav>
 
         <div class="nav-actions">
             <a href="<?= url('/shop.php') ?>" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
             <a href="<?= url('/shop.php') ?>" aria-label="Account"><i class="fa-regular fa-user"></i></a>
-            <a href="#" aria-label="Wishlist"><i class="fa-regular fa-heart"></i></a>
-            <a href="<?= url('/cart.php') ?>" class="cart-link" aria-label="Shopping cart">
+            <a href="<?= url('/wishlist.php') ?>" class="wishlist-link" aria-label="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+                <span class="wishlist-count"><?= (int) $wishCount ?></span>
+            </a>
+            <a href="<?= url('/cart.php') ?>" class="cart-link" aria-label="Shopping cart" data-cart-drawer-open>
                 <i class="fa-solid fa-bag-shopping"></i>
                 <span class="cart-count"><?= (int) $cartCount ?></span>
             </a>
@@ -123,6 +134,18 @@ if ($navCategories) {
 
     </div>
 </header>
+
+<!-- Cart drawer (slide-out) -->
+<div class="cart-drawer-overlay" data-cart-drawer-overlay hidden></div>
+<aside class="cart-drawer" data-cart-drawer aria-hidden="true">
+    <div class="cart-drawer-head">
+        <h2>Your Bag</h2>
+        <button type="button" class="cart-drawer-close" data-cart-drawer-close aria-label="Close cart">&times;</button>
+    </div>
+    <div class="cart-drawer-body" data-cart-drawer-body>
+        <p class="drawer-loading">Loading your bag…</p>
+    </div>
+</aside>
 
 <main>
 <?= flash_render() ?>

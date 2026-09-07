@@ -135,3 +135,24 @@ hata dein, phir import karein.
 
 **5. `config/config.php` sirf server par rehti hai** — gitignored hai aur
 `--delete` deploy se bhi excluded hai, is liye deploy usay overwrite/delete nahi karti.
+
+---
+
+## Database upgrade: `migration-fashlab-upgrade.sql`
+
+Ye file naye enterprise features (collections, reviews, wishlists, coupons,
+inventory logs, order tracking, menus, RBAC, rewards, journal, waghera) ki saari
+tables aur existing tables ke naye columns add karti hai — **kuch delete nahi karti**.
+
+- Live database par phpMyAdmin mein ja kar **Import** karein (baqi `database.sql` ki
+tarah isme `CREATE DATABASE` / `USE` lines NAHI hain, is liye IONOS par seedha
+import ho jayegi).
+- File **idempotent** hai — agar ghalti se dobara import ho jaye to koi nuqsan nahi.
+- Existing data (products, orders, customers, settings) ko nahi chhedti; existing
+settings kabhi overwrite nahi hoti.
+- Import ke baad `hero_slides`, `homepage_sections`, `menu_items`, `collections`,
+`settings` mein Fashlab Studio ki default configuration seed ho jati hai.
+- Jo menu items nayi storefront pages (journal, looks, policies, track-order,
+size-guide) par point karte hain wo `status = 0` (disabled) seed hain — jab wo
+pages deploy ho jayen to Admin se enable kar dein.
+- `.htaccess` is file ko web se protected karta hai (baqi `database.sql` ki tarah).

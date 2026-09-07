@@ -13,3 +13,6 @@ uploads/categories/*
 
 # Runtime logs
 logs/
+
+# Local tooling scratch
+.freebuff/
