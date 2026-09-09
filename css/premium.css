@@ -2217,3 +2217,190 @@ textarea:focus {
     .details-list { grid-template-columns: minmax(0, 1fr); }
     .product-tab { padding: 12px 15px; font-size: 12.5px; }
 }
+
+/* ============================================================================
+   ENTERPRISE POLISH — final design upgrades
+   ========================================================================== */
+
+/* --- Smooth page load animation ------------------------------------------- */
+body {
+    animation: tc-page-in .4s var(--ease-out);
+}
+
+@keyframes tc-page-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* --- Hero section: refined gradient and text shadow ------------------------ */
+.hero-content h1 {
+    text-shadow: 0 2px 20px rgba(26, 20, 22, .25);
+}
+
+.hero-content .hero-description {
+    text-shadow: 0 1px 10px rgba(26, 20, 22, .15);
+}
+
+/* --- Section labels: animated underline ----------------------------------- */
+.section-label {
+    position: relative;
+    display: inline-block;
+}
+
+.section-label::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 24px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width .35s var(--ease-out);
+}
+
+.tc-reveal.is-visible .section-label::after {
+    width: 24px;
+}
+
+/* --- Category cards: shimmer effect on hover ------------------------------ */
+.category-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 30%,
+        rgba(255, 255, 255, .12) 50%,
+        transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform .7s var(--ease-out);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.category-card:hover::before {
+    transform: translateX(120%);
+}
+
+/* --- Product cards: refined shadow layers ---------------------------------- */
+.product-card {
+    background: #fff;
+    border: 1px solid rgba(232, 224, 216, .6);
+}
+
+.product-card:hover {
+    box-shadow:
+        0 4px 8px rgba(38, 22, 26, .04),
+        0 12px 24px rgba(38, 22, 26, .08),
+        0 24px 48px rgba(38, 22, 26, .06);
+}
+
+/* --- Buttons: refined focus ring ------------------------------------------ */
+.btn:focus-visible,
+a.btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px var(--primary-tint);
+}
+
+/* --- Review cards: subtle top border accent -------------------------------- */
+.review-card {
+    border-top: 3px solid var(--primary);
+}
+
+/* --- Footer: refined social links ----------------------------------------- */
+.social-links a {
+    transition: all .25s var(--ease), transform .25s var(--ease);
+}
+
+.social-links a:active {
+    transform: scale(.94);
+}
+
+/* --- Newsletter: refined input focus --------------------------------------- */
+.newsletter-form input:focus {
+    outline: none;
+}
+
+.newsletter-form input:focus::placeholder {
+    color: rgba(255, 255, 255, .45);
+}
+
+.newsletter-form button {
+    position: relative;
+}
+
+.newsletter-form button::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, .35);
+}
+
+/* --- Gallery: subtle overlay on hover -------------------------------------- */
+.gallery-grid {
+    position: relative;
+}
+
+.gallery-grid img {
+    border-radius: 4px;
+    transition: transform .5s var(--ease-out), box-shadow .3s var(--ease);
+}
+
+.gallery-grid img:hover {
+    box-shadow: 0 12px 32px rgba(38, 22, 26, .18);
+}
+
+/* --- Trust bar: refined icon backgrounds ----------------------------------- */
+.trust-item i {
+    background: linear-gradient(135deg, #fff 0%, var(--cream) 100%);
+    box-shadow:
+        0 2px 4px rgba(38, 22, 26, .06),
+        inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+
+/* --- Why section: hover lift on feature cards ------------------------------ */
+.feature-card {
+    transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out),
+                border-color .3s var(--ease);
+}
+
+.feature-card:hover {
+    border-color: transparent;
+}
+
+/* --- Scrollbar styling for a premium feel ---------------------------------- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--cream);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* --- Selection color ------------------------------------------------------- */
+::selection {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+}

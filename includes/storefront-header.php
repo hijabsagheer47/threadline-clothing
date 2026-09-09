@@ -43,6 +43,7 @@ if ($mainNav === '') {
     $mainNav = $navItem('index.php', 'Home')
              . $navItem('shop.php', 'Shop')
              . $dropdownHtml
+             . $navItem('collections.php', 'Collections')
              . $navItem('about.php', 'About')
              . $navItem('contact.php', 'Contact');
 }

@@ -298,10 +298,11 @@ ul {
     align-items: center;
     background:
         linear-gradient(
-            90deg,
-            rgba(20, 13, 13, 0.67) 0%,
-            rgba(20, 13, 13, 0.38) 45%,
-            rgba(20, 13, 13, 0.08) 100%
+            135deg,
+            rgba(107, 34, 51, 0.72) 0%,
+            rgba(71, 19, 31, 0.48) 35%,
+            rgba(26, 20, 22, 0.25) 70%,
+            rgba(26, 20, 22, 0.10) 100%
         ),
         url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=2000&q=90")
         center center / cover no-repeat;
@@ -468,13 +469,21 @@ ul {
 .category-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 24px;
 }
 
 .category-card {
     position: relative;
     overflow: hidden;
     background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: transform .4s cubic-bezier(.4, 0, .2, 1), box-shadow .4s cubic-bezier(.4, 0, .2, 1);
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(59, 43, 38, .12);
 }
 
 .category-image {
@@ -1319,19 +1328,21 @@ ul {
 .features-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
+    gap: 28px;
 }
 
 .feature-card {
     text-align: center;
-    padding: 35px 22px;
+    padding: 40px 24px;
     border: 1px solid var(--border);
-    transition: var(--transition);
+    border-radius: 12px;
+    background: var(--white);
+    transition: transform .4s cubic-bezier(.4, 0, .2, 1), box-shadow .4s cubic-bezier(.4, 0, .2, 1), border-color .3s ease;
 }
 
 .feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(59, 43, 38, .10);
     border-color: transparent;
 }
 
@@ -1372,13 +1383,20 @@ ul {
 .reviews-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
+    gap: 28px;
 }
 
 .review-card {
     background: var(--white);
-    padding: 35px;
+    padding: 38px 32px;
     border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(59, 43, 38, .08);
 }
 
 .review-stars {
@@ -1466,7 +1484,10 @@ ul {
 .newsletter-form {
     display: flex;
     width: min(100%, 480px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 4px;
+    backdrop-filter: blur(8px);
 }
 
 .newsletter-form input {
@@ -1477,22 +1498,31 @@ ul {
     outline: none;
     background: transparent;
     color: var(--white);
-    font-size: 13px;
+    font-size: 14px;
+    padding: 0 16px;
 }
 
 .newsletter-form input::placeholder {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.60);
 }
 
 .newsletter-form button {
     border: none;
-    background: transparent;
-    color: var(--white);
+    background: var(--white);
+    color: var(--primary);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 1.2px;
     text-transform: uppercase;
-    padding: 0 5px 0 20px;
+    padding: 0 24px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.newsletter-form button:hover {
+    background: var(--cream);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -1507,17 +1537,19 @@ ul {
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 14px;
 }
 
 .gallery-grid img {
     height: 340px;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    border-radius: 8px;
+    transition: transform 0.5s cubic-bezier(.4, 0, .2, 1), box-shadow 0.3s ease;
 }
 
 .gallery-grid img:hover {
-    transform: scale(1.025);
+    transform: scale(1.03);
+    box-shadow: 0 12px 32px rgba(59, 43, 38, .15);
 }
 
 
@@ -1526,15 +1558,15 @@ ul {
    ============================================================ */
 
 .site-footer {
-    background: #21191a;
+    background: #1a1416;
     color: var(--white);
 }
 
 .footer-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    gap: 55px;
-    padding: 75px 0 60px;
+    gap: 48px;
+    padding: 80px 0 65px;
 }
 
 .footer-logo {
@@ -1601,25 +1633,27 @@ ul {
 }
 
 .footer-column a {
+    display: block;
     width: fit-content;
     color: rgba(255, 255, 255, 0.62);
-    font-size: 12px;
-    transition: var(--transition);
+    font-size: 13px;
+    padding: 5px 0;
+    transition: color 0.25s ease, transform 0.25s ease;
 }
 
 .footer-column a:hover {
     color: var(--white);
-    padding-left: 4px;
+    transform: translateX(4px);
 }
 
 .footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.10);
-    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 22px 0;
 }
 
 .footer-bottom p {
     color: rgba(255, 255, 255, 0.45);
-    font-size: 11px;
+    font-size: 12px;
     text-align: center;
 }
 
@@ -1970,6 +2004,7 @@ ul {
 
     .hero-content h1 {
         font-size: 42px;
+        line-height: 1.1;
     }
 
     .hero-eyebrow {

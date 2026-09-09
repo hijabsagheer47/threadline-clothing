@@ -162,6 +162,11 @@ function tc_render_main_nav(string $activeKey = ''): string
             $html .= '</div>';
         }
 
+        // Add a "View All" link at the bottom of the dropdown
+        $html .= '<a href="' . url('/collections.php') . '" class="dropdown-featured">'
+               . '<span class="dropdown-featured-label">EXPLORE ALL</span>'
+               . '<span class="dropdown-featured-text">View all collections &rarr;</span></a>';
+
         $html .= '</div></div>';
     }
 
