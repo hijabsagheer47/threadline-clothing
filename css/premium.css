@@ -2404,3 +2404,450 @@ a.btn:focus-visible {
     background: var(--primary-tint);
     color: var(--primary-dark);
 }
+
+/* ============================================================================
+   LUXE OVERLAY — final polish layer (appended last, wins the cascade)
+   ----------------------------------------------------------------------------
+   Glass header finish, cinematic hero, section ornaments, product-card shine,
+   trust strip, newsletter panel and the back-to-top control. Everything here
+   is additive: no class is renamed, so templates keep working unchanged.
+   ========================================================================== */
+
+/* ============================================================
+   L1. ANNOUNCEMENT BAR — maroon gradient with a slow sheen
+   ============================================================ */
+
+.announcement-bar {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg,
+        var(--primary-dark) 0%, var(--primary) 45%, var(--primary-light) 100%);
+    padding: 9px 15px;
+}
+
+.announcement-bar p {
+    color: #f6e9d4;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Diagonal light sweep every 7s */
+.announcement-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+        transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%);
+    transform: translateX(-120%);
+    animation: tc-sheen 7s var(--ease) infinite;
+    pointer-events: none;
+}
+
+@keyframes tc-sheen {
+    0%, 55%  { transform: translateX(-120%); }
+    85%, 100%{ transform: translateX(120%); }
+}
+
+/* ============================================================
+   L2. HEADER — glass finish, gold hairline, confident type
+   ============================================================ */
+
+.site-header {
+    background: rgba(255, 253, 250, .82);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+}
+
+/* Gold-to-transparent hairline under the header */
+.site-header::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent, rgba(177,138,84,.55) 30%,
+        rgba(177,138,84,.55) 70%, transparent);
+    opacity: 0;
+    transition: opacity .3s var(--ease);
+}
+
+.site-header.is-stuck::after { opacity: 1; }
+
+.site-header.is-stuck {
+    background: rgba(255, 253, 250, .94);
+    box-shadow: 0 10px 34px rgba(38, 22, 26, .10);
+}
+
+/* Brand mark: gentle lift and a warm glow */
+.brand-logo img {
+    transition: transform .35s var(--ease-out), filter .35s var(--ease-out);
+    filter: drop-shadow(0 2px 6px rgba(38, 22, 26, .12));
+}
+
+.brand-logo:hover img {
+    transform: scale(1.03);
+    filter: drop-shadow(0 4px 12px rgba(38, 22, 26, .18));
+}
+
+/* Nav links: small-caps confidence, gold on hover/active */
+.site-nav > a {
+    font-size: 13px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.site-nav > a::after {
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+}
+
+.site-nav > a:hover,
+.site-nav > a.active { color: var(--primary); }
+
+/* Count badges: deep maroon pill with a fine gold ring */
+.nav-actions .cart-count,
+.nav-actions .wishlist-count {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    box-shadow: 0 0 0 1.5px rgba(216, 185, 138, .8);
+    font-weight: 700;
+}
+
+/* ============================================================
+   L3. HERO — cinematic entrance and Ken Burns drift
+   ============================================================ */
+
+.hero-section {
+    position: relative;
+    overflow: hidden;
+    animation: tc-kenburns 26s var(--ease) infinite alternate;
+    will-change: transform;
+}
+
+@keyframes tc-kenburns {
+    from { transform: scale(1); }
+    to   { transform: scale(1.07) translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-section { animation: none; }
+}
+
+/* Vignette so text always wins over the photograph */
+.hero-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 50% 42%,
+        transparent 55%, rgba(20, 8, 10, .38) 100%);
+    pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 2; }
+
+.hero-content > * {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: tc-hero-in .9s var(--ease-out) forwards;
+}
+
+.hero-content .hero-eyebrow   { animation-delay: .15s; }
+.hero-content h1              { animation-delay: .3s; }
+.hero-content .hero-description { animation-delay: .45s; }
+.hero-content .hero-buttons   { animation-delay: .6s; }
+
+@keyframes tc-hero-in {
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-content > * { opacity: 1; transform: none; animation: none; }
+}
+
+/* Primary button: light sweep on hover (hero scope keeps it safe) */
+.hero-buttons .btn-primary {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero-buttons .btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg,
+        transparent 32%, rgba(255,255,255,.28) 50%, transparent 68%);
+    transform: translateX(-130%);
+    transition: transform .7s var(--ease);
+}
+
+.hero-buttons .btn-primary:hover::after { transform: translateX(130%); }
+
+/* Scroll cue */
+.hero-scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translateX(-50%);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,.85);
+    font-size: 10px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.hero-scroll-cue span {
+    display: block;
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(180deg, rgba(255,255,255,.9), transparent);
+    animation: tc-cue 2.2s var(--ease) infinite;
+    transform-origin: top;
+}
+
+@keyframes tc-cue {
+    0%   { transform: scaleY(0); opacity: 0; }
+    45%  { transform: scaleY(1); opacity: 1; }
+    100% { transform: scaleY(1) translateY(12px); opacity: 0; }
+}
+
+/* ============================================================
+   L4. TRUST STRIP — the "enterprise" reassurance band
+   ============================================================ */
+
+.trust-strip {
+    background: var(--cream);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 26px 0;
+}
+
+.trust-strip .container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: center;
+}
+
+.trust-item i {
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--primary);
+    font-size: 17px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(177,138,84,.35);
+}
+
+.trust-item strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: .01em;
+}
+
+.trust-item span {
+    display: block;
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+@media (max-width: 900px) {
+    .trust-strip .container { grid-template-columns: repeat(2, 1fr); }
+    .trust-item { justify-content: flex-start; }
+}
+
+@media (max-width: 520px) {
+    .trust-strip .container { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   L5. SECTION HEADINGS — gold ornament
+   ============================================================ */
+
+.section-heading h2,
+.section-top .section-heading h2 {
+    position: relative;
+    padding-bottom: 14px;
+}
+
+.section-heading h2::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 56px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), rgba(177,138,84,0));
+}
+
+.section-heading:not(.left) h2::after {
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg,
+        rgba(177,138,84,0), var(--gold), rgba(177,138,84,0));
+}
+
+/* ============================================================
+   L6. PRODUCT CARDS — lift, deeper image zoom, shine sweep
+   ============================================================ */
+
+.product-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform .45s var(--ease-out), box-shadow .45s var(--ease-out);
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.product-card .product-image img {
+    transition: transform .8s var(--ease-out), filter .8s var(--ease-out);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
+    filter: saturate(1.06);
+}
+
+/* Diagonal light sweep across the card image on hover */
+.product-card .product-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+        transparent 35%, rgba(255,255,255,.22) 50%, transparent 65%);
+    transform: translateX(-130%);
+    transition: transform .9s var(--ease);
+    pointer-events: none;
+}
+
+.product-card:hover .product-image::after { transform: translateX(130%); }
+
+/* ============================================================
+   L7. REVIEWS & GALLERY
+   ============================================================ */
+
+.review-card {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: transform .4s var(--ease-out), box-shadow .4s var(--ease-out),
+                border-color .4s var(--ease-out);
+}
+
+.review-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 24px; right: 24px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg,
+        rgba(177,138,84,0), rgba(177,138,84,.7), rgba(177,138,84,0));
+    opacity: 0;
+    transition: opacity .4s var(--ease);
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(177,138,84,.4);
+}
+
+.review-card:hover::before { opacity: 1; }
+
+.gallery-grid img {
+    transition: transform .7s var(--ease-out), box-shadow .7s var(--ease-out),
+                filter .7s var(--ease-out);
+}
+
+.gallery-grid img:hover {
+    transform: scale(1.045);
+    box-shadow: var(--shadow-lg);
+    filter: saturate(1.08);
+}
+
+/* ============================================================
+   L8. NEWSLETTER — maroon panel with gold button
+   ============================================================ */
+
+.newsletter-section {
+    background:
+        radial-gradient(90% 140% at 85% 10%, rgba(177,138,84,.16) 0%, transparent 55%),
+        linear-gradient(120deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+}
+
+.newsletter-section .section-label { color: var(--gold-light); }
+
+.newsletter-section h2,
+.newsletter-content h2 { color: #fff; }
+
+.newsletter-content p { color: rgba(255,255,255,.82); }
+
+.newsletter-form input {
+    background: rgba(255,255,255,.96) !important;
+    border-color: transparent !important;
+}
+
+/* ============================================================
+   L9. BACK TO TOP
+   ============================================================ */
+
+.tc-top {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 880;
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: 1px solid rgba(177,138,84,.45);
+    background: rgba(255, 253, 250, .92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--primary);
+    font-size: 15px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(14px);
+    pointer-events: none;
+    transition: opacity .35s var(--ease), transform .35s var(--ease),
+                box-shadow .35s var(--ease);
+    box-shadow: var(--shadow-md);
+}
+
+.tc-top.is-on {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.tc-top:hover {
+    box-shadow: var(--shadow-lg);
+    color: var(--primary-dark);
+}

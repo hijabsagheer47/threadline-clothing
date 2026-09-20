@@ -6,6 +6,17 @@ $order      = null;
 $timeline   = [];
 $orderItems = [];
 $error      = '';
+$prefill    = trim((string) ($_GET['order'] ?? ''));
+
+// My Orders page deep-links here with ?order=TC-... — auto-run the lookup
+// using the phone/email stored alongside the order on this device.
+$autoContact = trim((string) ($_GET['contact'] ?? ''));
+if ($prefill !== '' && $autoContact !== '' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $order = tc_find_order($prefill, $autoContact);
+    if (!$order) {
+        $error = 'No order found for this number on the server yet — it may still be syncing. Try again shortly.';
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_require($_POST['csrf_token'] ?? null);
@@ -66,7 +77,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
                 <div class="form-group">
                     <label for="order_number">Order Number <span class="required">*</span></label>
-                    <input type="text" id="order_number" name="order_number" placeholder="e.g. TC-20260904-ABC123" required>
+                    <input type="text" id="order_number" name="order_number" value="<?= e($prefill) ?>" placeholder="e.g. TC-20260904-ABC123" required>
                 </div>
                 <div class="form-group">
                     <label for="contact">Email or Phone <span class="required">*</span></label>

@@ -60,11 +60,37 @@ require __DIR__ . '/includes/storefront-header.php';
             <a href="<?= url('/collections.php') ?>" class="btn btn-outline">Explore Categories</a>
         </div>
     </div>
+    <a class="hero-scroll-cue" href="#shop-by-category" aria-label="Scroll to categories">
+        Scroll
+        <span></span>
+    </a>
 </section>
 <?php endif; ?>
 
+<!-- TRUST STRIP -->
+<section class="trust-strip" aria-label="Store promises">
+    <div class="container">
+        <div class="trust-item">
+            <i class="fa-solid fa-truck-fast"></i>
+            <div><strong>Fast Delivery</strong><span>Nationwide, 2–5 working days</span></div>
+        </div>
+        <div class="trust-item">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+            <div><strong>Cash on Delivery</strong><span>Pay when your order arrives</span></div>
+        </div>
+        <div class="trust-item">
+            <i class="fa-solid fa-rotate-left"></i>
+            <div><strong>Easy Returns</strong><span>7-day hassle-free exchange</span></div>
+        </div>
+        <div class="trust-item">
+            <i class="fa-solid fa-headset"></i>
+            <div><strong>Dedicated Support</strong><span>We reply within hours</span></div>
+        </div>
+    </div>
+</section>
+
 <!-- SHOP BY CATEGORY (dynamic) -->
-<section class="category-section section-padding">
+<section class="category-section section-padding" id="shop-by-category">
     <div class="container">
         <div class="section-heading">
             <p class="section-label">EXPLORE</p>

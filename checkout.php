@@ -81,6 +81,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $errors += $serviceErrors;
     } else {
+        // Stash a lightweight copy in a cookie so "My Orders" (device-local,
+        // no account needed) can list it later.
+        setcookie('tc_my_orders', json_encode([
+            'o' => $result['order_number'],
+            'c' => $old['phone'],
+            't' => time(),
+        ]), ['expires' => time() + 60 * 60 * 24 * 60, 'path' => '/', 'samesite' => 'Lax']);
+
         $_SESSION['last_order'] = [
             'order_number'   => $result['order_number'],
             'customer_name'  => $old['fullName'],

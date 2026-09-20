@@ -122,7 +122,13 @@ if ($mainNav === '') {
 
         <div class="nav-actions">
             <a href="<?= url('/shop.php') ?>" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <a href="<?= url('/shop.php') ?>" aria-label="Account"><i class="fa-regular fa-user"></i></a>
+            <a href="<?= url('/my-orders.php') ?>" aria-label="My Orders (saved on this device)" class="orders-link">
+                <i class="fa-solid fa-receipt"></i>
+            </a>
+            <a href="<?= url('/wishlist.php') ?>" class="wishlist-link" aria-label="Wishlist">
+                <i class="fa-regular fa-heart"></i>
+                <span class="wishlist-count"><?= (int) $wishCount ?></span>
+            </a>
             <a href="<?= url('/wishlist.php') ?>" class="wishlist-link" aria-label="Wishlist">
                 <i class="fa-regular fa-heart"></i>
                 <span class="wishlist-count"><?= (int) $wishCount ?></span>

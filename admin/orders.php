@@ -20,8 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $payAllowed = ['pending', 'paid', 'unpaid', 'refunded'];
 
         if (in_array($status, $allowed, true) && in_array($payStatus, $payAllowed, true)) {
+            $stmt = $db->prepare('SELECT order_status, payment_status FROM orders WHERE id = ?');
+            $stmt->execute([$orderId]);
+            $before = $stmt->fetch();
+
             $db->prepare('UPDATE orders SET order_status = ?, payment_status = ? WHERE id = ?')
                ->execute([$status, $payStatus, $orderId]);
+
+            // Keep the customer-facing timeline in sync (track-order + API read it).
+            if ($before && $before['order_status'] !== $status && tc_table_exists('order_status_history')) {
+                $db->prepare('INSERT INTO order_status_history (order_id, status, note) VALUES (?, ?, ?)')
+                   ->execute([$orderId, $status, 'Updated by store admin']);
+            }
+
             record_activity('order_status_update', 'order', $orderId, 'Order status set to "' . $status . '"');
             flash_set('success', 'Order updated.');
         } else {
@@ -230,6 +241,13 @@ $orders = $stmt->fetchAll();
 
 $qs = http_build_query(array_filter(['status' => $status, 'q' => $q], static fn($v) => $v !== ''));
 
+// One-click status chips with live counts.
+$statusCounts = [];
+foreach ($db->query('SELECT order_status, COUNT(*) AS c FROM orders GROUP BY order_status') as $row) {
+    $statusCounts[$row['order_status']] = (int) $row['c'];
+}
+$statusCounts['all'] = array_sum($statusCounts);
+
 $page_title = 'Orders';
 $active     = 'orders';
 
@@ -254,6 +272,17 @@ ob_start();
     <button type="submit" class="btn btn-outline btn-sm">Filter</button>
     <?php if ($qs): ?><a href="<?= url('/admin/orders.php') ?>" class="btn btn-outline btn-sm">Clear</a><?php endif; ?>
 </form>
+
+<div class="quick-chips" style="display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px">
+    <?php foreach (['all' => 'All', 'pending' => 'Pending', 'confirmed' => 'Confirmed', 'processing' => 'Processing', 'shipped' => 'Shipped', 'delivered' => 'Delivered', 'cancelled' => 'Cancelled'] as $key => $label): ?>
+        <a href="<?= e(url('/admin/orders.php' . ($key === 'all' ? '' : '?status=' . $key))) ?>"
+           style="padding:6px 14px;border-radius:999px;font-size:12.5px;font-weight:600;text-decoration:none;
+                  <?= ($key === 'all' ? $status === '' : $status === $key)
+                      ? 'background:var(--admin-primary,#800c26);color:#fff' : 'background:#f2ede5;color:#4a443c' ?>">
+            <?= e($label) ?> <span style="opacity:.65"><?= (int) ($statusCounts[$key] ?? 0) ?></span>
+        </a>
+    <?php endforeach; ?>
+</div>
 
 <div class="card">
     <div class="table-wrap">

@@ -497,6 +497,21 @@ function tc_find_order(string $orderNumber, string $contact): ?array
     return $row ?: null;
 }
 
+/** Comma-joined item names for an order, used by My Orders listing. */
+function tc_order_items_summary(int $orderId): array
+{
+    $stmt = db()->prepare(
+        'SELECT oi.product_name, oi.quantity FROM order_items oi WHERE oi.order_id = ? ORDER BY oi.id ASC'
+    );
+    $stmt->execute([$orderId]);
+    $rows = $stmt->fetchAll();
+    $names = [];
+    foreach ($rows as $row) {
+        $names[] = $row['product_name'] . ' × ' . (int) $row['quantity'];
+    }
+    return $names;
+}
+
 /** Timeline entries, newest first. Falls back to the order status itself. */
 function tc_order_timeline(int $orderId): array
 {
