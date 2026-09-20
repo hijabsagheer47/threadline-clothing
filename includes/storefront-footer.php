@@ -24,7 +24,7 @@ if (!$footerColumns) {
             . '<a href="' . url('/contact.php') . '">Size Guide</a>'
             . '<a href="' . url('/contact.php') . '#faq">FAQs</a>',
         'Information' => '<a href="' . url('/about.php') . '">About ' . e($storeName) . '</a>'
-            . '<a href="' . url('/contact.php') . '">Privacy Policy</a>'
+            . '<a href="' . url('/privacy-policy.php') . '">Privacy Policy</a>'
             . '<a href="' . url('/contact.php') . '">Terms &amp; Conditions</a>'
             . '<a href="' . url('/my-orders.php') . '">My Orders</a>'
             . '<a href="' . url('/track-order.php') . '">Track Order</a>'
