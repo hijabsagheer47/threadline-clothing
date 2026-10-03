@@ -85,7 +85,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
                 <!-- Empty Cart -->
                 <div class="empty-cart" id="emptyCart" <?= $items ? 'style="display:none"' : '' ?>>
-                    <div class="empty-cart-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+                    <div class="empty-cart-icon"><div class="lx-lottie" data-lottie="bag-empty"><i class="fa-solid fa-bag-shopping"></i></div></div>
                     <h2>Your Cart Is Empty</h2>
                     <p>Looks like you haven't added anything to your shopping bag yet. Explore our latest collections and find something you love.</p>
                     <a href="<?= url('/shop.php') ?>">START SHOPPING</a>

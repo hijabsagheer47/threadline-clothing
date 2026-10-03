@@ -400,6 +400,7 @@ function render_product_card(array $product): string
     }
 
     $name = e($product['name']);
+    $altName = e(setting('brand_name', setting('store_name')) . ' ' . $product['name']);
     $slug = e($product['slug']);
     $href = e(product_url($product['slug']));
     $productId = (int) ($product['id'] ?? 0);
@@ -447,7 +448,7 @@ function render_product_card(array $product): string
             <div class="product-thumb">
                 <div class="product-badges">' . $badgeHtml . '</div>
                 ' . $actionsHtml . '
-                <img src="' . e($img1) . '" alt="' . $name . '" loading="lazy">
+                <img src="' . e($img1) . '" alt="' . $altName . '" loading="lazy">
                 ' . $altImg . '
                 ' . $stockHtml . '
             </div>
@@ -466,7 +467,7 @@ function render_products_grid(array $items): string
 {
     if (!$items) {
         return '<div class="shop-empty" id="shop-empty">
-            <i class="fa-regular fa-face-frown"></i>
+            <div class="lx-lottie" data-lottie="bag-empty"><i class="fa-regular fa-face-frown"></i></div>
             <h2>No products found</h2>
             <p>Try changing your search or filters.</p>
         </div>';

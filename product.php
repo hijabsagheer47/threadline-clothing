@@ -34,6 +34,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['review_submit'] ?? '') ===
     redirect(url('/product.php?slug=' . urlencode($product['slug'])) . '#tab-reviews');
 }
 
+/* Recently viewed — a cookie list of real catalog slugs, capped at 8 and
+   switchable off with the admin's enable_recently_viewed setting. */
+$recentlyViewed = [];
+if (setting('enable_recently_viewed', '1') === '1') {
+    $rvSeen = array_values(array_filter(array_map('trim', explode(',', (string) ($_COOKIE['tc_recently_viewed'] ?? '')))));
+    $rvSeen = array_values(array_filter($rvSeen, static fn(string $s): bool => $s !== '' && $s !== (string) $product['slug']));
+    array_unshift($rvSeen, (string) $product['slug']);
+    $rvSeen = array_slice(array_unique($rvSeen), 0, 8);
+
+    if (!headers_sent()) {
+        setcookie('tc_recently_viewed', implode(',', $rvSeen), [
+            'expires'  => time() + 31536000,
+            'path'     => BASE_URL !== '' ? BASE_URL : '/',
+            'samesite' => 'Lax',
+            'httponly' => true,
+        ]);
+    }
+
+    foreach ($rvSeen as $rvSlug) {
+        if (count($recentlyViewed) >= 8) {
+            break;
+        }
+        $rvProduct = get_product($rvSlug);
+        if ($rvProduct) {
+            $recentlyViewed[] = $rvProduct;
+        }
+    }
+}
+
 $primaryImage = image_url($product['primary_image'] ?: ($images[0]['image'] ?? ''));
 $outOfStock   = (int) $product['stock_quantity'] < 1;
 $onSale       = product_has_sale($product);
@@ -48,6 +77,56 @@ $page_title     = $product['name'];
 $meta_description = mb_substr(strip_tags((string) $product['short_description']), 0, 155);
 $canonical      = product_url($product['slug']);
 $active_nav     = 'shop.php';
+$og_image       = $primaryImage;
+
+/* Real size guide from the admin's size_charts tables (never invented data). */
+$sizeChart = null;
+$sizeRows  = [];
+if (tc_table_exists('size_charts') && tc_table_exists('size_chart_measurements')) {
+    $scStmt = db()->prepare('SELECT * FROM size_charts WHERE status = 1 AND is_global = 1 ORDER BY sort_order, id LIMIT 1');
+    $scStmt->execute();
+    $sizeChart = $scStmt->fetch() ?: null;
+    if ($sizeChart) {
+        $srStmt = db()->prepare('SELECT * FROM size_chart_measurements WHERE size_chart_id = ? ORDER BY sort_order, id');
+        $srStmt->execute([(int) $sizeChart['id']]);
+        $sizeRows = $srStmt->fetchAll();
+    }
+}
+$sizeGuideUrl = $sizeRows ? '#size-guide' : '';
+
+// Structured data — real product data only, no fabricated ratings/reviews.
+$product_schema = [
+    '@context'    => 'https://schema.org',
+    '@type'       => 'Product',
+    'name'        => (string) $product['name'],
+    'image'       => $primaryImage,
+    'description' => $meta_description !== '' ? $meta_description : mb_substr(strip_tags((string) $product['description']), 0, 155),
+    'sku'         => (string) $product['sku'],
+    'brand'       => ['@type' => 'Brand', 'name' => (string) setting('brand_name', setting('store_name', 'Fashlab Studio'))],
+    'offers'      => [
+        '@type'             => 'Offer',
+        'url'               => abs_url('/product.php?slug=' . rawurlencode((string) $product['slug'])),
+        'priceCurrency'     => 'PKR',
+        'price'             => (string) ($onSale ? $product['sale_price'] : $product['price']),
+        'availability'      => $outOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+        'itemCondition'     => 'https://schema.org/NewCondition',
+    ],
+];
+if ($images) {
+    $product_schema['image'] = array_values(array_map(static fn($im): string => image_url($im['image'] ?? ''), $images));
+}
+
+$breadcrumb_schema = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
+    ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/index.php')],
+    ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => abs_url('/shop.php')],
+]];
+$bp = 3;
+foreach ($categories as $cat) {
+    $breadcrumb_schema['itemListElement'][] = ['@type' => 'ListItem', 'position' => $bp++, 'name' => $cat['name'], 'item' => abs_url('/category.php?slug=' . rawurlencode((string) $cat['slug']))];
+}
+$breadcrumb_schema['itemListElement'][] = ['@type' => 'ListItem', 'position' => $bp, 'name' => (string) $product['name']];
+
+$extra_schema = [$product_schema, $breadcrumb_schema];
 
 require __DIR__ . '/includes/storefront-header.php';
 ?>
@@ -85,7 +164,7 @@ require __DIR__ . '/includes/storefront-header.php';
             </div>
 
             <div class="product-main-image" id="productImageContainer">
-                <img id="mainProductImage" src="<?= e($primaryImage) ?>" alt="<?= e($product['name']) ?>">
+                <img id="mainProductImage" src="<?= e($primaryImage) ?>" alt="<?= e(setting('brand_name', setting('store_name')) . ' ' . $product['name']) ?>">
                 <div class="zoom-hint"><i class="fa-solid fa-magnifying-glass-plus"></i> Hover to zoom</div>
             </div>
         </div>
@@ -174,7 +253,7 @@ require __DIR__ . '/includes/storefront-header.php';
             <!-- Size -->
             <?php if ($sizes): ?>
                 <div class="product-option">
-                    <div class="option-heading"><strong>Size</strong> <a href="#size-guide">Size Guide</a></div>
+                    <div class="option-heading"><strong>Size</strong> <?php if ($sizeRows): ?><a href="#size-guide" data-size-guide>Size Guide</a><?php endif; ?></div>
                     <div class="size-options">
                         <?php foreach ($sizes as $si => $sz): ?>
                             <button type="button" class="size-option<?= $si === 0 ? ' active' : '' ?>"><?= e($sz) ?></button>
@@ -214,6 +293,11 @@ require __DIR__ . '/includes/storefront-header.php';
                 BUY NOW
             </button>
 
+            <!-- Order on WhatsApp (message built client-side, never auto-sent) -->
+            <a class="btn btn-wa" data-wa-order href="<?= e('https://wa.me/' . preg_replace('/[^0-9]/', '', (string) setting('whatsapp_number', ''))) ?>" target="_blank" rel="noopener">
+                <i class="fa-brands fa-whatsapp"></i> ORDER ON WHATSAPP
+            </a>
+
             <!-- Wishlist -->
             <button type="button" class="btn btn-outline product-wishlist<?= $wished ? ' active' : '' ?>"
                     data-product-id="<?= (int) $product['id'] ?>"
@@ -221,6 +305,12 @@ require __DIR__ . '/includes/storefront-header.php';
                     aria-pressed="<?= $wished ? 'true' : 'false' ?>">
                 <i class="fa-<?= $wished ? 'solid' : 'regular' ?> fa-heart"></i>
                 <span><?= $wished ? 'In Wishlist' : 'Wishlist' ?></span>
+            </button>
+
+            <!-- Share -->
+            <button type="button" class="btn btn-outline product-share" data-share-product aria-label="Share this product">
+                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                <span>SHARE</span>
             </button>
 
             <!-- Product Benefits -->
@@ -242,19 +332,71 @@ require __DIR__ . '/includes/storefront-header.php';
     </div>
 </section>
 
+<!-- SIZE GUIDE (real admin size-chart data) -->
+<?php if ($sizeRows): ?>
+<div class="lx-sizeguide" id="size-guide" role="dialog" aria-modal="true" aria-labelledby="sizeGuideTitle" hidden>
+    <div class="lx-sizeguide-card">
+        <button type="button" class="lx-sizeguide-close" aria-label="Close size guide" data-size-guide-close><i class="fa-solid fa-xmark"></i></button>
+        <p class="section-label">SIZE GUIDE</p>
+        <h3 id="sizeGuideTitle"><?= e((string) ($sizeChart['name'] ?? 'Size Guide')) ?></h3>
+        <?php if (!empty($sizeChart['description'])): ?>
+            <p class="lx-sizeguide-desc"><?= e((string) $sizeChart['description']) ?></p>
+        <?php endif; ?>
+        <div class="lx-sizeguide-scroll">
+            <table class="lx-sizeguide-table">
+                <thead>
+                    <tr><th scope="col">Size</th><th scope="col">Chest (cm)</th><th scope="col">Waist (cm)</th><th scope="col">Hip (cm)</th><th scope="col">Shoulder (cm)</th><th scope="col">Length (cm)</th></tr>
+                </thead>
+                <tbody>
+                <?php foreach ($sizeRows as $row): ?>
+                    <tr>
+                        <th scope="row"><?= e((string) $row['size_label']) ?></th>
+                        <td><?= (int) (float) $row['chest_cm'] ?></td>
+                        <td><?= (int) (float) $row['waist_cm'] ?></td>
+                        <td><?= (int) (float) $row['hip_cm'] ?></td>
+                        <td><?= (int) (float) $row['shoulder_cm'] ?></td>
+                        <td><?= (int) (float) $row['length_cm'] ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <p class="lx-sizeguide-note">All measurements are garment measurements in centimetres. For the best fit, compare with a similar piece you already own.</p>
+    </div>
+</div>
+<?php endif; ?>
+
 <!-- PRODUCT INFORMATION TABS -->
 <section class="product-information-section">
     <div class="container">
         <div class="product-tabs">
-            <button class="product-tab active" type="button" data-tab="description">Description</button>
+            <button class="product-tab active" type="button" data-tab="description">Why You'll Love It</button>
+            <button class="product-tab" type="button" data-tab="fabric">Fabric &amp; Care</button>
             <button class="product-tab" type="button" data-tab="details">Product Details</button>
-            <button class="product-tab" type="button" data-tab="shipping">Shipping &amp; Returns</button>
+            <button class="product-tab" type="button" data-tab="shipping">Delivery &amp; Exchange</button>
             <button class="product-tab" type="button" data-tab="reviews">Reviews</button>
         </div>
 
         <div class="product-tab-content active" id="tab-description">
+            <h3>Why You'll Love It</h3>
+            <ul class="details-list">
+                <?php if ($product['fabric'] !== ''): ?><li>Cut from <strong><?= e($product['fabric']) ?></strong> for all-day comfort</li><?php endif; ?>
+                <?php if ($categories): ?><li><?= e($categories[0]['name']) ?> silhouette from <?= e(setting('brand_name', setting('store_name', 'Fashlab Studio'))) ?></li><?php endif; ?>
+                <?php if ($sizes): ?><li>Available in <?= e(implode(', ', $sizes)) ?></li><?php endif; ?>
+                <?php if ($colors): ?><li>Colour options: <?= e(implode(', ', $colors)) ?></li><?php endif; ?>
+                <li><?= $outOfStock ? 'Currently out of stock' : 'In stock and ready to ship' ?></li>
+            </ul>
             <h3>About this piece</h3>
             <p><?= nl2br(e($product['description'] ?: 'No additional description available.')) ?></p>
+        </div>
+
+        <div class="product-tab-content" id="tab-fabric">
+            <h3>Fabric &amp; Care</h3>
+            <ul class="details-list">
+                <?php if ($product['fabric'] !== ''): ?><li><strong>Fabric:</strong> <?= e($product['fabric']) ?></li><?php endif; ?>
+                <?php if ($product['color'] !== ''): ?><li><strong>Colour:</strong> <?= e($product['color']) ?></li><?php endif; ?>
+                <li><strong>Care:</strong> Gentle hand wash or dry clean. Do not bleach. Dry in shade and iron on low heat.</li>
+            </ul>
         </div>
 
         <div class="product-tab-content" id="tab-details">
@@ -390,6 +532,22 @@ require __DIR__ . '/includes/storefront-header.php';
         </div>
         <div class="product-grid">
             <?php foreach ($related as $rel) echo render_product_card($rel); ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<?php if ($recentlyViewed): ?>
+<section class="section-padding recently-viewed">
+    <div class="container">
+        <div class="section-top">
+            <div class="section-heading left">
+                <p class="section-label">RECENTLY VIEWED</p>
+                <h2>Seen Recently</h2>
+            </div>
+        </div>
+        <div class="product-grid">
+            <?php foreach ($recentlyViewed as $rv) echo render_product_card($rv); ?>
         </div>
     </div>
 </section>

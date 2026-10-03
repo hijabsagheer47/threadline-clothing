@@ -120,6 +120,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
     <?php if (!$items): ?>
         <div class="empty-checkout">
+            <div class="lx-lottie" data-lottie="bag-empty"><i class="fa-solid fa-bag-shopping"></i></div>
             <h2>Your Cart Is Empty</h2>
             <p>Please add some products before proceeding to checkout.</p>
             <a href="<?= url('/shop.php') ?>" class="continue-shopping">Continue Shopping</a>

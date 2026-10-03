@@ -42,28 +42,28 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
     <div class="container">
         <div class="trust-grid">
             <div class="trust-item">
-                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <div class="lx-lottie" data-lottie="cod"><i class="fa-solid fa-hand-holding-dollar"></i></div>
                 <div>
                     <h4>Cash on Delivery</h4>
                     <p>Pay when your parcel arrives</p>
                 </div>
             </div>
             <div class="trust-item">
-                <i class="fa-solid fa-truck-fast"></i>
+                <div class="lx-lottie" data-lottie="delivery"><i class="fa-solid fa-truck-fast"></i></div>
                 <div>
                     <h4>Free Delivery</h4>
                     <p>On orders above <?= e(money($freeOver)) ?></p>
                 </div>
             </div>
             <div class="trust-item">
-                <i class="fa-solid fa-rotate-left"></i>
+                <div class="lx-lottie" data-lottie="exchange"><i class="fa-solid fa-rotate-left"></i></div>
                 <div>
                     <h4>Easy Exchange</h4>
-                    <p>7-day hassle-free exchange</p>
+                    <p><?= (int) setting('exchange_policy_days', '7') ?>-day hassle-free exchange</p>
                 </div>
             </div>
             <div class="trust-item">
-                <i class="fa-brands fa-whatsapp"></i>
+                <div class="lx-lottie" data-lottie="chat"><i class="fa-brands fa-whatsapp"></i></div>
                 <div>
                     <h4>Order on WhatsApp</h4>
                     <p><?= e($waNumber) ?></p>
@@ -82,9 +82,20 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
             <p>Thoughtfully designed clothing for every version of you.</p>
 
             <div class="social-links">
-                <a class="s-instagram" href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram on <?= e($storeName) ?>" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-                <a class="s-facebook" href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook page" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
-                <a class="s-linkedin" href="<?= e(setting('linkedin_url', '#')) ?>" aria-label="LinkedIn profile" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                <?php
+                // Only render a social icon when the admin has set a real URL —
+                // never a dead "#" placeholder, never an invented handle.
+                $socialLinks = [
+                    ['class' => 's-instagram', 'icon' => 'fa-brands fa-instagram', 'label' => 'Instagram on ' . $storeName, 'url' => setting('instagram_url', '')],
+                    ['class' => 's-facebook',  'icon' => 'fa-brands fa-facebook-f', 'label' => 'Facebook page',            'url' => setting('facebook_url', '')],
+                    ['class' => 's-linkedin',  'icon' => 'fa-brands fa-linkedin-in', 'label' => 'LinkedIn profile',          'url' => setting('linkedin_url', '')],
+                ];
+                foreach ($socialLinks as $social):
+                    $socialUrl = trim((string) $social['url']);
+                    if ($socialUrl === '' || $socialUrl === '#' || !preg_match('#^https?://#i', $socialUrl)) continue;
+                ?>
+                <a class="<?= e($social['class']) ?>" href="<?= e($socialUrl) ?>" aria-label="<?= e($social['label']) ?>" target="_blank" rel="noopener noreferrer"><i class="<?= e($social['icon']) ?>"></i></a>
+                <?php endforeach; ?>
                 <?php if ($waUrl !== ''): ?>
                 <a class="s-whatsapp" href="<?= e($waUrl) ?>" aria-label="Chat on WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
                 <?php endif; ?>
@@ -118,5 +129,6 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
 
 <script src="<?= e(asset_url('assets/js/site.js')) ?>"></script>
 <script src="<?= e(asset_url('assets/js/premium.js')) ?>"></script>
+<script src="<?= e(asset_url('assets/js/luxury.js')) ?>" defer></script>
 </body>
 </html>

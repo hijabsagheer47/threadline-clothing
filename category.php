@@ -78,6 +78,18 @@ $meta_description = $category['description'] ?: 'Shop the ' . $category['name'] 
 $canonical        = category_url($category['slug']);
 $active_nav       = 'shop.php';
 
+$extra_schema = [
+    ['@context' => 'https://schema.org', '@type' => 'CollectionPage',
+     'name' => $category['name'], 'url' => abs_url('/category.php?slug=' . rawurlencode((string) $category['slug'])),
+     'description' => strip_tags((string) $meta_description),
+     'isPartOf' => ['@type' => 'WebSite', 'name' => setting('store_name'), 'url' => abs_url('/index.php')]],
+    ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/index.php')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => abs_url('/shop.php')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => (string) $category['name'], 'item' => abs_url('/category.php?slug=' . rawurlencode((string) $category['slug']))],
+    ]],
+];
+
 require __DIR__ . '/includes/storefront-header.php';
 ?>
 

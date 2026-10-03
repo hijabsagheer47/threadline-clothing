@@ -25,7 +25,7 @@ require __DIR__ . '/includes/storefront-header.php';
 
         <?php if (!$items): ?>
             <div class="empty-cart">
-                <div class="empty-cart-icon"><i class="fa-regular fa-heart"></i></div>
+                <div class="empty-cart-icon"><div class="lx-lottie" data-lottie="heart"><i class="fa-regular fa-heart"></i></div></div>
                 <h2>Your wishlist is waiting for something beautiful</h2>
                 <p>Tap the heart on any product to save it here.</p>
                 <a href="<?= url('/shop.php') ?>">EXPLORE COLLECTION</a>

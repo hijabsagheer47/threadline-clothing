@@ -22,6 +22,18 @@ $meta_description = $collection['meta_description']
 $canonical        = collection_url($collection['slug']);
 $active_nav       = 'collections.php';
 
+$extra_schema = [
+    ['@context' => 'https://schema.org', '@type' => 'CollectionPage',
+     'name' => $collection['name'], 'url' => abs_url('/collection.php?slug=' . rawurlencode((string) $collection['slug'])),
+     'description' => strip_tags((string) $meta_description),
+     'isPartOf' => ['@type' => 'WebSite', 'name' => setting('store_name'), 'url' => abs_url('/index.php')]],
+    ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/index.php')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Collections', 'item' => abs_url('/collections.php')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => (string) $collection['name'], 'item' => abs_url('/collection.php?slug=' . rawurlencode((string) $collection['slug']))],
+    ]],
+];
+
 require __DIR__ . '/includes/storefront-header.php';
 ?>
 
