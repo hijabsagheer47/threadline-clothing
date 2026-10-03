@@ -9,6 +9,8 @@ $page_title      = $page_title      ?? '';
 $meta_description = $meta_description ?? setting('meta_description', '');
 $canonical       = $canonical       ?? abs_current();
 $extra_schema    = $extra_schema    ?? [];
+$full_title      = $full_title      ?? '';   // page-controlled <title>, wins over the default pattern
+$robots_noindex  = $robots_noindex  ?? false; // set by search-result / account pages
 
 // Canonical / Open Graph URLs must be absolute; page templates pass path-absolute
 // or already-absolute values, so only a missing origin is filled in here.
@@ -25,6 +27,9 @@ $storeName  = setting('store_name');
 $fullTitle  = $page_title !== ''
     ? (str_contains($page_title, $storeName) ? $page_title : $page_title . ' | ' . $storeName)
     : $storeName;
+if ($full_title !== '') {
+    $fullTitle = $full_title;
+}
 
 $cartCount = cart_count();
 $wishCount = wishlist_count();
@@ -77,6 +82,9 @@ if ($mainNav === '') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e($fullTitle) ?></title>
     <meta name="description" content="<?= e($meta_description) ?>">
+    <?php if ($robots_noindex): ?>
+    <meta name="robots" content="noindex, follow">
+    <?php endif; ?>
     <meta name="author" content="<?= e($storeName) ?>">
     <link rel="canonical" href="<?= e($canonical) ?>">
     <meta name="csrf-token" content="<?= e(csrf_token()) ?>">

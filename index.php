@@ -2,14 +2,29 @@
 declare(strict_types=1);
 require_once __DIR__ . '/includes/bootstrap.php';
 
-$page_title = setting('store_tagline', 'Where Style Meets Elegance');
-$active_nav = 'index.php';
+/* Homepage SEO — brand + broad commercial intent (one primary topic, no stuffing). */
+$full_title       = setting('store_name') . " | Women's Clothing & Fashion Online in Pakistan";
+$page_title       = setting('store_tagline', 'Where Style Meets Elegance');
+$meta_description = "Shop women's clothing online in Pakistan with " . setting('store_name')
+    . '. Explore stitched and unstitched suits, lawn, formal wear, casual styles and new fashion collections.';
+$active_nav       = 'index.php';
 
 $homeCategories = categories_with_counts(8);
 $newIn          = new_arrivals(8);
 $bestSellers    = best_sellers(8);
 $saleItems      = sale_products(4);
 $heroSlides     = tc_hero_slides();
+
+/* Shop-by-fabric chips + occasion links (real categories only) */
+$facets       = product_facets();
+$homeFabrics  = array_slice($facets['fabrics'] ?? [], 0, 10);
+$homeOccasions = [];
+foreach (['formal-wear', 'casual-wear', 'festive-collection', 'eid-collection', 'luxury-collection', 'eastern-wear'] as $occSlug) {
+    $occ = get_category_by_slug($occSlug);
+    if ($occ && (int) $occ['status'] === 1) {
+        $homeOccasions[] = $occ;
+    }
+}
 
 /* Floating hero cards — real products, never invented data */
 $heroCards = [];
@@ -62,8 +77,11 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
 
         <div class="lx-hero-copy">
             <p class="lx-hero-eyebrow"><?= e($heroEyebrow) ?></p>
-            <h1 class="lx-hero-title"><?= e($heroTitle) ?></h1>
-            <p class="lx-hero-sub"><?= e($heroSubtitle) ?></p>
+            <?php if ($heroTitle !== ''): ?>
+            <p class="lx-hero-campaign"><?= e($heroTitle) ?></p>
+            <?php endif; ?>
+            <h1 class="lx-hero-title">Women's Fashion <span class="line-2">&amp; Clothing Online in Pakistan</span></h1>
+            <p class="lx-hero-sub"><?= e($heroSubtitle) ?> Discover thoughtfully designed women's clothing from <?= e(setting('store_name')) ?>, including stitched and unstitched outfits, lawn, formal wear, casual wear, co-ords and seasonal collections.</p>
             <div class="lx-hero-cta">
                 <a href="<?= e($heroCta1Link) ?>" class="lx-btn lx-btn-primary"><?= e($heroCta1) ?></a>
                 <a href="<?= e($heroCta2Link) ?>" class="lx-btn lx-btn-ghost"><?= e($heroCta2) ?></a>
@@ -150,6 +168,41 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
                     </div>
                 </a>
             <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+
+<!-- SHOP BY FABRIC + OCCASION -->
+<section class="fabric-section section-padding" id="shop-by-fabric">
+    <div class="container">
+        <div class="section-heading">
+            <p class="section-label">FIND YOUR STYLE</p>
+            <h2>Shop By Fabric &amp; Occasion</h2>
+            <p>Explore the collection by the fabric you love or the moment you are dressing for.</p>
+        </div>
+
+        <div class="fabric-groups">
+            <?php if ($homeFabrics): ?>
+            <div class="fabric-group">
+                <h3>Fabric</h3>
+                <div class="fabric-strip">
+                    <?php foreach ($homeFabrics as $fab): ?>
+                        <a class="fabric-chip" href="<?= e(url('/shop.php?fabric=' . rawurlencode((string) $fab))) ?>"><?= e((string) $fab) ?></a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($homeOccasions): ?>
+            <div class="fabric-group">
+                <h3>Occasion</h3>
+                <div class="fabric-strip">
+                    <?php foreach ($homeOccasions as $occ): ?>
+                        <a class="fabric-chip" href="<?= e(category_url($occ['slug'])) ?>"><?= e($occ['name']) ?></a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
     </div>
 </section>

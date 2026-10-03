@@ -434,7 +434,11 @@
                 var item = q.closest('.faq-item');
                 var wasOpen = item.classList.contains('open');
                 qsa('.faq-item').forEach(function (i) { i.classList.remove('open'); });
-                if (!wasOpen) item.classList.add('open');
+                qsa('.faq-question').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+                if (!wasOpen) {
+                    item.classList.add('open');
+                    q.setAttribute('aria-expanded', 'true');
+                }
             });
         });
     }

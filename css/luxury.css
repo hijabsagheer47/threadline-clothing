@@ -384,11 +384,22 @@
     background: linear-gradient(90deg, var(--lx-champagne), transparent);
 }
 
+/* Editorial campaign line (admin hero slide title) above the H1 */
+.lx-hero-campaign {
+    font-family: var(--lx-serif);
+    font-style: italic;
+    font-size: clamp(17px, 1.6vw, 23px);
+    color: var(--lx-champagne-d);
+    letter-spacing: .03em;
+    margin: 0 0 clamp(10px, 1.4vh, 16px);
+    animation: lxFadeUp .9s .05s var(--lx-ease) both;
+}
+
 .lx-hero-title {
     font-family: var(--lx-serif);
     font-weight: 500;
-    font-size: clamp(44px, 6.4vw, 92px);
-    line-height: 1.02;
+    font-size: clamp(32px, 4vw, 56px);
+    line-height: 1.07;
     letter-spacing: -.015em;
     color: var(--lx-ink);
     margin: 0 0 clamp(16px, 2.4vh, 26px);
@@ -1578,7 +1589,7 @@
     margin: 6px 0 8px;
     color: var(--lx-ink);
 }
-.lx-sizeguide-desc { color: var(--lx-muted); font-size: 14.5px; margin-bottom: 18px; }
+.lx-sizeguide-desc { color: var(--lx-text-2); font-size: 14.5px; margin-bottom: 18px; }
 .lx-sizeguide-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .lx-sizeguide-table {
     width: 100%;
@@ -1597,7 +1608,7 @@
     font-size: 11.5px;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--lx-muted);
+    color: var(--lx-text-2);
     font-weight: 600;
 }
 .lx-sizeguide-table tbody th { color: var(--lx-ink); font-weight: 600; }
@@ -1605,6 +1616,60 @@
 .lx-sizeguide-note {
     margin-top: 16px;
     font-size: 12.5px;
-    color: var(--lx-muted);
+    color: var(--lx-text-2);
     line-height: 1.6;
+}
+
+/* ============================================================
+   21. SHOP BY FABRIC / OCCASION chips + category link polish
+   ============================================================ */
+
+.fabric-groups { display: grid; gap: 26px; }
+.fabric-group h3 {
+    font-family: var(--lx-serif);
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: .04em;
+    color: var(--lx-text-2);
+    margin-bottom: 14px;
+}
+.fabric-strip { display: flex; flex-wrap: wrap; gap: 12px; }
+.fabric-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 22px;
+    border: 1px solid var(--lx-line-2);
+    border-radius: 999px;
+    background: #fffdfa;
+    color: var(--lx-ink);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-decoration: none;
+    transition: border-color .25s var(--lx-ease), transform .25s var(--lx-ease), background .25s var(--lx-ease), box-shadow .25s var(--lx-ease), color .25s var(--lx-ease);
+}
+.fabric-chip:hover,
+.fabric-chip:focus-visible {
+    border-color: var(--lx-champagne);
+    background: var(--lx-ivory);
+    color: var(--lx-champagne-d);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(60, 48, 32, .08);
+}
+
+/* product category chip is now a real internal link */
+.product-category { text-decoration: none; }
+.product-category:hover { text-decoration: underline; }
+
+@media (max-width: 767px) {
+    .fabric-strip {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        margin: 0 -20px;
+        padding: 0 20px 8px;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+    .fabric-strip::-webkit-scrollbar { display: none; }
+    .fabric-chip { flex: 0 0 auto; }
 }

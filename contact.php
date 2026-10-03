@@ -45,6 +45,52 @@ $page_title       = 'Contact Us';
 $meta_description = 'Get in touch with ' . setting('store_name') . ' — questions about collections, orders, shipping and more.';
 $active_nav       = 'contact.php';
 
+/* Real policies only — every answer mirrors live store settings, never invented. */
+$freeOver = money((float) setting('free_shipping_threshold', '8000'));
+$shipFee  = money((float) setting('shipping_fee', '250'));
+$exDays   = (int) setting('exchange_policy_days', '7');
+
+$faqs = [
+    [
+        'q' => 'Do you offer cash on delivery in Pakistan?',
+        'a' => 'Yes. Cash on delivery is available across Pakistan, and you can also pay securely online at checkout where available.',
+    ],
+    [
+        'q' => 'How long does delivery take?',
+        'a' => 'Standard delivery usually takes 3–5 working days across Pakistan, while express delivery takes approximately 1–2 working days.',
+    ],
+    [
+        'q' => 'Do you offer free delivery?',
+        'a' => 'Yes — orders above ' . $freeOver . ' ship free anywhere in Pakistan. Below that, a flat shipping fee of ' . $shipFee . ' applies.',
+    ],
+    [
+        'q' => 'What is the exchange policy?',
+        'a' => 'We offer a ' . $exDays . '-day return and exchange policy on unworn items in their original packaging.',
+    ],
+    [
+        'q' => 'How can I order through WhatsApp?',
+        'a' => 'Open any product, choose your size and quantity and tap “Order on WhatsApp”. A message with the product, price and your selection is prepared for you — nothing is sent until you press send.',
+    ],
+    [
+        'q' => 'Are your products stitched or unstitched?',
+        'a' => 'Both. ' . setting('store_name') . ' offers ready-to-wear stitched clothing as well as unstitched suits, including 2 piece and 3 piece options.',
+    ],
+    [
+        'q' => 'How do I choose my size?',
+        'a' => 'Each product page lists the available sizes with a size guide showing chest, waist, hip, shoulder and length measurements in centimetres. If you still need help, message us with your measurements and we will guide you.',
+    ],
+];
+
+$extra_schema = [[
+    '@context'        => 'https://schema.org',
+    '@type'           => 'FAQPage',
+    'mainEntity'      => array_map(static fn(array $f): array => [
+        '@type'          => 'Question',
+        'name'           => $f['q'],
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+    ], $faqs),
+]];
+
 require __DIR__ . '/includes/storefront-header.php';
 ?>
 
@@ -99,9 +145,18 @@ require __DIR__ . '/includes/storefront-header.php';
                 <div class="contact-social">
                     <h3>Follow <?= e(setting('store_name')) ?></h3>
                     <div class="social-links">
-                        <a class="s-instagram" href="<?= e(setting('instagram_url', '#')) ?>" aria-label="Instagram" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>
-                        <a class="s-facebook" href="<?= e(setting('facebook_url', '#')) ?>" aria-label="Facebook" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a class="s-linkedin" href="<?= e(setting('linkedin_url', '#')) ?>" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <?php
+                        $socialLinks = [
+                            ['class' => 's-instagram', 'icon' => 'fa-brands fa-instagram', 'label' => 'Instagram', 'url' => setting('instagram_url', '')],
+                            ['class' => 's-facebook',  'icon' => 'fa-brands fa-facebook-f', 'label' => 'Facebook',  'url' => setting('facebook_url', '')],
+                            ['class' => 's-linkedin',  'icon' => 'fa-brands fa-linkedin-in', 'label' => 'LinkedIn',  'url' => setting('linkedin_url', '')],
+                        ];
+                        foreach ($socialLinks as $social):
+                            $socialUrl = trim((string) $social['url']);
+                            if ($socialUrl === '' || $socialUrl === '#' || !preg_match('#^https?://#i', $socialUrl)) continue;
+                        ?>
+                        <a class="<?= e($social['class']) ?>" href="<?= e($socialUrl) ?>" aria-label="<?= e($social['label']) ?>" target="_blank" rel="noopener noreferrer"><i class="<?= e($social['icon']) ?>"></i></a>
+                        <?php endforeach; ?>
                         <?php $waUrl = whatsapp_url('Hello! I have a question.'); if ($waUrl !== ''): ?>
                         <a class="s-whatsapp" href="<?= e($waUrl) ?>" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i></a>
                         <?php endif; ?>
@@ -172,22 +227,12 @@ require __DIR__ . '/includes/storefront-header.php';
             </div>
 
             <div class="faq-list">
+                <?php foreach ($faqs as $faq): ?>
                 <div class="faq-item">
-                    <button class="faq-question" type="button"><span>How long does delivery take?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
-                    <div class="faq-answer">Standard delivery usually takes 3–5 working days, while express delivery takes approximately 1–2 working days.</div>
+                    <button class="faq-question" type="button" aria-expanded="false"><span><?= e($faq['q']) ?></span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
+                    <div class="faq-answer"><?= e($faq['a']) ?></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" type="button"><span>Do you offer cash on delivery?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
-                    <div class="faq-answer">Yes, we offer Cash on Delivery across Pakistan. You can also pay securely online at checkout where available.</div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" type="button"><span>What is your return policy?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
-                    <div class="faq-answer">We offer a 7-day return and exchange policy on unworn items in their original packaging.</div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-question" type="button"><span>How do I know which size to order?</span><i class="fa-solid fa-chevron-down faq-chevron" aria-hidden="true"></i></button>
-                    <div class="faq-answer">Each product page lists available sizes. If you need help choosing, message us with your measurements and we will guide you.</div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

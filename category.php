@@ -73,10 +73,78 @@ if (is_ajax()) {
     exit;
 }
 
-$page_title       = $category['name'];
-$meta_description = $category['description'] ?: 'Shop the ' . $category['name'] . ' collection at ' . setting('store_name') . '.';
+/* SEO metadata per category — one primary topic per page, written for search
+   intent, only where real products exist. Admin meta_* columns always win. */
+$freeOver = money((float) setting('free_shipping_threshold', '8000'));
+$exDays   = (int) setting('exchange_policy_days', '7');
+
+$seoMap = [
+    'stitched' => [
+        'title' => "Stitched Women's Clothes Online in Pakistan",
+        'h1'    => "Stitched Women's Clothing",
+        'intro' => 'Ready-to-wear stitched clothing online in Pakistan: stitched suits, Pakistani stitched dresses and finished outfits for everyday and occasion wear. Explore ready-to-wear outfits by fabric, size and price, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'unstitched' => [
+        'title' => 'Unstitched Suits Online in Pakistan',
+        'h1'    => 'Unstitched Women\'s Suits',
+        'intro' => 'Shop unstitched suits online in Pakistan — unstitched lawn, 2 piece and 3 piece unstitched suits and fabric collections you can tailor to your own measurements. Browse Pakistani unstitched clothing by fabric, size and price, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'two-piece' => [
+        'title' => '2 Piece Suits Online in Pakistan',
+        'h1'    => '2 Piece Suits',
+        'intro' => 'Shop 2 piece suits online in Pakistan — shirt and trouser sets and 2 piece lawn, cotton and formal suits for everyday and occasion wear, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'three-piece' => [
+        'title' => '3 Piece Suits Online in Pakistan',
+        'h1'    => '3 Piece Suits',
+        'intro' => 'Explore 3 piece suits online in Pakistan — complete looks with shirt, bottom and dupatta in lawn, cotton, chiffon and formal fabrics, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'lawn-collection' => [
+        'title' => 'Lawn Suits Online in Pakistan',
+        'h1'    => 'Lawn Collection',
+        'intro' => 'Explore lawn suits online in Pakistan — printed lawn, summer lawn and seasonal Pakistani lawn fashion in 2 piece and 3 piece sets. Browse the lawn collection by colour and price, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'formal-wear' => [
+        'title' => "Women's Formal Wear Online in Pakistan",
+        'h1'    => "Women's Formal Wear",
+        'intro' => "Women's formal wear online in Pakistan — occasion wear, wedding guest dresses and eastern ensembles for weddings, dinners and festive events. Browse Pakistani formal wear by size and price, with free delivery above " . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'casual-wear' => [
+        'title' => "Women's Casual Wear Online in Pakistan",
+        'h1'    => "Women's Casual Wear",
+        'intro' => "Casual wear for women in Pakistan — everyday stitched and unstitched outfits, kurtas and co-ord sets designed for comfort. Shop women's casual wear online with free delivery above " . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'eid-collection' => [
+        'title' => 'Eid Dresses & Eid Collection for Women',
+        'h1'    => 'Eid Collection',
+        'intro' => 'Eid dresses and Eid collection for women — stitched and unstitched Eid outfits in lawn, cotton and formal fabrics, delivered across Pakistan with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'new-arrivals' => [
+        'title' => "New Arrivals: New Women's Clothing in Pakistan",
+        'h1'    => 'New Arrivals',
+        'intro' => 'Discover new arrivals in Pakistani women\'s clothing — the latest stitched and unstitched suits, lawn sets and co-ords added this season, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+    'sale' => [
+        'title' => "Sale on Women's Clothing Online in Pakistan",
+        'h1'    => 'The Sale Edit',
+        'intro' => 'Shop the sale on women\'s clothing online in Pakistan — marked-down stitched and unstitched suits, lawn and formal wear while stock lasts, with free delivery above ' . $freeOver . ' and ' . $exDays . '-day easy exchange.',
+    ],
+];
+
+$seoCat   = $seoMap[$category['slug']] ?? [];
+$introText = $category['meta_description']
+    ?: ($seoCat['intro'] ?? $category['description'] ?? '');
+
+$page_title       = $category['meta_title']
+    ?: ($seoCat['title'] ?? $category['name'] . " Online in Pakistan");
+$meta_description = $category['meta_description']
+    ?: mb_substr(strip_tags((string) ($seoCat['intro'] ?? $category['description'] ?? '')), 0, 158);
 $canonical        = category_url($category['slug']);
 $active_nav       = 'shop.php';
+
+if ($q !== '') {
+    $robots_noindex = true; // internal search results stay out of the index
+}
 
 $extra_schema = [
     ['@context' => 'https://schema.org', '@type' => 'CollectionPage',
@@ -98,8 +166,8 @@ require __DIR__ . '/includes/storefront-header.php';
     <div class="container">
         <div class="categories-hero-content">
             <span class="eyebrow"><?= e(strtoupper(setting('store_name'))) ?> COLLECTION</span>
-            <h1><?= e($category['name']) ?></h1>
-            <p><?= e($category['description'] ?: 'Discover the ' . $category['name'] . ' collection — thoughtfully designed pieces for every occasion.') ?></p>
+            <h1><?= e($seoCat['h1'] ?? $category['name']) ?></h1>
+            <p><?= e($introText ?: 'Discover the ' . $category['name'] . ' collection — thoughtfully designed pieces for every occasion.') ?></p>
         </div>
     </div>
 </section>

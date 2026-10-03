@@ -73,8 +73,25 @@ $discountPct  = $onSale && (float) $product['price'] > 0
 $sizes = array_values(array_filter(array_map('trim', explode(',', (string) $product['size']))));
 $colors = array_values(array_filter(array_map('trim', explode(',', (string) $product['color']))));
 
-$page_title     = $product['name'];
-$meta_description = mb_substr(strip_tags((string) $product['short_description']), 0, 155);
+$page_title     = $product['name'] . " | Women's Fashion Pakistan";
+$metaLead = trim(strip_tags((string) ($product['short_description'] ?: $product['description'])));
+$metaLead = mb_strlen($metaLead) > 110 ? trim(mb_substr($metaLead, 0, 110)) : $metaLead;
+$metaBits = $metaLead !== '' ? [rtrim($metaLead, '. ') . '.'] : [];
+if ($product['fabric'] !== '') {
+    $metaBits[] = $product['fabric'] . ' fabric.';
+}
+if ($categories) {
+    $metaBits[] = $categories[0]['name'] . ' piece from ' . setting('store_name') . '.';
+}
+$meta_description = implode(' ', $metaBits);
+$metaTail = ' Shop online in Pakistan with ' . (int) setting('exchange_policy_days', '7') . '-day easy exchange.';
+if ($metaTail !== '' && mb_strlen($meta_description . $metaTail) <= 158) {
+    $meta_description .= $metaTail;
+}
+$cutAt = mb_strrpos($meta_description, ' ');
+if (mb_strlen($meta_description) > 158 && $cutAt !== false) {
+    $meta_description = trim(mb_substr($meta_description, 0, $cutAt));
+}
 $canonical      = product_url($product['slug']);
 $active_nav     = 'shop.php';
 $og_image       = $primaryImage;
@@ -116,6 +133,45 @@ if ($images) {
     $product_schema['image'] = array_values(array_map(static fn($im): string => image_url($im['image'] ?? ''), $images));
 }
 
+/* Apparel variants → ProductGroup (only when the product really has variants). */
+$group_schema = null;
+if ($variants) {
+    $variesBy  = [];
+    $hasVariants = [];
+    foreach ($variants as $v) {
+        $vName = trim((string) $v['variant_name']);
+        if ($vName !== '' && !in_array($vName, $variesBy, true)) {
+            $lower = strtolower($vName);
+            $variesBy[] = str_contains($lower, 'size') ? 'https://schema.org/Size'
+                : (str_contains($lower, 'color') || str_contains($lower, 'colour') ? 'https://schema.org/Color' : 'https://schema.org/PropertyValue');
+        }
+        $vLabel = trim($vName . ' ' . (string) $v['variant_value']);
+        $hasVariants[] = [
+            '@type'     => 'Product',
+            'name'      => (string) $product['name'] . ($vLabel !== '' ? ' — ' . $vLabel : ''),
+            'sku'       => (string) $v['sku'] !== '' ? (string) $v['sku'] : ((string) $product['sku'] . '-' . (int) $v['id']),
+            'image'     => $primaryImage,
+            'offers'    => [
+                '@type'         => 'Offer',
+                'price'         => (string) effective_price($product, (float) $v['price_adjustment']),
+                'priceCurrency' => 'PKR',
+                'availability'  => (int) $v['stock_quantity'] < 1 ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+                'url'           => abs_url('/product.php?slug=' . rawurlencode((string) $product['slug'])),
+            ],
+        ];
+    }
+    $group_schema = [
+        '@context'      => 'https://schema.org',
+        '@type'         => 'ProductGroup',
+        'name'          => (string) $product['name'],
+        'productGroupID' => (string) ($product['sku'] !== '' ? $product['sku'] : 'product-' . (int) $product['id']),
+        'url'           => abs_url('/product.php?slug=' . rawurlencode((string) $product['slug'])),
+        'description'   => $meta_description,
+        'variesBy'      => array_values(array_unique($variesBy ?: ['https://schema.org/PropertyValue'])),
+        'hasVariant'    => $hasVariants,
+    ];
+}
+
 $breadcrumb_schema = ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => [
     ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => abs_url('/index.php')],
     ['@type' => 'ListItem', 'position' => 2, 'name' => 'Shop', 'item' => abs_url('/shop.php')],
@@ -126,7 +182,7 @@ foreach ($categories as $cat) {
 }
 $breadcrumb_schema['itemListElement'][] = ['@type' => 'ListItem', 'position' => $bp, 'name' => (string) $product['name']];
 
-$extra_schema = [$product_schema, $breadcrumb_schema];
+$extra_schema = array_values(array_filter([$product_schema, $group_schema, $breadcrumb_schema]));
 
 require __DIR__ . '/includes/storefront-header.php';
 ?>
@@ -173,7 +229,7 @@ require __DIR__ . '/includes/storefront-header.php';
         <div class="product-information">
 
             <?php if ($categories): ?>
-                <span class="product-category"><?= e($categories[0]['name']) ?></span>
+                <a class="product-category" href="<?= e(category_url($categories[0]['slug'])) ?>"><?= e($categories[0]['name']) ?></a>
             <?php endif; ?>
 
             <h1 class="product-title"><?= e($product['name']) ?></h1>

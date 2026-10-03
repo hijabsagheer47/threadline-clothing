@@ -65,9 +65,17 @@ if (is_ajax()) {
     exit;
 }
 
-$page_title     = 'Shop Our Collection';
-$meta_description = 'Discover thoughtfully designed stitched and unstitched pieces, formal wear, casual wear and more from ' . setting('store_name') . '.';
-$active_nav     = 'shop.php';
+$page_title      = "Shop Women's Clothing Online in Pakistan";
+$meta_description = "Shop women's clothing online in Pakistan — stitched and unstitched suits, lawn, formal and casual wear from " . setting('store_name')
+    . ', with free delivery on orders above ' . money((float) setting('free_shipping_threshold', '8000')) . '.';
+$active_nav      = 'shop.php';
+
+/* Faceted/sorted/search URLs duplicate the base listing: canonicalise them all
+   to the clean shop URL and keep internal search results out of the index. */
+$canonical = url('/shop.php');
+if ($q !== '') {
+    $robots_noindex = true;
+}
 
 require __DIR__ . '/includes/storefront-header.php';
 ?>
@@ -77,7 +85,7 @@ require __DIR__ . '/includes/storefront-header.php';
     <div class="shop-hero-overlay"></div>
     <div class="container shop-hero-content">
         <p class="section-label">THE <?= e(strtoupper(setting('store_name'))) ?> COLLECTION</p>
-        <h1>Shop Our Collection</h1>
+        <h1>Shop Women's Clothing</h1>
         <p>Discover thoughtfully designed pieces, refined details and timeless styles for every occasion.</p>
     </div>
 </section>
