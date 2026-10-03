@@ -137,7 +137,18 @@ function whatsapp_url(string $message = ''): string
 
 function asset_url(string $path): string
 {
-    return url('/' . ltrim($path, '/'));
+    $clean = '/' . ltrim($path, '/');
+
+    /* Cache-bust static assets with their mtime: CSS/JS are served with a
+       7-day expiry, so without a version query returning visitors would keep
+       running stale code after every deploy. */
+    static $versions = [];
+    if (!isset($versions[$clean])) {
+        $file = __DIR__ . '/..' . $clean;
+        $versions[$clean] = is_file($file) ? (string) filemtime($file) : '';
+    }
+
+    return url($clean) . ($versions[$clean] !== '' ? '?v=' . $versions[$clean] : '');
 }
 
 /**
