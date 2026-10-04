@@ -717,7 +717,23 @@
     }
 
     /* ------------------------------------------------------------- init */
+    /* ------------------------------------------------- pageview beacon */
+    function trackPageView() {
+        try {
+            if (!navigator.sendBeacon) return;
+            var payload = JSON.stringify({
+                path: (location.pathname || '/') + (location.search || ''),
+                referrer: document.referrer || ''
+            });
+            navigator.sendBeacon(
+                baseUrl() + '/api/pageview.php',
+                new Blob([payload], { type: 'application/json' })
+            );
+        } catch (e) { /* analytics must never break the page */ }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        trackPageView();
         bindFlashDismiss();
         bindYear();
         bindNav();

@@ -275,25 +275,37 @@
         if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
         var MAX = 6; // degrees — deliberately subtle
+        var SEL = '.product-card, .category-card';
         document.addEventListener('mousemove', function (ev) {
-            var card = ev.target.closest && ev.target.closest('.product-card');
+            var card = ev.target.closest && ev.target.closest(SEL);
             if (!card) return;
             var r = card.getBoundingClientRect();
             var px = (ev.clientX - r.left) / r.width - 0.5;
             var py = (ev.clientY - r.top) / r.height - 0.5;
             card.style.transform =
-                'perspective(900px) rotateY(' + (px * MAX).toFixed(2) + 'deg) rotateX(' +
+                'perspective(1200px) rotateY(' + (px * MAX).toFixed(2) + 'deg) rotateX(' +
                 (-py * MAX).toFixed(2) + 'deg) translateY(-6px)';
             card.style.transition = 'transform .18s ease-out, box-shadow .4s ease';
+            /* depth: the category image moves independently from the card */
+            if (card.classList.contains('category-card')) {
+                var img = card.querySelector('.category-image img');
+                if (img) {
+                    img.style.transition = 'transform .25s ease-out';
+                    img.style.transform = 'translate3d(' + (-px * 16).toFixed(1) + 'px,' +
+                        (-py * 16).toFixed(1) + 'px,0) scale(1.1)';
+                }
+            }
         }, { passive: true });
 
         document.addEventListener('mouseout', function (ev) {
-            var card = ev.target.closest && ev.target.closest('.product-card');
+            var card = ev.target.closest && ev.target.closest(SEL);
             if (!card) return;
             var to = ev.relatedTarget;
             if (to && card.contains(to)) return;
             card.style.transform = '';
             card.style.transition = '';
+            var img = card.querySelector('.category-image img');
+            if (img) { img.style.transform = ''; img.style.transition = ''; }
         }, { passive: true });
     }
 
@@ -500,6 +512,306 @@
     }
 
     /* ================================================================
+       7B. THREE.JS HERO — "The Signature Edit" above-the-fold scene
+       Animated silk sheets (real vertex waves) · glass forms · floating
+       cards · pearl spheres · champagne dust · mouse + scroll parallax.
+       Shared lazy loader; silent fallback keeps the 2D canvas layers.
+       ================================================================ */
+    var threePromise = null;
+    function loadThreeLib() {
+        if (window.THREE) return Promise.resolve(window.THREE);
+        if (!threePromise) {
+            threePromise = new Promise(function (resolve, reject) {
+                var s = document.createElement('script');
+                s.src = base + '/assets/js/vendor/three.min.js';
+                s.async = true;
+                s.onload = function () { resolve(window.THREE); };
+                s.onerror = reject;
+                document.head.appendChild(s);
+            });
+        }
+        return threePromise;
+    }
+
+    function initHeroScene() {
+        var canvas = qs('.lx-hero-3d');
+        var hero = qs('.lx-hero');
+        if (!canvas || !hero || reduced) return;
+        if (navigator.deviceMemory && navigator.deviceMemory < 2) return;
+        if (!window.WebGLRenderingContext) return;
+
+        var tier = isMobile() ? 'low' : (window.innerWidth < 1200 ? 'mid' : 'high');
+
+        loadThreeLib().then(function (THREE) {
+            try { buildHero(THREE); } catch (e) { /* 2D layers stay visible */ }
+        }).catch(function () { /* blocked/offline — fallback layers remain */ });
+
+        function buildHero(THREE) {
+            var W = hero.clientWidth || 1, H = hero.clientHeight || 1;
+            var renderer;
+            try {
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: tier === 'high' });
+            } catch (e) { return; }
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, tier === 'low' ? 1.3 : 1.6));
+            renderer.setSize(W, H, false);
+
+            var scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0xfdfbf7, 13.5, 36); // light ivory atmosphere, keeps objects crisp
+            var camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 100);
+            camera.position.set(0, 0, 10);
+
+            /* champagne lighting — key-dominant so 3D forms shade visibly */
+            scene.add(new THREE.AmbientLight(0xfff8ee, 0.72));
+            var key = new THREE.DirectionalLight(0xf9ecd2, 1.35);
+            key.position.set(5, 7, 6);
+            scene.add(key);
+            var rim = new THREE.DirectionalLight(0xd9b978, 0.5);
+            rim.position.set(-7, -4, 3);
+            scene.add(rim);
+            var glow = new THREE.PointLight(0xf3dfb6, 0.65, 40);
+            glow.position.set(0, 2.5, 7);
+            scene.add(glow);
+
+            var world = new THREE.Group();
+            scene.add(world);
+
+            /* --- silk sheets: vertex-displaced planes = moving fabric --- */
+            function makeSilk(w, h, sx, sy, color, opacity) {
+                var geo = new THREE.PlaneGeometry(w, h, sx, sy);
+                var mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
+                    color: color, metalness: 0.3, roughness: 0.3,
+                    transparent: true, opacity: opacity, side: THREE.DoubleSide
+                }));
+                mesh.userData.base = Float32Array.from(geo.attributes.position.array);
+                return mesh;
+            }
+            var segX = tier === 'low' ? 30 : 60;
+            var segY = tier === 'low' ? 8 : 14;
+            var silkA = makeSilk(11.5, 2.7, segX, segY, 0xd9bd8a, 0.62);
+            silkA.position.set(0.5, 2.4, -3.8);
+            silkA.rotation.set(-0.3, 0, -0.1);
+            world.add(silkA);
+            var silkB = makeSilk(9.5, 2.1, segX, segY, 0xf2e4cf, 0.55);
+            silkB.position.set(-0.5, -2.8, -4);
+            silkB.rotation.set(0.26, 0, 0.09);
+            world.add(silkB);
+
+            function wave(mesh, t, amp) {
+                var pos = mesh.geometry.attributes.position;
+                var base = mesh.userData.base;
+                for (var i = 0; i < pos.count; i++) {
+                    var x = base[i * 3], y = base[i * 3 + 1];
+                    pos.array[i * 3 + 2] =
+                        Math.sin(x * 0.75 + t * 1.15) * amp +
+                        Math.sin(y * 1.9 + t * 0.85) * amp * 0.5;
+                }
+                pos.needsUpdate = true;
+                /* re-light the folds: real shading across the moving fabric */
+                mesh.geometry.computeVertexNormals();
+            }
+
+            /* --- champagne silk ribbon (tube) across mid depth --- */
+            var ribbonPts = [];
+            for (var i = 0; i <= 48; i++) {
+                var t = (i / 48) * Math.PI * 3;
+                ribbonPts.push(new THREE.Vector3(
+                    -7.5 + (i / 48) * 15,
+                    Math.sin(t) * 0.9 + Math.sin(t * 0.5) * 0.3,
+                    Math.cos(t * 0.6) * 1.4
+                ));
+            }
+            var ribbon = new THREE.Mesh(
+                new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ribbonPts), 140, 0.12, 8, false),
+                new THREE.MeshStandardMaterial({
+                    color: 0xd2af72, metalness: 0.4, roughness: 0.4,
+                    transparent: true, opacity: 0.85
+                })
+            );
+            ribbon.position.set(0, -0.4, -2.6);
+            world.add(ribbon);
+
+            /* --- transparent glass forms --- */
+            var glassMat = new THREE.MeshPhysicalMaterial({
+                color: 0xf7f2ea, metalness: 0.05, roughness: 0.08,
+                transparent: true, opacity: 0.4, clearcoat: 0.6, clearcoatRoughness: 0.15
+            });
+            var edgeMat = new THREE.LineBasicMaterial({ color: 0xb9975a, transparent: true, opacity: 0.75 });
+            var icoGeo = new THREE.IcosahedronGeometry(1.15, 0);
+            var ico = new THREE.Group();
+            ico.add(new THREE.Mesh(icoGeo, glassMat));
+            ico.add(new THREE.LineSegments(new THREE.EdgesGeometry(icoGeo), edgeMat));
+            ico.position.set(tier === 'low' ? -5.0 : -5.6, 1.9, -3.2);
+            world.add(ico);
+
+            var pearlGlass = new THREE.Mesh(new THREE.SphereGeometry(0.8, 24, 18), glassMat.clone());
+            pearlGlass.material.opacity = 0.34;
+            pearlGlass.position.set(5.6, -2.5, -3);
+            world.add(pearlGlass);
+
+            var ring = new THREE.Mesh(
+                new THREE.TorusGeometry(1.0, 0.045, 10, 64),
+                new THREE.MeshStandardMaterial({ color: 0xc9a96a, metalness: 0.7, roughness: 0.3 })
+            );
+            ring.position.set(5.1, 2.7, -4.4);
+            ring.rotation.set(0.9, 0.4, 0);
+            world.add(ring);
+
+            /* --- floating product cards (abstract ivory + champagne edge) --- */
+            var cards = [];
+            var cardMat = new THREE.MeshStandardMaterial({
+                color: 0xfffdf8, metalness: 0.05, roughness: 0.6, transparent: true, opacity: 0.95
+            });
+            var cardEdgeMat = new THREE.MeshStandardMaterial({ color: 0xc9a96a, metalness: 0.5, roughness: 0.4 });
+            var cardSpots = tier === 'low'
+                ? [[-5.0, 2.7, -3.6], [5.2, -1.4, -4.2]]
+                : [[-5.2, 2.8, -3.6], [5.3, -1.4, -4.2], [-5.5, -2.4, -3.2]];
+            for (var c = 0; c < cardSpots.length; c++) {
+                var cw = 1.05, ch = 1.4;
+                var wrap = new THREE.Group();
+                var edge = new THREE.Mesh(new THREE.BoxGeometry(cw + 0.06, ch + 0.06, 0.02), cardEdgeMat);
+                edge.position.z = -0.03;
+                var face = new THREE.Mesh(new THREE.BoxGeometry(cw, ch, 0.05), cardMat);
+                wrap.add(edge); wrap.add(face);
+                wrap.position.set(cardSpots[c][0], cardSpots[c][1], cardSpots[c][2]);
+                wrap.rotation.set(0.05, cardSpots[c][0] < 0 ? 0.55 : -0.55, cardSpots[c][0] < 0 ? -0.08 : 0.08);
+                wrap.userData = { base: wrap.position.clone(), phase: c * 1.7, speed: 0.6 + c * 0.18 };
+                world.add(wrap);
+                cards.push(wrap);
+            }
+
+            /* --- pearl accents --- */
+            var pearls = [];
+            var pearlMat = new THREE.MeshStandardMaterial({ color: 0xf3e8dc, metalness: 0.35, roughness: 0.25 });
+            var pearlSpots = [[-3.4, -1.6, -1.8, 0.16], [3.6, 1.8, -2.2, 0.12], [1.8, -2.6, -1.2, 0.1]];
+            for (var pI = 0; pI < pearlSpots.length; pI++) {
+                var pl = new THREE.Mesh(new THREE.SphereGeometry(pearlSpots[pI][3], 18, 14), pearlMat);
+                pl.position.set(pearlSpots[pI][0], pearlSpots[pI][1], pearlSpots[pI][2]);
+                pl.userData = { base: pl.position.clone(), phase: pI * 2.1 };
+                world.add(pl);
+                pearls.push(pl);
+            }
+
+            /* --- champagne dust (depth layers, tiered density) --- */
+            var pCount = tier === 'high' ? 180 : (tier === 'mid' ? 110 : 60);
+            var pGeo = new THREE.BufferGeometry();
+            var pPos = new Float32Array(pCount * 3);
+            for (var p = 0; p < pCount; p++) {
+                pPos[p * 3] = (Math.random() - 0.5) * 20;
+                pPos[p * 3 + 1] = (Math.random() - 0.5) * 11;
+                pPos[p * 3 + 2] = -7 + Math.random() * 9;
+            }
+            pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+            var dust = new THREE.Points(pGeo, new THREE.PointsMaterial({
+                color: 0xc9a96a, size: 0.055, transparent: true, opacity: 0.65, sizeAttenuation: true
+            }));
+            scene.add(dust);
+
+            /* --- interaction state --- */
+            var mx = 0, my = 0, tmx = 0, tmy = 0;
+            var sy = 0, tsy = 0;
+            hero.addEventListener('mousemove', function (e) {
+                var r = hero.getBoundingClientRect();
+                tmx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+                tmy = ((e.clientY - r.top) / r.height - 0.5) * 2;
+            }, { passive: true });
+            window.addEventListener('scroll', function () {
+                tsy = Math.min(window.scrollY || 0, (hero.offsetHeight || 800) * 1.2);
+            }, { passive: true });
+
+            var running = true;
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (en) { running = en[0].isIntersecting; }, { threshold: 0 })
+                    .observe(hero);
+            }
+
+            /* first frame immediately — visible even before rAF ticks */
+            renderer.render(scene, camera);
+            canvas.classList.add('is-live');
+
+            var clock = new THREE.Clock();
+            function loop() {
+                requestAnimationFrame(loop);
+                if (!running) return;
+                var e = clock.getElapsedTime();
+                mx += (tmx - mx) * 0.05;
+                my += (tmy - my) * 0.05;
+                sy += (tsy - sy) * 0.07;
+
+                /* fabric in motion */
+                wave(silkA, e, 0.4 + sy * 0.00025);
+                wave(silkB, e + 2.1, 0.3 + sy * 0.0002);
+                ribbon.rotation.z = Math.sin(e * 0.3) * 0.07;
+                ribbon.position.y = -0.4 + Math.sin(e * 0.5) * 0.22 + sy * 0.0035;
+
+                /* glass + accents */
+                ico.rotation.y = e * 0.16;
+                ico.rotation.x = Math.sin(e * 0.4) * 0.18;
+                ico.position.y = 1.9 + Math.sin(e * 0.7) * 0.24;
+                pearlGlass.rotation.y = -e * 0.2;
+                pearlGlass.position.y = -2.5 + Math.cos(e * 0.6) * 0.2;
+                ring.rotation.z = e * 0.25;
+                ring.rotation.x = 0.9 + Math.sin(e * 0.35) * 0.2;
+
+                /* floating cards bob */
+                for (var k = 0; k < cards.length; k++) {
+                    var d = cards[k].userData;
+                    cards[k].position.y = d.base.y + Math.sin(e * d.speed + d.phase) * 0.22;
+                    cards[k].position.x = d.base.x + Math.cos(e * 0.4 + d.phase) * 0.1;
+                    cards[k].rotation.y = (d.base.x < 0 ? 0.55 : -0.55) + Math.sin(e * 0.5 + d.phase) * 0.08 + mx * 0.12;
+                }
+                for (var q = 0; q < pearls.length; q++) {
+                    var pd = pearls[q].userData;
+                    pearls[q].position.y = pd.base.y + Math.sin(e * 0.8 + pd.phase) * 0.3;
+                    pearls[q].position.x = pd.base.x + Math.cos(e * 0.55 + pd.phase) * 0.16;
+                }
+
+                /* mouse + scroll parallax with depth layers */
+                world.rotation.y = mx * 0.13;
+                world.rotation.x = my * 0.07 + Math.sin(e * 0.2) * 0.02;
+                world.position.y = sy * 0.006;
+                camera.position.x = mx * 0.55;
+                camera.position.y = -my * 0.35 + sy * 0.002;
+                camera.position.z = 10 + sy * 0.003;
+                camera.lookAt(0, 0, 0);
+                dust.rotation.y = e * 0.015 + mx * -0.06;
+                dust.position.x = mx * -0.8;
+                dust.position.y = my * -0.45 + sy * 0.012;
+
+                renderer.render(scene, camera);
+            }
+            loop();
+
+            window.addEventListener('resize', function () {
+                var w = hero.clientWidth || 1, h = hero.clientHeight || 1;
+                camera.aspect = w / h;
+                camera.updateProjectionMatrix();
+                renderer.setSize(w, h, false);
+            });
+        }
+    }
+
+    /* ================================================================
+       7C. SCROLL PROGRESS — thin champagne bar
+       ================================================================ */
+    function initScrollProgress() {
+        var bar = qs('.lx-scroll-progress');
+        if (!bar) return;
+        if (reduced) { bar.style.display = 'none'; return; }
+        var ticking = false;
+        function update() {
+            ticking = false;
+            var doc = document.documentElement;
+            var max = (doc.scrollHeight - window.innerHeight) || 1;
+            var p = Math.min(1, Math.max(0, (window.scrollY || doc.scrollTop || 0) / max));
+            bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+        }
+        window.addEventListener('scroll', function () {
+            if (!ticking) { ticking = true; requestAnimationFrame(update); }
+        }, { passive: true });
+        update();
+    }
+
+    /* ================================================================
        8. THREE.JS — "The Fashlab Experience" boutique scene
        Lazy-loads three.min.js; graceful CSS fallback if WebGL fails.
        ================================================================ */
@@ -515,19 +827,7 @@
         function boot() {
             if (loaded) return;
             loaded = true;
-            loadThree().then(function (THREE) { build(THREE); }).catch(function () { /* keep fallback */ });
-        }
-
-        function loadThree() {
-            return new Promise(function (resolve, reject) {
-                if (window.THREE) { resolve(window.THREE); return; }
-                var s = document.createElement('script');
-                s.src = base + '/assets/js/vendor/three.min.js';
-                s.async = true;
-                s.onload = function () { resolve(window.THREE); };
-                s.onerror = reject;
-                document.head.appendChild(s);
-            });
+            loadThreeLib().then(function (THREE) { build(THREE); }).catch(function () { /* keep fallback */ });
         }
 
         function build(THREE) {
@@ -1076,6 +1376,8 @@
         initCardTilt();
         initSearch();
         initLottie();
+        initHeroScene();
+        initScrollProgress();
         initExperience();
         initReveals();
         initMagnet();

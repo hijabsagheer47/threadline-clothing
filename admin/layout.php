@@ -17,9 +17,10 @@ $navItems = [
     'collections'=> ['label' => 'Collections',         'icon' => 'fa-gem',            'href' => '/admin/collections.php'],
     'orders'    => ['label' => 'Orders',              'icon' => 'fa-receipt',        'href' => '/admin/orders.php', 'badge' => $pendingOrders],
     'customers' => ['label' => 'Customers',           'icon' => 'fa-users',          'href' => '/admin/customers.php'],
-    'subscribers'=> ['label' => 'Subscribers',        'icon' => 'fa-envelope-open-text', 'href' => '/admin/subscribers.php'],
-    'messages'  => ['label' => 'Messages',            'icon' => 'fa-comment-dots',   'href' => '/admin/messages.php', 'badge' => $unreadMsgs],
+    'subscribers'=> ['label' => 'Subscribers',        'icon' => 'fa-envelope-open-text', 'href' => '/admin/subscribers.php'],    'messages'  => ['label' => 'Messages',             'icon' => 'fa-comment-dots',   'href' => '/admin/messages.php', 'badge' => $unreadMsgs],
+    'journal'   => ['label' => 'Style Journal',         'icon' => 'fa-feather',        'href' => '/admin/journal.php'],
     'reports'   => ['label' => 'Reports',             'icon' => 'fa-chart-column',   'href' => '/admin/reports.php'],
+    'analytics' => ['label' => 'Analytics',            'icon' => 'fa-chart-line',     'href' => '/admin/analytics.php'],
     'settings'  => ['label' => 'Settings',            'icon' => 'fa-gear',           'href' => '/admin/settings.php'],
 ];
 

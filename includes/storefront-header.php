@@ -148,7 +148,7 @@ if ($mainNav === '') {
             'email'       => setting('store_email', ''),
         ],
     ] + (setting('instagram_url') !== '#' && setting('instagram_url') !== ''
-        ? ['sameAs' => [setting('instagram_url')]] : []), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+        ? ['sameAs' => [setting('instagram_url')]] : []), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
     </script>
     <script type="application/ld+json">
     <?= json_encode([
@@ -161,13 +161,16 @@ if ($mainNav === '') {
             'target' => abs_url('/shop.php?q={search_term_string}'),
             'query-input' => 'required name=search_term_string',
         ],
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>
     </script>
     <?php foreach ($extra_schema as $schema): ?>
-    <script type="application/ld+json"><?= json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?>;</script>
+    <script type="application/ld+json"><?= json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
     <?php endforeach; ?>
 </head>
 <body>
+
+<!-- Scroll progress (champagne) -->
+<div class="lx-scroll-progress" aria-hidden="true"></div>
 
 <!-- Announcement bar (rotating) -->
 <?php if ($announcementMessages): ?>

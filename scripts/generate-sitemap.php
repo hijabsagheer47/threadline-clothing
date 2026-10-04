@@ -56,6 +56,14 @@ foreach (db()->query('SELECT slug, updated_at FROM products WHERE status = 1 ORD
     $add($abs('/product.php?slug=' . rawurlencode((string) $row['slug'])), $row['updated_at'] ?? null, 'weekly', 0.9);
 }
 
+// Style Journal (published articles only)
+if (tc_table_exists('journal_posts')) {
+    $add($abs('/journal.php'), null, 'weekly', 0.6);
+    foreach (db()->query("SELECT slug, updated_at FROM journal_posts WHERE status = 'published' ORDER BY id") as $row) {
+        $add($abs('/journal-article.php?slug=' . rawurlencode((string) $row['slug'])), $row['updated_at'] ?? null, 'monthly', 0.6);
+    }
+}
+
 $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
 $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 foreach ($entries as $entry) {

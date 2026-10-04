@@ -73,6 +73,7 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
 <!-- HERO — 3D fashion experience -->
 <section class="lx-hero" aria-label="Featured collection">
     <canvas class="lx-hero-particles" aria-hidden="true"></canvas>
+    <canvas class="lx-hero-3d" aria-hidden="true"></canvas>
     <div class="container lx-hero-inner">
 
         <div class="lx-hero-copy">
@@ -381,6 +382,48 @@ $freeOver   = (float) setting('free_shipping_threshold', '8000');
         <?php endif; ?>
     </div>
 </section>
+
+<!-- STYLE JOURNAL (real published articles) -->
+<?php
+$homeJournal = [];
+if (tc_table_exists('journal_posts')) {
+    $homeJournal = db()->query(
+        "SELECT title, slug, excerpt, published_at, created_at
+         FROM journal_posts
+         WHERE status = 'published'
+           AND (published_at IS NULL OR published_at <= NOW())
+         ORDER BY COALESCE(published_at, created_at) DESC
+         LIMIT 3"
+    )->fetchAll();
+}
+?>
+<?php if ($homeJournal): ?>
+<section class="products-section section-padding" aria-labelledby="lx-home-journal-title">
+    <div class="container">
+        <div class="section-top">
+            <div class="section-heading left lx-reveal">
+                <p class="section-label">FROM THE JOURNAL</p>
+                <h2 id="lx-home-journal-title">The Style Journal</h2>
+                <p>Fabric guides, styling notes and dressing advice — worth reading before your next order.</p>
+            </div>
+            <a href="<?= e(url('/journal.php')) ?>" class="text-link">Read The Journal <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="lx-journal-grid">
+            <?php foreach ($homeJournal as $jp): ?>
+                <article class="lx-journal-card lx-reveal">
+                    <div class="lj-body">
+                        <h3><a href="<?= e(url('/journal-article.php?slug=' . rawurlencode($jp['slug']))) ?>"><?= e($jp['title']) ?></a></h3>
+                        <?php if (!empty($jp['excerpt'])): ?><p><?= e($jp['excerpt']) ?></p><?php endif; ?>
+                        <span class="lj-meta">
+                            <time datetime="<?= e(date('Y-m-d', strtotime($jp['published_at'] ?: $jp['created_at']))) ?>"><?= e(date('M j, Y', strtotime($jp['published_at'] ?: $jp['created_at']))) ?></time>
+                        </span>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
 
 <!-- GALLERY -->
 <section class="gallery-section section-padding">

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Analytics | Admin — Fashlab Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/threadline-clothing/assets/css/admin.css?v=1788937902">
+</head>
+<body>
+
+<div class="admin-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-brand">
+            <a href="/threadline-clothing/admin/index.php">Fashlab Studio</a>
+            <small>Admin Panel</small>
+        </div>
+
+        <nav class="sidebar-nav">
+                            <a href="/threadline-clothing/admin/index.php" class="">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    Dashboard                                    </a>
+                            <a href="/threadline-clothing/admin/products.php" class="">
+                    <i class="fa-solid fa-shirt"></i>
+                    All Products                                    </a>
+                            <a href="/threadline-clothing/admin/product-form.php" class="">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Product                                    </a>
+                            <a href="/threadline-clothing/admin/categories.php" class="">
+                    <i class="fa-solid fa-table-cells-large"></i>
+                    Categories                                    </a>
+                            <a href="/threadline-clothing/admin/collections.php" class="">
+                    <i class="fa-solid fa-gem"></i>
+                    Collections                                    </a>
+                            <a href="/threadline-clothing/admin/orders.php" class="">
+                    <i class="fa-solid fa-receipt"></i>
+                    Orders                                            <span class="badge gold" style="margin-left:auto">4</span>
+                                    </a>
+                            <a href="/threadline-clothing/admin/customers.php" class="">
+                    <i class="fa-solid fa-users"></i>
+                    Customers                                    </a>
+                            <a href="/threadline-clothing/admin/subscribers.php" class="">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    Subscribers                                    </a>
+                            <a href="/threadline-clothing/admin/messages.php" class="">
+                    <i class="fa-solid fa-comment-dots"></i>
+                    Messages                                    </a>
+                            <a href="/threadline-clothing/admin/reports.php" class="">
+                    <i class="fa-solid fa-chart-column"></i>
+                    Reports                                    </a>
+                            <a href="/threadline-clothing/admin/analytics.php" class="active">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Analytics                                    </a>
+                            <a href="/threadline-clothing/admin/settings.php" class="">
+                    <i class="fa-solid fa-gear"></i>
+                    Settings                                    </a>
+                    </nav>
+
+        <div class="sidebar-footer">
+            <a href="/threadline-clothing/admin/activity.php"><i class="fa-solid fa-clock-rotate-left"></i> Activity Log</a>
+            <br><br>
+            <a href="/threadline-clothing/index.php" target="_blank"><i class="fa-solid fa-store"></i> View Store</a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="admin-main">
+
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <span class="topbar-title">Analytics</span>
+            </div>
+            <div class="topbar-right">
+                <a href="/threadline-clothing/admin/profile.php" class="topbar-admin">
+                    <div class="admin-avatar">T</div>
+                    <div class="admin-meta">
+                        <div class="admin-name">Test Admin</div>
+                        <div class="admin-role">super_admin</div>
+                    </div>
+                </a>
+                <a href="/threadline-clothing/admin/logout.php" class="btn btn-outline btn-sm" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            
+            
+<style>
+    .anx-range { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 20px; }
+    .anx-range a {
+        padding: 6px 14px; border-radius: 999px; border: 1px solid #e4dcd2;
+        font-size: 13px; color: #6b5f57; text-decoration: none; background: #fff;
+        transition: all .2s ease;
+    }
+    .anx-range a:hover { border-color: #c9a96a; color: #9c7c3f; }
+    .anx-range a.is-active { background: #c9a96a; border-color: #c9a96a; color: #fff; }
+
+    .anx-chart {
+        display: flex; align-items: flex-end; gap: 4px;
+        height: 220px; padding: 18px 14px 6px;
+        background: linear-gradient(180deg, #fffdf9, #fdfaf4);
+        border: 1px solid #eee6da; border-radius: 14px; margin-bottom: 22px;
+    }
+    .anx-day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0; height: 100%; justify-content: flex-end; }
+    .anx-bars { display: flex; align-items: flex-end; gap: 2px; width: 100%; height: calc(100% - 26px); justify-content: center; }
+    .anx-bar { width: 42%; max-width: 16px; border-radius: 3px 3px 0 0; min-height: 2px; transition: height .4s ease; }
+    .anx-bar.views { background: linear-gradient(180deg, #c9a96a, #b99a63); }
+    .anx-bar.vis { background: rgba(201, 169, 106, .35); }
+    .anx-day label { font-size: 10px; color: #8d8177; white-space: nowrap; overflow: hidden; max-width: 100%; }
+    .anx-legend { display: flex; gap: 16px; font-size: 12px; color: #6b5f57; margin-bottom: 18px; }
+    .anx-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; }
+    .anx-legend .l-vis { background: rgba(201, 169, 106, .35); }
+    .anx-legend .l-views { background: #c9a96a; }
+
+    .anx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .anx-panel { background: #fff; border: 1px solid #eee6da; border-radius: 14px; padding: 18px 20px; }
+    .anx-panel h3 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: #9c7c3f; margin-bottom: 14px; }
+    .anx-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid #f4efe7; font-size: 14px; }
+    .anx-row:last-child { border-bottom: 0; }
+    .anx-row .lbl { color: #3b2b26; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .anx-row .val { color: #8d8177; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+    .anx-meter { height: 6px; border-radius: 999px; background: #f4efe7; overflow: hidden; margin-top: 5px; }
+    .anx-meter > span { display: block; height: 100%; background: linear-gradient(90deg, #e3cda1, #c9a96a); border-radius: 999px; }
+    .anx-empty { text-align: center; padding: 46px 20px; color: #8d8177; font-size: 14.5px; background: #fffdf9; border: 1px dashed #e4dcd2; border-radius: 14px; }
+    .anx-empty i { font-size: 30px; color: #c9a96a; display: block; margin-bottom: 12px; }
+    @media (max-width: 720px) { .anx-day label { display: none; } }
+</style>
+
+<div class="page-header">
+    <div>
+        <h1>Analytics</h1>
+        <p>First-party visitor analytics — collected on your own server, no third-party trackers.</p>
+    </div>
+</div>
+
+<div class="anx-range">
+            <a href="/threadline-clothing/admin/analytics.php?days=7" class="">Last 7 days</a>
+            <a href="/threadline-clothing/admin/analytics.php?days=14" class="is-active">Last 14 days</a>
+            <a href="/threadline-clothing/admin/analytics.php?days=30" class="">Last 30 days</a>
+            <a href="/threadline-clothing/admin/analytics.php?days=90" class="">Last 90 days</a>
+    </div>
+
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon gold"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <div class="stat-value">38</div>
+                <div class="stat-label">Visitors</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="fa-solid fa-eye"></i></div>
+            <div>
+                <div class="stat-value">117</div>
+                <div class="stat-label">Page Views</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="fa-solid fa-arrow-pointer"></i></div>
+            <div>
+                <div class="stat-value">3.1</div>
+                <div class="stat-label">Views / Visit</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon gold"><i class="fa-solid fa-mobile-screen"></i></div>
+            <div>
+                <div class="stat-value">
+                    Mobile                </div>
+                <div class="stat-label">Top Device</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="anx-legend">
+        <span><i class="l-views"></i> Page views</span>
+        <span><i class="l-vis"></i> Visitors</span>
+    </div>
+
+    <div class="anx-chart" role="img" aria-label="Daily page views and visitors for the selected period">
+                    <div class="anx-day" title="2026-09-21 — 6 views, 5 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 38%"></span>
+                    <span class="anx-bar views" style="height: 46%"></span>
+                </div>
+                <label>Sep 21</label>
+            </div>
+                    <div class="anx-day" title="2026-09-22 — 13 views, 11 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 85%"></span>
+                    <span class="anx-bar views" style="height: 100%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-09-23 — 6 views, 5 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 38%"></span>
+                    <span class="anx-bar views" style="height: 46%"></span>
+                </div>
+                <label>Sep 23</label>
+            </div>
+                    <div class="anx-day" title="2026-09-24 — 12 views, 9 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 69%"></span>
+                    <span class="anx-bar views" style="height: 92%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-09-25 — 6 views, 6 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 46%"></span>
+                    <span class="anx-bar views" style="height: 46%"></span>
+                </div>
+                <label>Sep 25</label>
+            </div>
+                    <div class="anx-day" title="2026-09-26 — 7 views, 7 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 54%"></span>
+                    <span class="anx-bar views" style="height: 54%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-09-27 — 10 views, 8 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 62%"></span>
+                    <span class="anx-bar views" style="height: 77%"></span>
+                </div>
+                <label>Sep 27</label>
+            </div>
+                    <div class="anx-day" title="2026-09-28 — 12 views, 10 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 77%"></span>
+                    <span class="anx-bar views" style="height: 92%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-09-29 — 8 views, 7 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 54%"></span>
+                    <span class="anx-bar views" style="height: 62%"></span>
+                </div>
+                <label>Sep 29</label>
+            </div>
+                    <div class="anx-day" title="2026-09-30 — 8 views, 7 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 54%"></span>
+                    <span class="anx-bar views" style="height: 62%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-10-01 — 3 views, 3 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 23%"></span>
+                    <span class="anx-bar views" style="height: 23%"></span>
+                </div>
+                <label>Oct 1</label>
+            </div>
+                    <div class="anx-day" title="2026-10-02 — 4 views, 4 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 31%"></span>
+                    <span class="anx-bar views" style="height: 31%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-10-03 — 12 views, 9 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 69%"></span>
+                    <span class="anx-bar views" style="height: 92%"></span>
+                </div>
+                <label>Oct 3</label>
+            </div>
+                    <div class="anx-day" title="2026-10-04 — 9 views, 8 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 62%"></span>
+                    <span class="anx-bar views" style="height: 69%"></span>
+                </div>
+                <label></label>
+            </div>
+                    <div class="anx-day" title="2026-10-05 — 1 views, 1 visitors">
+                <div class="anx-bars">
+                    <span class="anx-bar vis" style="height: 8%"></span>
+                    <span class="anx-bar views" style="height: 8%"></span>
+                </div>
+                <label>Oct 5</label>
+            </div>
+            </div>
+
+    <div class="anx-grid">
+        <div class="anx-panel">
+            <h3>Top Pages</h3>
+                                        <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/shop.php">Shop</span>
+                        <span class="val">25</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 100%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/index.php">Home</span>
+                        <span class="val">21</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 84%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/product.php?slug=aisha-soft-cotton-lawn">Product — Aisha Soft Cotton Lawn</span>
+                        <span class="val">12</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 48%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/cart.php">Cart</span>
+                        <span class="val">12</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 48%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/contact.php">Contact</span>
+                        <span class="val">11</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 44%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/collections.php">Collections</span>
+                        <span class="val">11</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 44%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/category.php?slug=lawn-collection">Category — Lawn Collection</span>
+                        <span class="val">10</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 40%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/product.php?slug=anaya-bridal-eastern-ensemble">Product — Anaya Bridal Eastern Ensemble</span>
+                        <span class="val">9</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 36%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="/category.php?slug=stitched">Category — Stitched</span>
+                        <span class="val">6</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 24%"></span></div>
+                </div>
+                                </div>
+
+        <div class="anx-panel">
+            <h3>Traffic Sources</h3>
+                                        <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="Direct / no referrer">Direct / no referrer</span>
+                        <span class="val">42</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 100%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="google.com/search">google.com/search</span>
+                        <span class="val">29</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 69%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="instagram.com">instagram.com</span>
+                        <span class="val">24</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 57%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="bing.com">bing.com</span>
+                        <span class="val">21</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 50%"></span></div>
+                </div>
+                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl" title="google.com/search">google.com/search</span>
+                        <span class="val">1</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 2%"></span></div>
+                </div>
+                                </div>
+
+        <div class="anx-panel">
+            <h3>Devices</h3>
+                                                        <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl"><i class="fa-solid fa-desktop" style="color:#c9a96a;margin-right:8px"></i>Desktop</span>
+                        <span class="val">44 (38%)</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 85%"></span></div>
+                </div>
+                                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl"><i class="fa-solid fa-tablet-screen-button" style="color:#c9a96a;margin-right:8px"></i>Tablet</span>
+                        <span class="val">21 (18%)</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 40%"></span></div>
+                </div>
+                                            <div class="anx-row" style="display:block">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <span class="lbl"><i class="fa-solid fa-mobile-screen" style="color:#c9a96a;margin-right:8px"></i>Mobile</span>
+                        <span class="val">52 (44%)</span>
+                    </div>
+                    <div class="anx-meter"><span style="width: 100%"></span></div>
+                </div>
+                                </div>
+    </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.getElementById('sidebarToggle').addEventListener('click', function () {
+        document.getElementById('adminSidebar').classList.toggle('open');
+    });
+</script>
+</body>
+</html>
